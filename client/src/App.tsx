@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Timer from './components/Timer/Timer';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,6 +10,11 @@ interface Timer {
 }
 function App() {
   const [timers, setTimers] = useState<Timer[]>([]);
+
+  useEffect(() => {
+    setTimers(JSON.parse(localStorage.getItem('timers') ?? '[]') as Timer[]);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
@@ -19,30 +24,21 @@ function App() {
       !formData.get('minutes')
     )
       return;
-    setTimers((prev) => [
-      ...prev,
-      {
-        id: uuidv4(),
-        title: (formData.get('title') ?? 'Unknown') as string,
-        duration: {
-          hours: parseInt((formData.get('hours') ?? '0') as string),
-          minutes: parseInt((formData.get('minutes') ?? '0') as string),
-          seconds: 0,
-        },
+
+    const newTimer = {
+      id: uuidv4(),
+      title: (formData.get('title') ?? 'Unknown') as string,
+      duration: {
+        hours: parseInt((formData.get('hours') ?? '0') as string),
+        minutes: parseInt((formData.get('minutes') ?? '0') as string),
+        seconds: 0,
       },
-    ]);
+    };
+    setTimers((prev) => [...prev, newTimer]);
+    localStorage.setItem('timers', JSON.stringify([...timers, newTimer]));
     e.target.reset();
   };
 
-  function calculateEndTime(hours: number, minutes: number) {
-    const endTime = new Date();
-    endTime.setHours(endTime.getHours() + hours);
-    endTime.setMinutes(endTime.getMinutes() + minutes);
-    return endTime;
-  }
-
-  const endTime = new Date();
-  endTime.setHours(endTime.getHours() + 1);
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -58,9 +54,18 @@ function App() {
       </form>
 
       {timers.map((item) => (
-        <Timer key={item.id} title={item.title} duration={item.duration} />
+        <Timer
+          key={item.id}
+          id={item.id}
+          title={item.title}
+          duration={item.duration}
+        />
       ))}
-      <Timer title="coding" duration={{ hours: 1, minutes: 0, seconds: 0 }} />
+      <Timer
+        title="coding"
+        id={'zz8182128921'}
+        duration={{ hours: 1, minutes: 0, seconds: 0 }}
+      />
     </>
   );
 }
