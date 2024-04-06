@@ -1,0 +1,18 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 1rem;
+
+}
+
+.navbar a {
+    background-color: white;
+    color: black;
+    text-decoration: none;
+    padding: 0.5rem;
+
+}
