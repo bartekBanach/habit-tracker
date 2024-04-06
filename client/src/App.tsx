@@ -4,6 +4,10 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Layout from './components/Layout/Layout';
 
+import axios from 'axios';
+axios.defaults.baseURL = 'http://localhost:4000/';
+axios.defaults.withCredentials = true;
+
 function App() {
   return (
     <>
