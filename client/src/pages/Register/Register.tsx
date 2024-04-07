@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface RegisterFormData {
   email: string;
@@ -12,20 +14,40 @@ const Register = () => {
     username: '',
     password: '',
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // You can perform form submission logic here
+
+    const { email, username, password } = formData;
+
+    try {
+      const { data } = await axios.post('/register', {
+        username,
+        email,
+        password,
+      });
+
+      if (data.error) {
+        setError(data.error as string);
+      } else {
+        setFormData({});
+        navigate('/login');
+      }
+    } catch (err) {
+      console.log(error);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
+      <span>{error}</span>
       <div>
         <label htmlFor="email">Email:</label>
         <input

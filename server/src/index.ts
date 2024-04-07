@@ -5,15 +5,20 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const app = express();
+
+//db connection
 mongoose
   .connect(process.env.MONGO_URL as string)
   .then(() => console.log("Connected to db."))
   .catch((err) => console.log("Error connecting to db.", err));
 
-const app = express();
-const port = process.env.PORT;
+//middleware
+app.use(express.json());
 
 app.use("/", router);
+
+const port = process.env.PORT;
 
 app.listen(port, () => {
   return console.log(
