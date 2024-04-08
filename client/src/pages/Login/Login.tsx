@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface LoginFormData {
   email: string;
@@ -6,6 +8,7 @@ interface LoginFormData {
 }
 
 const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -16,10 +19,25 @@ const Login = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // You can perform login logic here
+    const { email, password } = formData;
+
+    try {
+      const { data } = await axios.post('/login', {
+        email,
+        password,
+      });
+
+      if (data.error) {
+        console.log(data.error);
+      } else {
+        setFormData({});
+        navigate('/');
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

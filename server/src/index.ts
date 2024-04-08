@@ -1,7 +1,8 @@
-import express from "express";
+import express, { urlencoded } from "express";
 import router from "./routes/authRoutes";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ mongoose
 
 //middleware
 app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
 
 app.use("/", router);
 

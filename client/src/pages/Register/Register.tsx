@@ -41,7 +41,7 @@ const Register = () => {
         navigate('/login');
       }
     } catch (err) {
-      console.log(error);
+      console.log(err);
     }
   };
 
