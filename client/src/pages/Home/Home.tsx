@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Timer from '../../components/Timer/Timer';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './Home.module.css';
+import HabitForm from '../../components/HabitForm/HabitForm';
 
 const Home = () => {
   const [timers, setTimers] = useState<Timer[]>([]);
@@ -36,6 +37,7 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
+      <HabitForm />
       <form onSubmit={handleSubmit}>
         <input required name="title" type="text" placeholder="title"></input>
         <input required name="hours" type="number" placeholder="hours"></input>
