@@ -24,7 +24,7 @@ const Login = () => {
     const { email, password } = formData;
 
     try {
-      const { data } = await axios.post('/login', {
+      const { data } = await axios.post('/user/login', {
         email,
         password,
       });
