@@ -24,6 +24,7 @@ const HabitForm = ({}) => {
       return;
     }
     const { name, category } = formData;
+    setFormData({ ...formData, name: '' });
 
     await addHabit({ name, category, user: user.id });
   };

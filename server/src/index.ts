@@ -21,9 +21,9 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/user", authRoutes);
-app.use("/habit", habitRoutes);
-app.use("/activity", activityRoutes);
+app.use("/api/users", authRoutes);
+app.use("/api/habits", habitRoutes);
+app.use("/api/activities", activityRoutes);
 
 const port = process.env.PORT;
 

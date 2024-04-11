@@ -2,16 +2,16 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000/api' }),
   tagTypes: ['Habits'],
   endpoints: (builder) => ({
     getHabits: builder.query({
-      query: () => ({ url: '/habit' }),
+      query: () => ({ url: '/habits' }),
       providesTags: ['Habits'],
     }),
     addHabit: builder.mutation({
       query: (habit: Habit) => {
-        return { url: '/habit', method: 'POST', body: habit };
+        return { url: '/habits', method: 'POST', body: habit };
       },
       invalidatesTags: ['Habits'],
     }),
