@@ -5,10 +5,19 @@ import habitRoutes from "./routes/habitRoutes";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import { notFound } from "./middleware/errorMiddleware";
+import { errorHandler } from "./middleware/errorMiddleware";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+  }),
+);
 
 //db connection
 mongoose
@@ -24,6 +33,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/users", authRoutes);
 app.use("/api/habits", habitRoutes);
 app.use("/api/activities", activityRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const port = process.env.PORT;
 

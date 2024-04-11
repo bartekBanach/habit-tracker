@@ -2,12 +2,14 @@ import { Request, Response } from "express";
 import User from "../models/user";
 import { hashPassword, comparePasswords } from "../helpers/auth";
 import jwt from "jsonwebtoken";
+import asyncHandler from "express-async-handler";
 
-export const test = (req: Request, res: Response) => {
-  res.json("hello world");
-};
+const test = asyncHandler(async (req: Request, res: Response) => {
+  res.status(404);
+  throw new Error("Test route try error handling");
+});
 
-export const registerUser = async (req: Request, res: Response) => {
+const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/;
 
@@ -15,22 +17,24 @@ export const registerUser = async (req: Request, res: Response) => {
     const { username, email, password } = req.body;
 
     if (!username) {
-      return res.json({ error: "Username is required." });
+      res.json({ error: "Username is required." });
+      return;
     }
     if (!passwordRegex.test(password)) {
-      return res.json({
+      res.json({
         error:
           "Password must be at least 8 characters long and contain at least one special character and one number",
       });
+      return;
     }
 
     const userExist = await User.findOne({ email });
     if (userExist) {
-      return res.json({ error: "Email is already taken." });
+      res.json({ error: "Email is already taken." });
+      return;
     }
 
     const hashedPassword = await hashPassword(password);
-    console.log("hashed pass", hashedPassword);
 
     const user = User.create({
       username,
@@ -38,21 +42,22 @@ export const registerUser = async (req: Request, res: Response) => {
       password: hashedPassword,
     });
 
-    return res.json(user);
+    res.json(user);
   } catch (err) {
     console.log(err);
+    res.sendStatus(500);
   }
-  res.json("User registerred");
-};
+});
 
-export const loginUser = async (req: Request, res: Response) => {
+const loginUser = asyncHandler(async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     console.log("user", user);
     if (!user) {
-      return res.json({ error: "This user does not exist." });
+      res.json({ error: "This user does not exist." });
+      return;
     }
     const match = await comparePasswords(password, user.password);
 
@@ -74,9 +79,9 @@ export const loginUser = async (req: Request, res: Response) => {
   } catch (err) {
     console.log(err);
   }
-};
+});
 
-export const getProfile = (req: Request, res: Response) => {
+const getProfile = (req: Request, res: Response) => {
   const { token } = req.cookies;
   console.log(token);
   if (token) {
@@ -88,3 +93,5 @@ export const getProfile = (req: Request, res: Response) => {
     res.json(null);
   }
 };
+
+export { loginUser, registerUser, getProfile, test };
