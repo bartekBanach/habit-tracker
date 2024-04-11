@@ -5,7 +5,6 @@ import { userContext } from '../../context/userContext';
 
 const Navbar = () => {
   const { user } = useContext(userContext);
-  console.log('USER NAVBAR', user);
   return (
     <nav className={styles.navbar}>
       <Link to="/">Home</Link>

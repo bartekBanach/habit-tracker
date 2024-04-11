@@ -1,13 +1,25 @@
+interface Duration {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
 
+interface Timer {
+  id: string;
+  title: string;
+  duration: Duration;
+}
 
-  interface Duration {
-    hours: number;
-    minutes: number;
-    seconds: number;
-  }
+interface Habit {
+  _id?: string;
+  name: string;
+  category: string;
+  user: string;
+}
 
-  interface Timer {
-    id: string;
-    title: string;
-    duration: Duration;
-  }
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  iat: number;
+}

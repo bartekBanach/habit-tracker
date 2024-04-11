@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { useAddHabitMutation } from '../api/apiSlice';
+import { userContext } from '../../context/userContext';
+const options = [
+  { id: 0, label: 'Creative', value: 'Creative' },
+  { id: 1, label: 'Career', value: 'Career' },
+  { id: 2, label: 'Exercise', value: 'Exercise' },
+];
 
 const HabitForm = ({}) => {
-  const options = [
-    { id: 0, label: 'Creative', value: 'Creative' },
-    { id: 1, label: 'Career', value: 'Career' },
-    { id: 2, label: 'Exercise', value: 'Exercise' },
-  ];
+  const [addHabit] = useAddHabitMutation();
+  const { user } = useContext(userContext);
+  console.log('user', user.id);
+
   const [formData, setFormData] = useState({
     name: '',
     category: options[0].value,
@@ -13,8 +19,13 @@ const HabitForm = ({}) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!user) {
+      console.log('Unlogged');
+      return;
+    }
     const { name, category } = formData;
-    console.log(formData);
+
+    await addHabit({ name, category, user: user.id });
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

@@ -21,10 +21,10 @@ export const createHabit = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const { name, category } = req.body;
+  const { name, category, user } = req.body;
 
   try {
-    const habit: IHabit = new Habit({ name, category });
+    const habit: IHabit = new Habit({ name, category, user });
     await habit.save();
     res.status(201).json({ message: "Habit created successfully", habit });
   } catch (error) {
