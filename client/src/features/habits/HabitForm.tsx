@@ -10,7 +10,6 @@ const options = [
 const HabitForm = ({}) => {
   const [addHabit] = useAddHabitMutation();
   const { user } = useContext(userContext);
-  console.log('user', user.id);
 
   const [formData, setFormData] = useState({
     name: '',

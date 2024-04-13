@@ -5,7 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon ./src/index.ts",
+    "dev": "npx nodemon --files ./src/index.ts",
+    "start": "ts-node --files src/index.ts",
     "lint": "eslint src/**/*.ts --fix",
     "build": "tsc"
   },

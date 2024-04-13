@@ -28,7 +28,7 @@ mongoose
 //middleware
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/users", authRoutes);
 app.use("/api/habits", habitRoutes);
