@@ -13,7 +13,6 @@ export default function Timer({ id, title, duration }: TimerProps) {
   const [remainingTime, setRemainingTime] = useState(
     calculateRemainingTime(duration)
   );
-  console.log(remainingTime);
 
   useEffect(() => {
     if (isRunning) {

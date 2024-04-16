@@ -22,6 +22,7 @@ const authSlice = createSlice({
         payload: { email, token },
       }: PayloadAction<{ email: string | null; token: string | null }>
     ) => {
+      console.log('token in dispatch fn', token, email);
       state.email = email;
       state.token = token;
     },

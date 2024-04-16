@@ -13,6 +13,7 @@ const baseQuery = fetchBaseQuery({
     if (token) {
       headers.set('authorization', `Bearer ${token}`);
     }
+    console.log(token, headers, 'Token & headers');
     return headers;
   },
 });
@@ -24,13 +25,13 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const { getState, dispatch } = api;
   let result = await baseQuery(args, api, extraOptions);
-  if (result.error && result.error.status === 401) {
-    const refreshResult = await baseQuery('/users/refresh', api, extraOptions);
+  if (result.error && result.error.originalStatus === 401) {
+    const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
 
     if (refreshResult.data) {
-      const { token } = refreshResult.data as { token: string };
+      const { accessToken } = refreshResult.data as { accessToken: string };
       const email = (getState() as RootState).auth.email;
-      dispatch(setCredentials({ token: token, email: email }));
+      dispatch(setCredentials({ token: accessToken, email: email }));
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logOut());

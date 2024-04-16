@@ -30,9 +30,10 @@ const Login = () => {
 
     try {
       const userData = (await login({ email, password }).unwrap()) as {
-        token: string;
+        accessToken: string;
       };
-      dispatch(setCredentials({ ...userData, email }));
+
+      dispatch(setCredentials({ token: userData.accessToken, email }));
       setFormData({ email: '', password: '' });
       navigate('/');
     } catch (err) {

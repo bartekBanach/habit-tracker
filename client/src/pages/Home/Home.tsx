@@ -43,7 +43,6 @@ const Home = () => {
     localStorage.setItem('timers', JSON.stringify([...timers, newTimer]));
     e.target.reset();
   };
-  console.log(habits);
 
   if (habits)
     return (

@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { getAllHabits, createHabit } from "../controllers/habitController";
+import { verifyJWT } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.use(
   }),
 );
 
-router.post("/", createHabit);
-router.get("/", getAllHabits);
+router.post("/", verifyJWT, createHabit);
+router.get("/", verifyJWT, getAllHabits);
 
 export default router;
