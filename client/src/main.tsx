@@ -3,15 +3,16 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { ApiProvider } from '@reduxjs/toolkit/query/react';
-import { apiSlice } from './features/api/apiSlice.ts';
+
+import { store } from './app/store.ts';
+import { Provider } from 'react-redux';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ApiProvider api={apiSlice}>
+    <Provider store={store}>
       <Router>
         <App />
       </Router>
-    </ApiProvider>
+    </Provider>
   </React.StrictMode>
 );

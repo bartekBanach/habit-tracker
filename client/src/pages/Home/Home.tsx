@@ -3,8 +3,8 @@ import Timer from '../../components/Timer/Timer';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './Home.module.css';
 import HabitForm from '../../features/habits/HabitForm';
-import { useGetHabitsQuery } from '../../features/api/apiSlice';
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
+import { useGetHabitsQuery } from '../../features/habits/HabitsApiSlice';
 
 const Home = () => {
   const [timers, setTimers] = useState<Timer[]>([]);
@@ -14,7 +14,7 @@ const Home = () => {
     isSuccess,
     isError,
     error,
-  } = useGetHabitsQuery();
+  } = useGetHabitsQuery({});
 
   useEffect(() => {
     setTimers(JSON.parse(localStorage.getItem('timers') ?? '[]') as Timer[]);

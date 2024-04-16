@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { setCredentials } from '../../features/auth/authSlice';
+import { useLoginMutation } from '../../features/auth/authApiSlice';
+import { useDispatch } from 'react-redux';
 
 interface LoginFormData {
   email: string;
@@ -14,6 +16,9 @@ const Login = () => {
     password: '',
   });
 
+  const [login, isLoading] = useLoginMutation();
+  const dispatch = useDispatch();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -24,17 +29,12 @@ const Login = () => {
     const { email, password } = formData;
 
     try {
-      const { data } = await axios.post('/api/users/login', {
-        email,
-        password,
-      });
-
-      if (data.error) {
-        console.log(data.error);
-      } else {
-        setFormData({});
-        navigate('/');
-      }
+      const userData = (await login({ email, password }).unwrap()) as {
+        token: string;
+      };
+      dispatch(setCredentials({ ...userData, email }));
+      setFormData({ email: '', password: '' });
+      navigate('/');
     } catch (err) {
       console.log(err);
     }

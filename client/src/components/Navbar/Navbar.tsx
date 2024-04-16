@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 import styles from './Navbar.module.css';
-import { useContext } from 'react';
-import { userContext } from '../../context/userContext';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../../features/auth/authSlice';
 
 const Navbar = () => {
-  const { user } = useContext(userContext);
+  const user = useSelector(selectCurrentUser);
   return (
     <nav className={styles.navbar}>
       <Link to="/">Home</Link>
       <Link to="/login">Login</Link>
       <Link to="/register">Register</Link>
-      {user && <span>Logged as {user.username}</span>}
+      {user && <span>Logged as {user}</span>}
     </nav>
   );
 };
