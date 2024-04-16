@@ -22,6 +22,7 @@ export const createHabit = async (
   res: Response,
 ): Promise<void> => {
   const { name, category, user } = req.body;
+  console.log(user);
 
   try {
     const habit: IHabit = new Habit({ name, category, user });

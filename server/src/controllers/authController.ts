@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import User from "../models/user";
-import { comparePasswords } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import generateToken from "../utils/generateToken";
+import generateRefreshToken from "../utils/generateRefreshToken";
 
 const test = asyncHandler(async (req: Request, res: Response) => {
   res.status(404);
@@ -17,15 +16,14 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/;
 
   if (!username) {
-    res.json({ error: "Username is required." });
-    return;
+    res.status(400);
+    throw new Error("Username is required.");
   }
   if (!passwordRegex.test(password)) {
-    res.json({
-      error:
-        "Password must be at least 8 characters long and contain at least one special character and one number",
-    });
-    return;
+    res.status(400);
+    throw new Error(
+      "Password must be at least 8 characters long and contain at least one special character and one number",
+    );
   }
 
   const userExists = await User.findOne({ email });
@@ -41,11 +39,22 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (user) {
-    generateToken(res, user._id);
+    const accessToken = jwt.sign(
+      {
+        UserInfo: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "10s" },
+    );
+
+    generateRefreshToken(res, user._id);
+
     res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
+      accessToken,
     });
   } else {
     res.status(400);
@@ -59,11 +68,35 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPasswords(password))) {
-    generateToken(res, user._id);
+    const accessToken = jwt.sign(
+      {
+        UserInfo: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "10s" },
+    );
+
+    generateRefreshToken(res, user._id);
+
+    /*const refreshToken = jwt.sign(
+      { userId: user._id },
+      process.env.REFRESH_TOKEN_SECRET as string,
+      { expiresIn: "1d" },
+    );
+
+    res.cookie("jwt", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });*/
+
     res.status(201).json({
-      _id: user._id,
-      username: user.username,
-      email: user.email,
+      accessToken,
     });
   } else {
     res.status(401);
@@ -71,13 +104,54 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
-const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-  res.cookie("jwt", "", {
+const logoutUser = (req: Request, res: Response) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) return res.sendStatus(204);
+  res.clearCookie("jwt", {
     httpOnly: true,
-    expires: new Date(0),
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "strict",
   });
+  res.json({ message: "Cookie cleared" });
+};
 
-  res.status(200).json({ message: "User logged out" });
+const refresh = asyncHandler(async (req: Request, res: Response) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+
+  const refreshToken = cookies.jwt;
+
+  try {
+    const decoded = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET as string,
+    ) as { userId: string };
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+      res.status(401);
+      throw new Error("Unauthorized");
+    }
+    const accessToken = jwt.sign(
+      {
+        UserInfo: {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET as string,
+      { expiresIn: "10s" },
+    );
+
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(401);
+    throw new Error("Not authorized, invalid token");
+  }
 });
 
 const getProfile = (req: Request, res: Response) => {
@@ -91,4 +165,4 @@ const getProfile = (req: Request, res: Response) => {
   }
 };
 
-export { loginUser, logoutUser, registerUser, getProfile, test };
+export { loginUser, logoutUser, registerUser, getProfile, refresh, test };
