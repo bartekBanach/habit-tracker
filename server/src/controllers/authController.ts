@@ -4,11 +4,6 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import generateRefreshToken from "../utils/generateRefreshToken";
 
-const test = asyncHandler(async (req: Request, res: Response) => {
-  res.status(404);
-  throw new Error("Test route try error handling");
-});
-
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
@@ -82,19 +77,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
 
     generateRefreshToken(res, user._id);
 
-    /*const refreshToken = jwt.sign(
-      { userId: user._id },
-      process.env.REFRESH_TOKEN_SECRET as string,
-      { expiresIn: "1d" },
-    );
-
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });*/
-
     res.status(201).json({
       accessToken,
     });
@@ -165,4 +147,4 @@ const getProfile = (req: Request, res: Response) => {
   }
 };
 
-export { loginUser, logoutUser, registerUser, getProfile, refresh, test };
+export { loginUser, logoutUser, registerUser, getProfile, refresh };
