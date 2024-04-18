@@ -22,18 +22,17 @@ const authSlice = createSlice({
         payload: { email, token },
       }: PayloadAction<{ email: string | null; token: string | null }>
     ) => {
-      console.log('token in dispatch fn', token, email);
       state.email = email;
       state.token = token;
     },
-    logOut: (state) => {
+    clearCredentials: (state) => {
       state.email = null;
       state.token = null;
     },
   },
 });
 
-export const { setCredentials, logOut } = authSlice.actions;
+export const { setCredentials, clearCredentials } = authSlice.actions;
 
 export default authSlice.reducer;
 
