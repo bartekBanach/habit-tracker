@@ -5,16 +5,20 @@ import styles from './Home.module.css';
 import HabitForm from '../../features/habits/HabitForm';
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
 import { useGetHabitsQuery } from '../../features/habits/HabitsApiSlice';
+import { useGetHabitsByUserQuery } from '../../features/habits/HabitsApiSlice';
+import { selectCurrentUser } from '../../features/auth/authSlice';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
   const [timers, setTimers] = useState<Timer[]>([]);
+  const user = useSelector(selectCurrentUser);
   const {
     data: habits,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useGetHabitsQuery({});
+  } = useGetHabitsByUserQuery(user._id);
 
   useEffect(() => {
     setTimers(JSON.parse(localStorage.getItem('timers') ?? '[]') as Timer[]);
@@ -47,10 +51,13 @@ const Home = () => {
   if (habits)
     return (
       <div className={styles.container}>
-        <aside>
-          <HabitsList habits={habits} />
-          <HabitForm />
-        </aside>
+        {user && (
+          <aside>
+            <HabitsList userId={user._id} />
+            <HabitForm userId={user._id} />
+          </aside>
+        )}
+
         <main>
           <form onSubmit={handleSubmit}>
             <select name="category">

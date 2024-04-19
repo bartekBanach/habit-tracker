@@ -18,8 +18,7 @@ interface Habit {
 }
 
 interface User {
-  id: string;
+  _id: string;
   username: string;
   email: string;
-  iat: number;
 }

@@ -3,13 +3,13 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
 interface AuthState {
-  email: string | null;
   token: string | null;
+  user: User | null;
 }
 
 const initialState: AuthState = {
-  email: null,
   token: null,
+  user: null,
 };
 
 const authSlice = createSlice({
@@ -19,15 +19,19 @@ const authSlice = createSlice({
     setCredentials: (
       state,
       {
-        payload: { email, token },
-      }: PayloadAction<{ email: string | null; token: string | null }>
+        payload: { email, _id, token },
+      }: PayloadAction<{
+        email: string | null;
+        _id: string | null;
+        token: string | null;
+      }>
     ) => {
-      state.email = email;
+      state.user = { _id, email };
       state.token = token;
     },
     clearCredentials: (state) => {
-      state.email = null;
       state.token = null;
+      state.user = null;
     },
   },
 });
@@ -36,5 +40,5 @@ export const { setCredentials, clearCredentials } = authSlice.actions;
 
 export default authSlice.reducer;
 
-export const selectCurrentUser = (state: RootState) => state.auth.email;
+export const selectCurrentUser = (state: RootState) => state.auth.user;
 export const selectCurrentToken = (state: RootState) => state.auth.token;

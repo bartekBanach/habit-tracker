@@ -1,10 +1,8 @@
 import { Request, Response } from "express";
 import Habit, { IHabit } from "../models/habit";
+import asyncHandler from "express-async-handler";
 
-export const getAllHabits = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+const getAllHabits = async (req: Request, res: Response): Promise<void> => {
   try {
     const habits: IHabit[] = await Habit.find();
     res.json(habits);
@@ -17,12 +15,14 @@ export const getAllHabits = async (
   }
 };
 
-export const createHabit = async (
-  req: Request,
-  res: Response,
-): Promise<void> => {
+const getHabitsByUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.userId;
+  const habits: IHabit[] = await Habit.find({ user: userId });
+  res.json(habits);
+});
+
+const createHabit = async (req: Request, res: Response): Promise<void> => {
   const { name, category, user } = req.body;
-  console.log(user);
 
   try {
     const habit: IHabit = new Habit({ name, category, user });
@@ -36,3 +36,5 @@ export const createHabit = async (
     }
   }
 };
+
+export { getAllHabits, getHabitsByUser, createHabit };

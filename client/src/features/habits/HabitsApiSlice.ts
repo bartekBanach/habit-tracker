@@ -5,7 +5,10 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
     getHabits: builder.query({
       query: () => ({ url: '/habits' }),
       providesTags: ['Habits'],
-      keepUnusedDataFor: 5,
+    }),
+    getHabitsByUser: builder.query({
+      query: (userId) => ({ url: `/habits/${userId}` }),
+      providesTags: ['Habits'],
     }),
     addHabit: builder.mutation({
       query: (habit: Habit) => {
@@ -16,4 +19,8 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetHabitsQuery, useAddHabitMutation } = habitsApiSlice;
+export const {
+  useGetHabitsQuery,
+  useGetHabitsByUserQuery,
+  useAddHabitMutation,
+} = habitsApiSlice;

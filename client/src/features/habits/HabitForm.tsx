@@ -6,12 +6,12 @@ const options = [
   { id: 2, label: 'Exercise', value: 'Exercise' },
 ];
 
-const HabitForm = ({}) => {
+interface HabitsFormProps {
+  userId: string;
+}
+
+const HabitForm = ({ userId }: HabitsFormProps) => {
   const [addHabit] = useAddHabitMutation();
-  const user = {
-    _id: '128913731',
-    username: 'john doe',
-  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -27,7 +27,7 @@ const HabitForm = ({}) => {
     const { name, category } = formData;
     setFormData({ ...formData, name: '' });
 
-    await addHabit({ name, category, user: user._id });
+    await addHabit({ name, category, user: userId });
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

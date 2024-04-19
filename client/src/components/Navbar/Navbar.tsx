@@ -35,7 +35,7 @@ const Navbar = () => {
       <Link to="/register">Register</Link>
       {token && (
         <div>
-          <span>Logged as {user}</span>
+          <span>Logged as {user.email}</span>
           <button type="button" onClick={handleLogout}>
             Logout
           </button>

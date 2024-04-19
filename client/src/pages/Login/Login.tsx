@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../../features/auth/authSlice';
 import { useLoginMutation } from '../../features/auth/authApiSlice';
 import { useDispatch } from 'react-redux';
+import { jwtDecode } from 'jwt-decode';
 
 interface LoginFormData {
   email: string;
@@ -29,11 +30,14 @@ const Login = () => {
     const { email, password } = formData;
 
     try {
-      const userData = (await login({ email, password }).unwrap()) as {
+      const { accessToken } = (await login({ email, password }).unwrap()) as {
         accessToken: string;
       };
 
-      dispatch(setCredentials({ token: userData.accessToken, email }));
+      const decoded = jwtDecode(accessToken);
+      const { _id } = decoded;
+
+      dispatch(setCredentials({ token: accessToken, email, _id }));
       setFormData({ email: '', password: '' });
       navigate('/');
     } catch (err) {
