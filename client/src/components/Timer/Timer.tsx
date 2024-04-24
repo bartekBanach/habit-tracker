@@ -4,11 +4,12 @@ import styles from './Timer.module.css';
 
 interface TimerProps {
   id: string;
+  habitId: string;
   title: string;
   duration: Duration;
 }
 
-export default function Timer({ id, title, duration }: TimerProps) {
+export default function Timer({ id, habitId, title, duration }: TimerProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(
     calculateRemainingTime(duration)
@@ -62,7 +63,9 @@ export default function Timer({ id, title, duration }: TimerProps) {
 
   return (
     <div className={styles.container}>
-      <h2>{title}</h2>
+      <h2>
+        {title}-{habitId}
+      </h2>
       <p>
         {getHours(remainingTime)}h : {getMinutes(remainingTime)}m :{' '}
         {getSeconds(remainingTime)}s

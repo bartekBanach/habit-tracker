@@ -6,6 +6,7 @@ interface Duration {
 
 interface Timer {
   id: string;
+  habitId: string;
   title: string;
   duration: Duration;
 }
