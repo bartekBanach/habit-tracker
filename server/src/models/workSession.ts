@@ -1,12 +1,12 @@
 import mongoose, { Model, Schema, Document } from "mongoose";
 
-export interface IActivity extends Document {
+export interface IWorkSession extends Document {
   habit: mongoose.Types.ObjectId;
   timeDuration: Number;
   finishedAt: Date;
 }
 
-const activitySchema = new Schema({
+const workSessionSchema = new Schema({
   habit: {
     type: Schema.Types.ObjectId,
     ref: "Habit",
@@ -23,9 +23,9 @@ const activitySchema = new Schema({
   },
 });
 
-const activityModel: Model<IActivity> = mongoose.model<IActivity>(
+const workSessionModel: Model<IWorkSession> = mongoose.model<IWorkSession>(
   "Activity",
-  activitySchema,
+  workSessionSchema,
 );
 
-export default activityModel;
+export default workSessionModel;

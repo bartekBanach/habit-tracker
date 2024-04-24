@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import Activity, { IActivity } from "../models/activity";
+import WorkSession, { IWorkSession } from "../models/workSession";
 
-export async function createActivity(
+export async function createWorkSession(
   req: Request,
   res: Response,
 ): Promise<void> {
   try {
     const { habit, timeDuration } = req.body;
-    const activity: IActivity = new Activity({ habit, timeDuration });
-    await activity.save();
+    const workSession: IWorkSession = new WorkSession({ habit, timeDuration });
+    await workSession.save();
     res
       .status(201)
-      .json({ message: "Activity created successfully", activity });
+      .json({ message: "Activity created successfully", workSession });
   } catch (error) {
     if (error instanceof Error) {
       res
@@ -21,12 +21,12 @@ export async function createActivity(
   }
 }
 
-export async function getAllActivities(
+export async function getAllWorkSessions(
   req: Request,
   res: Response,
 ): Promise<void> {
   try {
-    const activities: IActivity[] = await Activity.find();
+    const activities: IWorkSession[] = await WorkSession.find();
     res.json(activities);
   } catch (error) {
     if (error instanceof Error) {

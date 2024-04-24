@@ -1,6 +1,6 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes";
-import activityRoutes from "./routes/activityRoutes";
+import workSessionRoutes from "./routes/workSessionRoutes";
 import habitRoutes from "./routes/habitRoutes";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/habits", habitRoutes);
-app.use("/api/activities", activityRoutes);
+app.use("/api/work-sessions", workSessionRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
