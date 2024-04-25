@@ -74,9 +74,7 @@ export default function Timer({
 
   return (
     <div className={styles.container}>
-      <h2>
-        {title}-{habitId}
-      </h2>
+      <h2>{title}</h2>
       <p>
         {getHours(remainingTime)}h : {getMinutes(remainingTime)}m :{' '}
         {getSeconds(remainingTime)}s
