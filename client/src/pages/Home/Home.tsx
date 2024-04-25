@@ -3,7 +3,7 @@ import Timer from '../../components/Timer/Timer';
 import styles from './Home.module.css';
 import HabitForm from '../../features/habits/HabitForm';
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
-import { useGetHabitsByUserQuery } from '../../features/habits/HabitsApiSlice';
+import { useGetHabitsByUserQuery } from '../../features/habits/habitsApiSlice';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import { useSelector } from 'react-redux';
 import { TimerForm } from '../../components/Timer/TimerForm';
@@ -22,6 +22,12 @@ const Home = () => {
   useEffect(() => {
     setTimers(JSON.parse(localStorage.getItem('timers') ?? '[]') as Timer[]);
   }, []);
+
+  const deleteTimer = (timerId: string) => {
+    const newTimers = timers.filter((timer) => timer.id !== timerId);
+    setTimers(newTimers);
+    localStorage.setItem('timers', JSON.stringify(newTimers));
+  };
 
   if (isLoading) return <p>Loading.....</p>;
 
@@ -50,14 +56,9 @@ const Home = () => {
             habitId={item.habitId}
             title={item.title}
             duration={item.duration}
+            deleteTimer={deleteTimer}
           />
         ))}
-        <Timer
-          title="coding"
-          id={'zz8182128921'}
-          habitId={'83927322819'}
-          duration={{ hours: 1, minutes: 0, seconds: 0 }}
-        />
       </main>
     </div>
   );

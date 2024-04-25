@@ -1,19 +1,21 @@
 import styles from './HabitsList.module.css';
-import { useGetHabitsByUserQuery } from '../HabitsApiSlice';
+import { useGetHabitsByUserQuery } from '../habitsApiSlice';
+import { getHours, getMinutes, getSeconds } from '../../../utils/timeUtils';
 
-const HabitsList = ({ userId }) => {
-  const {
-    data: habits,
-    isLoading,
-    isSuccess,
-    isError,
-    error,
-  } = useGetHabitsByUserQuery(userId);
+interface HabitsListProps {
+  userId: string;
+}
+
+const HabitsList = ({ userId }: HabitsListProps) => {
+  const { data: habits } = useGetHabitsByUserQuery(userId);
   if (habits)
     return (
       <ul className={styles.container}>
         {habits.map((item: Habit) => (
-          <li key={item._id}>{item.name}</li>
+          <li key={item._id}>
+            {item.name} time: {getHours(item.timeSpent)}h :{' '}
+            {getMinutes(item.timeSpent)}m : {getSeconds(item.timeSpent)}s
+          </li>
         ))}
       </ul>
     );

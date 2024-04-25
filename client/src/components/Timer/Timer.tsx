@@ -1,19 +1,45 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
 import styles from './Timer.module.css';
+import { useAddWorkSessionMutation } from '../../features/workSessions/workSessionsApiSlice';
+import {
+  getHours,
+  getMinutes,
+  getSeconds,
+  getMilliseconds,
+} from '../../utils/timeUtils';
 
 interface TimerProps {
   id: string;
   habitId: string;
   title: string;
   duration: Duration;
+  deleteTimer: (timerId: string) => void;
 }
 
-export default function Timer({ id, habitId, title, duration }: TimerProps) {
+export default function Timer({
+  id,
+  habitId,
+  title,
+  duration,
+  deleteTimer,
+}: TimerProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(
     calculateRemainingTime(duration)
   );
+  const [addWorkSession] = useAddWorkSessionMutation();
+
+  const logTime = async () => {
+    setIsRunning(false);
+    await addWorkSession({
+      habit: habitId,
+      timeDuration: getMilliseconds(duration) - remainingTime,
+      finishedAt: new Date(),
+    });
+    localStorage.removeItem(`timer_${id}`);
+    deleteTimer(id);
+  };
 
   useEffect(() => {
     if (isRunning) {
@@ -37,28 +63,13 @@ export default function Timer({ id, habitId, title, duration }: TimerProps) {
     localStorage.setItem(`timer_${id}`, remainingTime.toString());
   }, [remainingTime, id]);
 
-  function getHours(milliseconds: number) {
-    const diffrenceInSeconds = Math.floor(milliseconds / 1000);
-    return Math.floor(diffrenceInSeconds / 60 / 60);
-  }
-
-  function getMinutes(milliseconds: number) {
-    const diffrenceInSeconds = Math.floor(milliseconds / 1000);
-    return Math.floor(diffrenceInSeconds / 60) % 60;
-  }
-
-  function getSeconds(milliseconds: number) {
-    const diffrenceInSeconds = Math.floor(milliseconds / 1000);
-    return diffrenceInSeconds % 60;
-  }
-
   function calculateRemainingTime(duration: Duration) {
     const savedTime = localStorage.getItem(`timer_${id}`);
     if (savedTime !== null) {
       return parseInt(savedTime);
     }
-    const { hours, minutes, seconds } = duration;
-    return hours * 3600000 + minutes * 60000 + seconds * 1000;
+
+    return getMilliseconds(duration);
   }
 
   return (
@@ -84,6 +95,9 @@ export default function Timer({ id, habitId, title, duration }: TimerProps) {
           type="button"
         >
           Start
+        </button>
+        <button disabled={isRunning} onClick={() => logTime()} type="button">
+          Save time
         </button>
       </div>
     </div>

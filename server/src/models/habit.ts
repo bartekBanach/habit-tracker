@@ -5,6 +5,7 @@ export interface IHabit extends Document {
   name: string;
   category: string;
   color?: string;
+  timeSpent: number;
 }
 
 const habitSchema: Schema<IHabit> = new Schema<IHabit>({
@@ -24,7 +25,10 @@ const habitSchema: Schema<IHabit> = new Schema<IHabit>({
   color: {
     type: String,
   },
-  // activities: [{ type: Schema.Types.ObjectId, ref: "Activity" }],
+  timeSpent: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const habitModel: Model<IHabit> = mongoose.model<IHabit>("Habit", habitSchema);

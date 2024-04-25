@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAddHabitMutation } from './HabitsApiSlice';
+import { useAddHabitMutation } from './habitsApiSlice';
 const options = [
   { id: 0, label: 'Creative', value: 'Creative' },
   { id: 1, label: 'Career', value: 'Career' },

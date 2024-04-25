@@ -11,12 +11,13 @@ export async function createWorkSession(
     await workSession.save();
     res
       .status(201)
-      .json({ message: "Activity created successfully", workSession });
+      .json({ message: "Work Session created successfully", workSession });
   } catch (error) {
     if (error instanceof Error) {
-      res
-        .status(500)
-        .json({ message: "Failed to create activity", error: error.message });
+      res.status(500).json({
+        message: "Failed to create Work Session",
+        error: error.message,
+      });
     }
   }
 }
