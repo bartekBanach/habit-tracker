@@ -19,8 +19,13 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
     if (!habitTitle) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
+    if (
+      !formData.get('hours') &&
+      !formData.get('minutes') &&
+      !formData.get('seconds')
+    )
+      return;
 
-    console.log('form hours data', formData.get('hours'));
     const newTimer = {
       id: uuidv4(),
       //title: (formData.get('title') ?? 'Unknown') as string,
@@ -37,7 +42,6 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
     localStorage.setItem('timers', JSON.stringify([...timers, newTimer]));
     e.target.reset();
   };
-  console.log('hdhjsdhjhdsjdsh');
 
   return (
     <form onSubmit={handleSubmit}>
@@ -54,12 +58,7 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
 
       <input name="hours" type="number" placeholder="hours"></input>
       <input name="minutes" type="number" placeholder="minutes"></input>
-      <input
-        required
-        name="seconds"
-        type="number"
-        placeholder="seconds"
-      ></input>
+      <input name="seconds" type="number" placeholder="seconds"></input>
 
       <button type="submit">New timer</button>
     </form>

@@ -8,6 +8,7 @@ import {
   getSeconds,
   getMilliseconds,
 } from '../../utils/timeUtils';
+import CircularProgressbar from '../CircularProgressbar/CircularProgressbar';
 
 interface TimerProps {
   id: string;
@@ -75,25 +76,22 @@ export default function Timer({
   return (
     <div className={styles.container}>
       <h2>{title}</h2>
-      <p>
-        {getHours(remainingTime)}h : {getMinutes(remainingTime)}m :{' '}
-        {getSeconds(remainingTime)}s
-      </p>
+
+      <CircularProgressbar
+        angle={(remainingTime / getMilliseconds(duration)) * 360}
+        text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
+      />
       <div className={styles.controls}>
         <button
-          disabled={!isRunning}
-          onClick={() => setIsRunning(false)}
+          onClick={() => {
+            setIsRunning((prev) => !prev);
+          }}
+          disabled={remainingTime === 0}
           type="button"
         >
-          Pause
+          {isRunning ? 'Pause' : 'Start'}
         </button>
-        <button
-          disabled={isRunning}
-          onClick={() => setIsRunning(true)}
-          type="button"
-        >
-          Start
-        </button>
+
         <button disabled={isRunning} onClick={() => logTime()} type="button">
           Save time
         </button>
