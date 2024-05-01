@@ -2,14 +2,13 @@ import express from "express";
 import {
   createWorkSession,
   getAllWorkSessions,
+  getWorkSessionsByTimePeriod,
 } from "../controllers/workSessionController";
 
 const router = express.Router();
 
-// Route to create a new activity
 router.post("/", createWorkSession);
-
-// Route to get all activities
 router.get("/", getAllWorkSessions);
+router.get("/by-time-period", getWorkSessionsByTimePeriod);
 
 export default router;

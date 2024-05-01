@@ -10,6 +10,25 @@ export const workSessionsApiSlice = apiSlice.injectEndpoints({
       query: (habitId) => ({ url: `/work-sessions/${habitId}` }),
       providesTags: ['WorkSessions'],
     }),
+    getWorkSessionsByTime: builder.query({
+      query: ({
+        from,
+        to,
+        habitId,
+      }: {
+        from: string;
+        to: string;
+        habitId: string | null;
+      }) => ({
+        url: `/work-sessions/by-time-period`,
+        params: {
+          habitId,
+          from: from,
+          to: to,
+        },
+      }),
+      providesTags: ['WorkSessions'],
+    }),
     addWorkSession: builder.mutation({
       query: (workSession: WorkSession) => {
         return { url: '/work-sessions', method: 'POST', body: workSession };
@@ -22,5 +41,6 @@ export const workSessionsApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetWorkSessionsByHabitQuery,
   useGetWorkSessionsQuery,
+  useGetWorkSessionsByTimeQuery,
   useAddWorkSessionMutation,
 } = workSessionsApiSlice;

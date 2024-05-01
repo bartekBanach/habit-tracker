@@ -37,7 +37,6 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
         seconds: parseInt((formData.get('seconds') || '0') as string),
       },
     };
-    console.log(newTimer);
     setTimers((prev) => [...prev, newTimer]);
     localStorage.setItem('timers', JSON.stringify([...timers, newTimer]));
     e.target.reset();
