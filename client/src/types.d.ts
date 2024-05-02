@@ -23,7 +23,8 @@ interface WorkSession {
   _id?: string;
   habit: string;
   timeDuration: number;
-  finishedAt: Date;
+  finishedAt: string;
+  __v: number;
 }
 
 interface User {
