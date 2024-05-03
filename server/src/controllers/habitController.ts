@@ -14,7 +14,6 @@ const getAllHabits = async (req: Request, res: Response): Promise<void> => {
 };
 
 const getHabitsByUser = asyncHandler(async (req: Request, res: Response) => {
-  console.log('USER ID', req?.user?._id);
   const userId = req?.user?._id;
   const habits: IHabit[] = await Habit.find({ user: userId });
   res.json(habits);

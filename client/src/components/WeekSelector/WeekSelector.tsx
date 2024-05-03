@@ -2,29 +2,40 @@ import React, { useState } from 'react';
 import { startOfWeek, endOfWeek, format, subWeeks, addWeeks } from 'date-fns';
 
 interface WeekSelectorProps {
-  onWeekChange: (week: Date) => void;
+  onWeekChange: (from: Date, to: Date) => void;
+  isDisabled: boolean;
 }
 
-const WeekSelector: React.FC<WeekSelectorProps> = ({ onWeekChange }) => {
-  const [selectedWeek, setSelectedWeek] = useState<Date>(new Date());
+const WeekSelector: React.FC<WeekSelectorProps> = ({
+  onWeekChange,
+  isDisabled,
+}) => {
+  const [from, setFrom] = useState<Date>(startOfWeek(new Date()));
+  const [to, setTo] = useState(endOfWeek(from));
 
   const handleWeekChange = (direction: 'prev' | 'next'): void => {
-    const newDate =
-      direction === 'prev'
-        ? subWeeks(selectedWeek, 1)
-        : addWeeks(selectedWeek, 1);
-    setSelectedWeek(newDate);
-    onWeekChange(newDate);
+    const newFromDate =
+      direction === 'prev' ? subWeeks(from, 1) : addWeeks(from, 1);
+
+    const newToDate = endOfWeek(newFromDate);
+    setFrom(newFromDate);
+    setTo(newToDate);
+
+    onWeekChange(newFromDate, newToDate);
   };
 
   return (
     <div>
-      <button onClick={() => handleWeekChange('prev')}>Previous Week</button>
+      <button disabled={isDisabled} onClick={() => handleWeekChange('prev')}>
+        Previous Week
+      </button>
       <span>
-        {format(startOfWeek(selectedWeek), 'MMM do')} -{' '}
-        {format(endOfWeek(selectedWeek), 'MMM do')}
+        {format(startOfWeek(from), 'MMM do')} -{' '}
+        {format(endOfWeek(to), 'MMM do')}
       </span>
-      <button onClick={() => handleWeekChange('next')}>Next Week</button>
+      <button disabled={isDisabled} onClick={() => handleWeekChange('next')}>
+        Next Week
+      </button>
     </div>
   );
 };

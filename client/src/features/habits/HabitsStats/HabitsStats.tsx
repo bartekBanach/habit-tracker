@@ -1,119 +1,59 @@
 import WeekSelector from '../../../components/WeekSelector/WeekSelector';
 import { useGetWorkSessionsByTimeQuery } from '../../workSessions/workSessionsApiSlice';
-import { startOfWeek, endOfWeek, format, startOfDay, addDays } from 'date-fns';
-import {
-  BarChart,
-  Bar,
-  Rectangle,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Label,
-} from 'recharts';
-import { millisecondsToMinutes } from 'date-fns';
+import { startOfWeek, endOfWeek, format } from 'date-fns';
+
 import { useState } from 'react';
-
-interface DataPoint {
-  name: string;
-  minutes: number;
-}
-
-type AccumulatedData = Record<string, number>;
+import { useSelector } from 'react-redux';
+import { selectHabitsByUser } from '../habitsApiSlice';
+import DataChart from '../DataChart/DataChart';
 
 const HabitsStats = () => {
-  const [selectedHabit, setSelectedHabit] = useState('');
+  const habits = useSelector(selectHabitsByUser);
+
+  const [selectedHabit, setSelectedHabit] = useState(
+    habits ? habits[0]._id : ''
+  );
 
   const currentDate = new Date();
-  const startOfCurrentWeek = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const endOfCurrentWeek = endOfWeek(currentDate, { weekStartsOn: 0 });
+  const startOfCurrentWeek = startOfWeek(currentDate);
+  const endOfCurrentWeek = endOfWeek(currentDate);
 
-  const { data: workSessions } = useGetWorkSessionsByTimeQuery({
-    from: format(startOfCurrentWeek, 'MM/dd/yyyy'),
-    to: format(endOfCurrentWeek, 'MM/dd/yyyy'),
-    habitId: '661ae4d58d213ec62218c84a',
+  const [fromDate, setFromDate] = useState<Date>(startOfCurrentWeek);
+  const [toDate, setToDate] = useState<Date>(endOfCurrentWeek);
+
+  const { data: workSessions, isLoading } = useGetWorkSessionsByTimeQuery({
+    from: format(fromDate, 'MM/dd/yyyy'),
+    to: format(toDate, 'MM/dd/yyyy'),
+    habitId: selectedHabit,
   });
-
-  const handleWeekChange = (date: Date) => {};
-
-  const fillMissingWeekdays = (data: AccumulatedData): AccumulatedData => {
-    const currentWeekData: AccumulatedData = {};
-
-    for (let i = 0; i < 7; i++) {
-      const currentDate = addDays(startOfCurrentWeek, i);
-      const formattedDate = format(currentDate, 'MM/dd/yyyy');
-
-      if (!data[formattedDate]) {
-        currentWeekData[formattedDate] = 0;
-      } else {
-        currentWeekData[formattedDate] = data[formattedDate];
-      }
-    }
-    return currentWeekData;
+  console.log('from ', fromDate, 'to ', toDate, 'data: ', workSessions);
+  const handleWeekChange = (from: Date, to: Date) => {
+    setFromDate(from);
+    setToDate(to);
   };
 
-  const accumulatedData = workSessions
-    ? workSessions.reduce((acc: AccumulatedData, item: WorkSession) => {
-        const day = format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
-        acc[day] = (acc[day] || 0) + item.timeDuration;
-        return acc;
-      }, {})
-    : {};
+  if (habits)
+    return (
+      <>
+        <h2>Habit stats</h2>
 
-  const chartData: DataPoint[] = Object.entries(
-    fillMissingWeekdays(accumulatedData)
-  ).map(([date, value]) => ({
-    name: date,
-    minutes: millisecondsToMinutes(value),
-  }));
+        {
+          <select
+            name="category"
+            onChange={(e) => setSelectedHabit(e.target.value)}
+          >
+            {habits.map((item: Habit) => (
+              <option key={item._id} value={item._id}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+        }
 
-  return (
-    <>
-      <h2>Habit stats</h2>
-
-      {/*<select
-        name="category"
-        onChange={(e) => setSelectedHabit(e.target.value)}
-      >
-        {habits.map((item: Habit) => (
-          <option key={item._id} value={item._id}>
-            {item.name}
-          </option>
-        ))}
-      </select>*/}
-
-      <WeekSelector onWeekChange={handleWeekChange} />
-
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          width={700}
-          height={300}
-          data={chartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-          barSize={40}
-        >
-          <Tooltip />
-          <XAxis
-            dataKey="name"
-            scale="point"
-            padding={{ left: 30, right: 30 }}
-            tick={{ fill: 'white' }}
-          />
-          <YAxis tick={{ fill: 'white' }} />
-          <Legend />
-          <CartesianGrid />
-          <Bar dataKey="minutes" fill="orange" />
-        </BarChart>
-      </ResponsiveContainer>
-    </>
-  );
+        <WeekSelector onWeekChange={handleWeekChange} isDisabled={isLoading} />
+        <DataChart data={workSessions} startOfCurrentWeek={fromDate} />
+      </>
+    );
 };
 
 export default HabitsStats;
