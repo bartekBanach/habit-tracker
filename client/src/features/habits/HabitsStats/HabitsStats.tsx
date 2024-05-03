@@ -1,6 +1,6 @@
 import WeekSelector from '../../../components/WeekSelector/WeekSelector';
 import { useGetWorkSessionsByTimeQuery } from '../../workSessions/workSessionsApiSlice';
-import { startOfWeek, endOfWeek, format, startOfDay } from 'date-fns';
+import { startOfWeek, endOfWeek, format, startOfDay, addDays } from 'date-fns';
 import {
   BarChart,
   Bar,
@@ -11,14 +11,10 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import { millisecondsToMinutes } from 'date-fns';
-import { getDate } from 'date-fns';
-
-interface ChartDataItem {
-  name: string;
-  hours: number;
-}
+import { useState } from 'react';
 
 interface DataPoint {
   name: string;
@@ -28,6 +24,8 @@ interface DataPoint {
 type AccumulatedData = Record<string, number>;
 
 const HabitsStats = () => {
+  const [selectedHabit, setSelectedHabit] = useState('');
+
   const currentDate = new Date();
   const startOfCurrentWeek = startOfWeek(currentDate, { weekStartsOn: 1 });
   const endOfCurrentWeek = endOfWeek(currentDate, { weekStartsOn: 0 });
@@ -40,6 +38,22 @@ const HabitsStats = () => {
 
   const handleWeekChange = (date: Date) => {};
 
+  const fillMissingWeekdays = (data: AccumulatedData): AccumulatedData => {
+    const currentWeekData: AccumulatedData = {};
+
+    for (let i = 0; i < 7; i++) {
+      const currentDate = addDays(startOfCurrentWeek, i);
+      const formattedDate = format(currentDate, 'MM/dd/yyyy');
+
+      if (!data[formattedDate]) {
+        currentWeekData[formattedDate] = 0;
+      } else {
+        currentWeekData[formattedDate] = data[formattedDate];
+      }
+    }
+    return currentWeekData;
+  };
+
   const accumulatedData = workSessions
     ? workSessions.reduce((acc: AccumulatedData, item: WorkSession) => {
         const day = format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
@@ -48,30 +62,54 @@ const HabitsStats = () => {
       }, {})
     : {};
 
-  const chartData: DataPoint[] = Object.entries(accumulatedData).map(
-    ([date, value]) => ({
-      name: date,
-      minutes: millisecondsToMinutes(value),
-    })
-  );
-
-  console.log('WORK SESSIONS', workSessions);
-  console.log('CHART DATA', chartData);
+  const chartData: DataPoint[] = Object.entries(
+    fillMissingWeekdays(accumulatedData)
+  ).map(([date, value]) => ({
+    name: date,
+    minutes: millisecondsToMinutes(value),
+  }));
 
   return (
     <>
       <h2>Habit stats</h2>
+
+      {/*<select
+        name="category"
+        onChange={(e) => setSelectedHabit(e.target.value)}
+      >
+        {habits.map((item: Habit) => (
+          <option key={item._id} value={item._id}>
+            {item.name}
+          </option>
+        ))}
+      </select>*/}
+
       <WeekSelector onWeekChange={handleWeekChange} />
-      <ResponsiveContainer width="100%" height={400}>
+
+      <ResponsiveContainer width="100%" height={300}>
         <BarChart
+          width={700}
+          height={300}
           data={chartData}
-          margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+          barSize={40}
         >
-          <CartesianGrid stroke="#ccc" vertical={false} />
-          <XAxis dataKey="name" />
-          <YAxis />
           <Tooltip />
-          <Bar dataKey="minutes" fill="#82ca9d" />
+          <XAxis
+            dataKey="name"
+            scale="point"
+            padding={{ left: 30, right: 30 }}
+            tick={{ fill: 'white' }}
+          />
+          <YAxis tick={{ fill: 'white' }} />
+          <Legend />
+          <CartesianGrid />
+          <Bar dataKey="minutes" fill="orange" />
         </BarChart>
       </ResponsiveContainer>
     </>

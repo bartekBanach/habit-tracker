@@ -31,6 +31,7 @@ const Navbar = () => {
   return (
     <nav className={styles.navbar}>
       <Link to="/">Home</Link>
+      <Link to="/user">User</Link>
       <Link to="/login">Login</Link>
       <Link to="/register">Register</Link>
       {token && (

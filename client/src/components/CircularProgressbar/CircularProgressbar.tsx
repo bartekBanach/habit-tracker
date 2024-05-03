@@ -5,7 +5,6 @@ interface CircularProgressbarProps {
   text: string;
 }
 const CircularProgressbar = ({ angle, text }: CircularProgressbarProps) => {
-  console.log('angle', angle);
   return (
     <div className={`${styles.mainContainer} ${styles.center}`}>
       <div className={`${styles.circleContainer} ${styles.center}`}>

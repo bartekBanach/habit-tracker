@@ -7,7 +7,7 @@ interface HabitsListProps {
 }
 
 const HabitsList = ({ userId }: HabitsListProps) => {
-  const { data: habits } = useGetHabitsByUserQuery(userId);
+  const { data: habits } = useGetHabitsByUserQuery();
   if (habits)
     return (
       <ul className={styles.container}>
