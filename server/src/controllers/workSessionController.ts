@@ -32,18 +32,25 @@ async function getAllWorkSessions(req: Request, res: Response): Promise<void> {
 async function getWorkSessionsByTimePeriod(req: Request, res: Response): Promise<void> {
   try {
     const { from, to, habitId } = req.query;
+    console.log('HBITIDIDIDIID', habitId);
 
-    if (!habitId || !from || !to) {
+    if (!from || !to) {
       res.status(400).json({ message: 'habitId, from and parameters are required' });
       return;
     }
-    const workSessions: IWorkSession[] = await WorkSession.find({
-      habit: habitId as string,
+
+    const query: any = {
       finishedAt: {
         $gte: new Date(from as string),
         $lte: new Date(to as string),
       },
-    });
+    };
+
+    if (habitId) {
+      query.habit = habitId;
+    }
+
+    const workSessions: IWorkSession[] = await WorkSession.find(query);
 
     res.json(workSessions);
   } catch (error) {

@@ -11,23 +11,44 @@ import {
 import { format, startOfDay, addDays } from 'date-fns';
 import { millisecondsToMinutes } from 'date-fns';
 
-interface DataPoint {
+/*interface DataPoint {
   name: string;
   minutes: number;
+}*/
+
+interface DayData {
+  [key: string]: number | string;
 }
 
-type AccumulatedData = Record<string, number>;
+interface AccumulatedData {
+  [key: string]: DayData;
+}
 
 interface DataChartProps {
   data: WorkSession[] | undefined;
   startOfCurrentWeek: Date;
 }
 
+const getRandomColor = () => {
+  const r = Math.floor(Math.random() * 256); // Random value for red (0-255)
+  const g = Math.floor(Math.random() * 256); // Random value for green (0-255)
+  const b = Math.floor(Math.random() * 256); // Random value for blue (0-255)
+  return `rgb(${r},${g},${b})`; // Return RGB color string
+};
+
 const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
+  const habitsSet = new Set();
   const accumulatedData = data
     ? data.reduce((acc: AccumulatedData, item: WorkSession) => {
+        //add all encountered habits to set
+        if (!habitsSet.has(item.habit)) habitsSet.add(item.habit);
+
         const day = format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
-        acc[day] = (acc[day] || 0) + item.timeDuration;
+        if (!acc[day]) {
+          acc[day] = { name: day };
+        }
+        acc[day][item.habit] =
+          ((acc[day][item.habit] || 0) as number) + item.timeDuration;
         return acc;
       }, {})
     : {};
@@ -40,7 +61,11 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
       const formattedDate = format(currentDate, 'MM/dd/yyyy');
 
       if (!data[formattedDate]) {
-        currentWeekData[formattedDate] = 0;
+        currentWeekData[formattedDate] = { name: formattedDate };
+        /*habitsSet.forEach((habit) => {
+          currentWeekData[formattedDate][habit] = 0;
+        });*/
+        //currentWeekData[formattedDate].test = 0;
       } else {
         currentWeekData[formattedDate] = data[formattedDate];
       }
@@ -48,40 +73,43 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
     return currentWeekData;
   };
 
-  const chartData: DataPoint[] = Object.entries(
+  const chartData: DayData[] = Object.values(
     fillMissingWeekdays(accumulatedData)
-  ).map(([date, value]) => ({
-    name: date,
-    minutes: millisecondsToMinutes(value),
-  }));
-  return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart
-        width={700}
-        height={300}
-        data={chartData}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-        barSize={40}
-      >
-        <Tooltip />
-        <XAxis
-          dataKey="name"
-          scale="point"
-          padding={{ left: 30, right: 30 }}
-          tick={{ fill: 'white' }}
-        />
-        <YAxis tick={{ fill: 'white' }} />
-        <Legend />
-        <CartesianGrid />
-        <Bar dataKey="minutes" fill="orange" />
-      </BarChart>
-    </ResponsiveContainer>
   );
+
+  const chartKeys = Array.from(habitsSet);
+  if (chartData)
+    return (
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          width={700}
+          height={300}
+          data={chartData}
+          margin={{
+            top: 5,
+            right: 30,
+            left: 20,
+            bottom: 5,
+          }}
+          barSize={40}
+        >
+          <Tooltip />
+          <XAxis
+            dataKey="name"
+            scale="point"
+            padding={{ left: 30, right: 30 }}
+            tick={{ fill: 'white' }}
+          />
+          <YAxis tick={{ fill: 'white' }} />
+          <Legend />
+          <CartesianGrid />
+
+          {chartKeys.map((key) => (
+            <Bar key={key} dataKey={key} stackId="a" fill={getRandomColor()} />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+    );
 };
 
 export default DataChart;

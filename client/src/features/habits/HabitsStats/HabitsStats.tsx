@@ -10,9 +10,7 @@ import DataChart from '../DataChart/DataChart';
 const HabitsStats = () => {
   const habits = useSelector(selectHabitsByUser);
 
-  const [selectedHabit, setSelectedHabit] = useState(
-    habits ? habits[0]._id : ''
-  );
+  const [selectedHabit, setSelectedHabit] = useState('');
 
   const currentDate = new Date();
   const startOfCurrentWeek = startOfWeek(currentDate);
@@ -26,7 +24,9 @@ const HabitsStats = () => {
     to: format(toDate, 'MM/dd/yyyy'),
     habitId: selectedHabit,
   });
-  console.log('from ', fromDate, 'to ', toDate, 'data: ', workSessions);
+
+  console.log(workSessions);
+
   const handleWeekChange = (from: Date, to: Date) => {
     setFromDate(from);
     setToDate(to);
@@ -42,6 +42,9 @@ const HabitsStats = () => {
             name="category"
             onChange={(e) => setSelectedHabit(e.target.value)}
           >
+            <option key={0} value="">
+              Overall
+            </option>
             {habits.map((item: Habit) => (
               <option key={item._id} value={item._id}>
                 {item.name}
