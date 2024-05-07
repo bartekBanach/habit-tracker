@@ -1,5 +1,5 @@
-import mongoose, { Model, Schema, Document } from "mongoose";
-import { IHabit } from "./habit";
+import mongoose, { Model, Schema, Document } from 'mongoose';
+import { IHabit } from './habit';
 
 export interface IWorkSession extends Document {
   habit: mongoose.Types.ObjectId;
@@ -10,7 +10,7 @@ export interface IWorkSession extends Document {
 const workSessionSchema = new Schema({
   habit: {
     type: Schema.Types.ObjectId,
-    ref: "Habit",
+    ref: 'Habit',
     required: true,
   },
   timeDuration: {
@@ -24,9 +24,9 @@ const workSessionSchema = new Schema({
   },
 });
 
-workSessionSchema.pre("save", async function (next) {
+workSessionSchema.pre('save', async function (next) {
   try {
-    const habit = await mongoose.model<IHabit>("Habit").findById(this.habit);
+    const habit = await mongoose.model<IHabit>('Habit').findById(this.habit);
     if (habit) {
       console.log(habit);
       habit.timeSpent += this.timeDuration;
@@ -38,9 +38,6 @@ workSessionSchema.pre("save", async function (next) {
   }
 });
 
-const workSessionModel: Model<IWorkSession> = mongoose.model<IWorkSession>(
-  "WorkSession",
-  workSessionSchema,
-);
+const workSessionModel: Model<IWorkSession> = mongoose.model<IWorkSession>('WorkSession', workSessionSchema);
 
 export default workSessionModel;

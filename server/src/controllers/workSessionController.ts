@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import WorkSession, { IWorkSession } from '../models/workSession';
-import { startOfWeek, endOfWeek } from 'date-fns';
+import { startOfWeek, endOfWeek, startOfDay, endOfDay } from 'date-fns';
+import asyncHandler from 'express-async-handler';
 
 async function createWorkSession(req: Request, res: Response): Promise<void> {
   try {
@@ -32,7 +33,6 @@ async function getAllWorkSessions(req: Request, res: Response): Promise<void> {
 async function getWorkSessionsByTimePeriod(req: Request, res: Response): Promise<void> {
   try {
     const { from, to, habitId } = req.query;
-    console.log('HBITIDIDIDIID', habitId);
 
     if (!from || !to) {
       res.status(400).json({ message: 'habitId, from and parameters are required' });
@@ -41,8 +41,8 @@ async function getWorkSessionsByTimePeriod(req: Request, res: Response): Promise
 
     const query: any = {
       finishedAt: {
-        $gte: new Date(from as string),
-        $lte: new Date(to as string),
+        $gte: startOfDay(new Date(from as string)),
+        $lt: endOfDay(new Date(to as string)),
       },
     };
 
@@ -60,4 +60,15 @@ async function getWorkSessionsByTimePeriod(req: Request, res: Response): Promise
   }
 }
 
-export { createWorkSession, getAllWorkSessions, getWorkSessionsByTimePeriod };
+const deleteAllWorkSessions = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    await WorkSession.deleteMany({});
+    res.json({ message: 'All sessions deleted successfully' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: 'Failed to delete sessions', error: error.message });
+    }
+  }
+});
+
+export { createWorkSession, getAllWorkSessions, getWorkSessionsByTimePeriod, deleteAllWorkSessions };

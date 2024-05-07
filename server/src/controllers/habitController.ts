@@ -20,10 +20,10 @@ const getHabitsByUser = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const createHabit = async (req: Request, res: Response): Promise<void> => {
-  const { name, category, user } = req.body;
+  const { name, category, user, color } = req.body;
 
   try {
-    const habit: IHabit = new Habit({ name, category, user });
+    const habit: IHabit = new Habit({ name, category, user, color });
     await habit.save();
     res.status(201).json({ message: 'Habit created successfully', habit });
   } catch (error) {
@@ -33,4 +33,15 @@ const createHabit = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { getAllHabits, getHabitsByUser, createHabit };
+const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    // Delete all habits
+    await Habit.deleteMany({});
+    res.json({ message: 'All habits deleted successfully' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: 'Failed to delete habits', error: error.message });
+    }
+  }
+});
+export { getAllHabits, getHabitsByUser, createHabit, deleteAllHabits };
