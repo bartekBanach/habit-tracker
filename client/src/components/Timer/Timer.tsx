@@ -16,6 +16,7 @@ interface TimerProps {
   title: string;
   duration: Duration;
   deleteTimer: (timerId: string) => void;
+  color: string;
 }
 
 export default function Timer({
@@ -24,6 +25,7 @@ export default function Timer({
   title,
   duration,
   deleteTimer,
+  color,
 }: TimerProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(
@@ -80,6 +82,7 @@ export default function Timer({
       <CircularProgressbar
         angle={(remainingTime / getMilliseconds(duration)) * 360}
         text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
+        color={color}
       />
       <div className={styles.controls}>
         <button

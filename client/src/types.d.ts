@@ -9,6 +9,7 @@ interface Timer {
   habitId: string;
   title: string;
   duration: Duration;
+  color: string;
 }
 
 interface Habit {
@@ -16,7 +17,8 @@ interface Habit {
   name: string;
   category: string;
   user: string;
-  timeSpent: number;
+  timeSpent?: number;
+  color: string;
 }
 
 interface WorkSession {

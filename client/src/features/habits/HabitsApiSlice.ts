@@ -36,3 +36,11 @@ export const selectHabitsByUser = createSelector(
   selectGetHabitsByUserResult,
   (habitsResult) => habitsResult.data
 );
+
+export const selectHabitById = (habitId: string) =>
+  createSelector(selectGetHabitsByUserResult, (habitsResult) => {
+    if (habitsResult.data) {
+      return habitsResult.data.find((habit) => habit._id === habitId);
+    }
+    return null;
+  });

@@ -25,7 +25,7 @@ const HabitsStats = () => {
     habitId: selectedHabit,
   });
 
-  console.log(workSessions);
+  console.log('workSessions', workSessions);
 
   const handleWeekChange = (from: Date, to: Date) => {
     setFromDate(from);

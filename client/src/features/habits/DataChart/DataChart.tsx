@@ -9,40 +9,41 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { format, startOfDay, addDays } from 'date-fns';
-import { millisecondsToMinutes } from 'date-fns';
+import { selectHabitsByUser } from '../habitsApiSlice';
+import { useSelector } from 'react-redux';
 
-/*interface DataPoint {
-  name: string;
-  minutes: number;
-}*/
-
-interface DayData {
-  [key: string]: number | string;
-}
-
-interface AccumulatedData {
-  [key: string]: DayData;
-}
+type DayData = Record<string, number | string>;
+type AccumulatedData = Record<string, DayData>;
 
 interface DataChartProps {
   data: WorkSession[] | undefined;
   startOfCurrentWeek: Date;
 }
 
-const getRandomColor = () => {
-  const r = Math.floor(Math.random() * 256); // Random value for red (0-255)
-  const g = Math.floor(Math.random() * 256); // Random value for green (0-255)
-  const b = Math.floor(Math.random() * 256); // Random value for blue (0-255)
-  return `rgb(${r},${g},${b})`; // Return RGB color string
-};
-
 const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
-  const habitsSet = new Set();
-  const accumulatedData = data
-    ? data.reduce((acc: AccumulatedData, item: WorkSession) => {
-        //add all encountered habits to set
-        if (!habitsSet.has(item.habit)) habitsSet.add(item.habit);
+  const habits = useSelector(selectHabitsByUser);
+  const habitsSet = new Set<Habit>();
 
+  const processedData: WorkSession[] = (data ?? []).flatMap(
+    (workSession: WorkSession) => {
+      const habit = habits?.find((h: Habit) => workSession.habit === h._id);
+
+      if (habit) {
+        if (!habitsSet.has(habit)) habitsSet.add(habit);
+        return [
+          {
+            ...workSession,
+            habit: habit.name,
+          },
+        ];
+      } else {
+        return [];
+      }
+    }
+  );
+
+  const accumulatedData = processedData
+    ? processedData.reduce((acc: AccumulatedData, item: WorkSession) => {
         const day = format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
         if (!acc[day]) {
           acc[day] = { name: day };
@@ -62,10 +63,6 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
 
       if (!data[formattedDate]) {
         currentWeekData[formattedDate] = { name: formattedDate };
-        /*habitsSet.forEach((habit) => {
-          currentWeekData[formattedDate][habit] = 0;
-        });*/
-        //currentWeekData[formattedDate].test = 0;
       } else {
         currentWeekData[formattedDate] = data[formattedDate];
       }
@@ -78,6 +75,7 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
   );
 
   const chartKeys = Array.from(habitsSet);
+
   if (chartData)
     return (
       <ResponsiveContainer width="100%" height={300}>
@@ -104,8 +102,13 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
           <Legend />
           <CartesianGrid />
 
-          {chartKeys.map((key) => (
-            <Bar key={key} dataKey={key} stackId="a" fill={getRandomColor()} />
+          {chartKeys.map((item) => (
+            <Bar
+              key={item._id}
+              dataKey={item.name}
+              stackId="a"
+              fill={item.color}
+            />
           ))}
         </BarChart>
       </ResponsiveContainer>

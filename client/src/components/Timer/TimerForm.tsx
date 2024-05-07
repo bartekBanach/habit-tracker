@@ -8,15 +8,15 @@ interface TimerFormProps {
 }
 
 export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
-  const [selectedHabit, setSelectedHabit] = useState(habits[0]._id);
+  const [selectedHabit, setSelectedHabit] = useState(
+    habits[0] ? habits[0]._id : ''
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const habitTitle = habits.find(
-      (habit) => habit._id === selectedHabit
-    )?.name;
-    if (!habitTitle) return;
+    const habitItem = habits.find((habit) => habit._id === selectedHabit);
+    if (!habitItem) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
     if (
@@ -30,7 +30,8 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
       id: uuidv4(),
       //title: (formData.get('title') ?? 'Unknown') as string,
       habitId: selectedHabit,
-      title: habitTitle,
+      title: habitItem.name,
+      color: habitItem.color,
       duration: {
         hours: parseInt(formData.get('hours') || '0', 10),
         minutes: parseInt((formData.get('minutes') || '0') as string),

@@ -30,6 +30,7 @@ const TimersList = () => {
               id={item.id}
               habitId={item.habitId}
               title={item.title}
+              color={item.color}
               duration={item.duration}
               deleteTimer={deleteTimer}
             />

@@ -3,8 +3,13 @@ import styles from './CircularProgressbar.module.css';
 interface CircularProgressbarProps {
   angle: number;
   text: string;
+  color: string;
 }
-const CircularProgressbar = ({ angle, text }: CircularProgressbarProps) => {
+const CircularProgressbar = ({
+  angle,
+  text,
+  color,
+}: CircularProgressbarProps) => {
   return (
     <div className={`${styles.mainContainer} ${styles.center}`}>
       <div className={`${styles.circleContainer} ${styles.center}`}>
@@ -13,6 +18,7 @@ const CircularProgressbar = ({ angle, text }: CircularProgressbarProps) => {
           style={{
             transform: angle > 180 ? 'rotate(180deg)' : `rotate(${angle}deg)`,
             display: angle === 0 ? 'none' : 'block',
+            backgroundColor: color,
           }}
         ></div>
         <div
@@ -20,6 +26,7 @@ const CircularProgressbar = ({ angle, text }: CircularProgressbarProps) => {
           style={{
             transform: `rotate(${angle}deg)`,
             display: angle === 0 ? 'none' : 'block',
+            backgroundColor: color,
           }}
         ></div>
         <div
