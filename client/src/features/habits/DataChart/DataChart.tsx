@@ -7,8 +7,15 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts';
-import { format, startOfDay, addDays } from 'date-fns';
+import {
+  format,
+  startOfDay,
+  addDays,
+  millisecondsToHours,
+  differenceInDays,
+} from 'date-fns';
 import { selectHabitsByUser } from '../habitsApiSlice';
 import { useSelector } from 'react-redux';
 
@@ -17,10 +24,11 @@ type AccumulatedData = Record<string, DayData>;
 
 interface DataChartProps {
   data: WorkSession[] | undefined;
-  startOfCurrentWeek: Date;
+  from: Date;
+  to: Date;
 }
 
-const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
+const DataChart = ({ data, from, to }: DataChartProps) => {
   const habits = useSelector(selectHabitsByUser);
   const habitsSet = new Set<Habit>();
 
@@ -49,16 +57,18 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
           acc[day] = { name: day };
         }
         acc[day][item.habit] =
-          ((acc[day][item.habit] || 0) as number) + item.timeDuration;
+          ((acc[day][item.habit] || 0) as number) +
+          millisecondsToHours(item.timeDuration);
         return acc;
       }, {})
     : {};
 
   const fillMissingWeekdays = (data: AccumulatedData): AccumulatedData => {
     const currentWeekData: AccumulatedData = {};
+    const daysAmount = Math.abs(differenceInDays(from, to));
 
-    for (let i = 0; i < 7; i++) {
-      const currentDate = addDays(startOfCurrentWeek, i);
+    for (let i = 0; i < daysAmount; i++) {
+      const currentDate = addDays(from, i);
       const formattedDate = format(currentDate, 'MM/dd/yyyy');
 
       if (!data[formattedDate]) {
@@ -110,6 +120,12 @@ const DataChart = ({ data, startOfCurrentWeek }: DataChartProps) => {
               fill={item.color}
             />
           ))}
+          <ReferenceLine
+            y={1000000}
+            stroke="red"
+            strokeDasharray="3 3"
+            label="Desired Time"
+          />
         </BarChart>
       </ResponsiveContainer>
     );
