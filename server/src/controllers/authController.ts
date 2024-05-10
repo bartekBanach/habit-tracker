@@ -1,30 +1,27 @@
-import { Request, Response } from "express";
-import User from "../models/user";
-import jwt from "jsonwebtoken";
-import asyncHandler from "express-async-handler";
-import generateRefreshToken from "../utils/generateRefreshToken";
+import { Request, Response } from 'express';
+import User from '../models/user';
+import jwt from 'jsonwebtoken';
+import asyncHandler from 'express-async-handler';
+import generateRefreshToken from '../utils/generateRefreshToken';
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/;
 
   if (!username) {
     res.status(400);
-    throw new Error("Username is required.");
+    throw new Error('Username is required.');
   }
   if (!passwordRegex.test(password)) {
     res.status(400);
-    throw new Error(
-      "Password must be at least 8 characters long and contain at least one special character and one number",
-    );
+    throw new Error('Password must be at least 8 characters long and contain at least one special character and one number');
   }
 
   const userExists = await User.findOne({ email });
   if (userExists) {
     res.status(400);
-    throw new Error("User already exists.");
+    throw new Error('User already exists.');
   }
 
   const user = await User.create({
@@ -43,7 +40,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET as string,
-      { expiresIn: "10s" },
+      { expiresIn: '10s' },
     );
 
     generateRefreshToken(res, user._id);
@@ -53,7 +50,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
     });
   } else {
     res.status(400);
-    throw new Error("Invalid user data");
+    throw new Error('Invalid user data');
   }
 });
 
@@ -72,7 +69,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET as string,
-      { expiresIn: "10s" },
+      { expiresIn: '10s' },
     );
 
     generateRefreshToken(res, user._id);
@@ -82,40 +79,37 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     });
   } else {
     res.status(401);
-    throw new Error("Invalid email or password");
+    throw new Error('Invalid email or password');
   }
 });
 
 const logoutUser = (req: Request, res: Response) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) return res.sendStatus(204);
-  res.clearCookie("jwt", {
+  res.clearCookie('jwt', {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV !== 'development',
+    sameSite: 'strict',
   });
-  res.json({ message: "Cookie cleared" });
+  res.json({ message: 'Cookie cleared' });
 };
 
 const refresh = asyncHandler(async (req: Request, res: Response) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) {
     res.status(401);
-    throw new Error("Not authorized, no token");
+    throw new Error('Not authorized, no token');
   }
 
   const refreshToken = cookies.jwt;
 
   try {
-    const decoded = jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET as string,
-    ) as { userId: string };
-    const user = await User.findById(decoded.userId).select("-password");
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as { userId: string };
+    const user = await User.findById(decoded.userId).select('-password');
 
     if (!user) {
       res.status(401);
-      throw new Error("Unauthorized");
+      throw new Error('Unauthorized');
     }
     const accessToken = jwt.sign(
       {
@@ -126,13 +120,13 @@ const refresh = asyncHandler(async (req: Request, res: Response) => {
         },
       },
       process.env.ACCESS_TOKEN_SECRET as string,
-      { expiresIn: "10s" },
+      { expiresIn: '10s' },
     );
 
     res.json({ accessToken });
   } catch (error) {
     res.status(401);
-    throw new Error("Not authorized, invalid token");
+    throw new Error('Not authorized, invalid token');
   }
 });
 
