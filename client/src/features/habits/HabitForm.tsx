@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAddHabitMutation } from './habitsApiSlice';
-import { BlockPicker } from 'react-color';
-import { ColorResult } from 'react-color';
+import ColorPicker from '../../components/ColorPicker/ColorPicker';
 
 const options = [
   { id: 0, label: 'Creative', value: 'Creative' },
@@ -22,7 +21,6 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
   });
 
   const [color, setColor] = useState('#D9E3F0');
-  console.log('color', color);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -41,6 +39,11 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  const handleColorChange = (color: string) => {
+    setColor(color);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
@@ -54,11 +57,8 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
           required
         />
       </div>
-      <BlockPicker
-        color={color}
-        onChange={(color: ColorResult) => setColor(color.hex)}
-        triangle="hide"
-      />
+      <ColorPicker color={color} onColorChange={handleColorChange} />
+
       <div>
         <select
           name="category"

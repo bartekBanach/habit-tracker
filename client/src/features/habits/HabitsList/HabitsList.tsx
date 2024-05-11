@@ -12,10 +12,7 @@ const HabitsList = ({ userId }: HabitsListProps) => {
     return (
       <ul className={styles.container}>
         {habits.map((item: Habit) => (
-          <li key={item._id}>
-            {item.name} time: {getHours(item.timeSpent)}h :{' '}
-            {getMinutes(item.timeSpent)}m : {getSeconds(item.timeSpent)}s
-          </li>
+          <li key={item._id}>{item.name}</li>
         ))}
       </ul>
     );
