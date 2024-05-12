@@ -1,19 +1,11 @@
 import styles from './Home.module.css';
 
 const Home = () => {
-  /*const user = useSelector(selectCurrentUser);
-  const { data: habits, isLoading } = useGetHabitsByUserQuery();
-
-  if (isLoading) return <p>Loading.....</p>;
-
-  if (!habits || !user)
-    return (
-      <>
-        <p>No user</p>
-      </>
-    );*/
-
-  return <div className={styles.container}>Hello world</div>;
+  return (
+    <div className={styles.container}>
+      <h1 className="text-3xl font-bold underline">Hello world</h1>
+    </div>
+  );
 };
 
 export default Home;
