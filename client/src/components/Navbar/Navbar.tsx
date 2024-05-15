@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import styles from './Navbar.module.css';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { clearCredentials } from '../../features/auth/authSlice';
 import { useLogoutMutation } from '../../features/auth/authApiSlice';
 import { selectCurrentToken } from '../../features/auth/authSlice';
+import Button from '../Button/Button';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -18,7 +18,6 @@ const Navbar = () => {
   const handleLogout = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
-    console.log('hello wolrd');
     e.preventDefault();
     try {
       await logout();
@@ -29,19 +28,35 @@ const Navbar = () => {
     }
   };
   return (
-    <nav className={styles.navbar}>
-      <Link to="/">Home</Link>
-      <Link to="/user">User</Link>
-      <Link to="/login">Login</Link>
-      <Link to="/register">Register</Link>
-      {token && (
-        <div>
-          <span>Logged as {user.email}</span>
-          <button type="button" onClick={handleLogout}>
-            Logout
-          </button>
+    <nav className="text-black flex justify-between items-center px-4 py-6">
+      <Link to="/">
+        <div className="bg-yellow-300 text-black rounded-md px-4 py-2 shadow-md">
+          <h1 className=" text-3xl">habitTracker</h1>
         </div>
-      )}
+      </Link>
+
+      <div className="flex gap-5 items-center">
+        <Link className="bg-white p-2 rounded-md shadow-md" to="/">
+          Home
+        </Link>
+        <Link className="bg-white p-2 rounded-md shadow-md" to="/user">
+          User
+        </Link>
+        <Link className="bg-white p-2 rounded-md shadow-md" to="/login">
+          Login
+        </Link>
+        <Link className="bg-white p-2 rounded-md shadow-md" to="/register">
+          Register
+        </Link>
+        {token && (
+          <div>
+            <span>Logged as {user.email}</span>
+            <Button className="bg-red-500 text-white" onClick={handleLogout}>
+              Logout
+            </Button>
+          </div>
+        )}
+      </div>
     </nav>
   );
 };

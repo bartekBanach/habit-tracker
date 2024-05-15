@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { TimerForm } from './TimerForm';
 import Timer from './Timer';
 import { useGetHabitsByUserQuery } from '../../features/habits/habitsApiSlice';
-import styles from './TimersList.module.css';
 
 const TimersList = () => {
   const [timers, setTimers] = useState<Timer[]>([]);
@@ -21,9 +20,9 @@ const TimersList = () => {
   };
   if (habits)
     return (
-      <div>
+      <div className="flex flex-col gap-10 items-center">
         <TimerForm habits={habits} timers={timers} setTimers={setTimers} />
-        <div className={styles.timersGrid}>
+        <div className="grid grid-cols-2 gap-7">
           {timers.map((item) => (
             <Timer
               key={item.id}
@@ -35,6 +34,7 @@ const TimersList = () => {
               deleteTimer={deleteTimer}
             />
           ))}
+          <div className="border shadow-md p-5">Add new timer placeholder</div>
         </div>
       </div>
     );

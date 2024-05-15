@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useEffect } from 'react';
-import styles from './Timer.module.css';
 import { useAddWorkSessionMutation } from '../../features/workSessions/workSessionsApiSlice';
 import {
   getHours,
@@ -9,6 +8,7 @@ import {
   getMilliseconds,
 } from '../../utils/timeUtils';
 import CircularProgressbar from '../CircularProgressbar/CircularProgressbar';
+import Button from '../Button/Button';
 
 interface TimerProps {
   id: string;
@@ -76,16 +76,16 @@ export default function Timer({
   }
 
   return (
-    <div className={styles.container}>
-      <h2>{title}</h2>
+    <div className="flex flex-col justify-center items-center border shadow-md py-6 px-7">
+      <h2 className="text-xl font-semibold">{title}</h2>
 
       <CircularProgressbar
         angle={(remainingTime / getMilliseconds(duration)) * 360}
         text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
         color={color}
       />
-      <div className={styles.controls}>
-        <button
+      <div className="flex flex-row justify-center items-center space-x-5">
+        <Button
           onClick={() => {
             setIsRunning((prev) => !prev);
           }}
@@ -93,11 +93,10 @@ export default function Timer({
           type="button"
         >
           {isRunning ? 'Pause' : 'Start'}
-        </button>
-
-        <button disabled={isRunning} onClick={() => logTime()} type="button">
+        </Button>
+        <Button disabled={isRunning} onClick={() => logTime()} type="button">
           Save time
-        </button>
+        </Button>
       </div>
     </div>
   );

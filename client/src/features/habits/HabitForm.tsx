@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAddHabitMutation } from './habitsApiSlice';
 import ColorPicker from '../../components/ColorPicker/ColorPicker';
-
+import Button from '../../components/Button/Button';
+import Input from '../../components/Input/Input';
 const options = [
   { id: 0, label: 'Creative', value: 'Creative' },
   { id: 1, label: 'Career', value: 'Career' },
@@ -45,10 +46,14 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-wrap gap-5 items-center shadow-md p-5"
+    >
+      <div className="flex flex-wrap gap-3 items-center">
         <label htmlFor="name">Name</label>
         <input
+          className="border border-gray400 p-2 rounded-md"
           type="text"
           id="name"
           name="name"
@@ -57,6 +62,7 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
           required
         />
       </div>
+
       <ColorPicker color={color} onColorChange={handleColorChange} />
 
       <div>
@@ -73,7 +79,9 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
         </select>
       </div>
 
-      <button type="submit">New habit</button>
+      <Button intent="primary" type="submit">
+        Create
+      </Button>
     </form>
   );
 };

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import Button from '../Button/Button';
 
 interface TimerFormProps {
   timers: Timer[];
@@ -60,7 +61,9 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
       <input name="minutes" type="number" placeholder="minutes"></input>
       <input name="seconds" type="number" placeholder="seconds"></input>
 
-      <button type="submit">New timer</button>
+      <Button intent="primary" type="submit">
+        New timer
+      </Button>
     </form>
   );
 };

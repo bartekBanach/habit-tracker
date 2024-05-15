@@ -71,8 +71,8 @@ const HabitsStats = () => {
 
   if (habits)
     return (
-      <>
-        <h2>Habit stats</h2>
+      <div className="flex flex-col gap-1 items-center border border-gray-300 rounded-md shadow-md p-5 ">
+        <h2 className="text-2xl font-semibold">Habit stats</h2>
 
         <select
           name="category"
@@ -124,7 +124,7 @@ const HabitsStats = () => {
           isDisabled={isLoading}
         />
         <DataChart data={workSessions} from={fromDate} to={toDate} />
-      </>
+      </div>
     );
 };
 

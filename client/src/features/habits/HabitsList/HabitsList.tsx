@@ -1,6 +1,4 @@
-import styles from './HabitsList.module.css';
 import { useGetHabitsByUserQuery } from '../habitsApiSlice';
-import { getHours, getMinutes, getSeconds } from '../../../utils/timeUtils';
 
 interface HabitsListProps {
   userId: string;
@@ -10,9 +8,15 @@ const HabitsList = ({ userId }: HabitsListProps) => {
   const { data: habits } = useGetHabitsByUserQuery();
   if (habits)
     return (
-      <ul className={styles.container}>
+      <ul className="flex flex-col text-white gap-2 shadow-md p-5">
         {habits.map((item: Habit) => (
-          <li key={item._id}>{item.name}</li>
+          <li
+            className="shadow-md border rounded-md py-2 px-4"
+            key={item._id}
+            style={{ backgroundColor: `${item.color}` }}
+          >
+            {item.name}
+          </li>
         ))}
       </ul>
     );

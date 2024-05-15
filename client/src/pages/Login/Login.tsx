@@ -4,6 +4,7 @@ import { setCredentials } from '../../features/auth/authSlice';
 import { useLoginMutation } from '../../features/auth/authApiSlice';
 import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
+import Input from '../../components/Input/Input';
 
 interface LoginFormData {
   email: string;
@@ -47,6 +48,7 @@ const Login = () => {
 
   return (
     <form onSubmit={handleSubmit}>
+      <Input id="test" label="login" placeholder="login"></Input>
       <div>
         <label htmlFor="email">Email:</label>
         <input

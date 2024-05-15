@@ -1,15 +1,12 @@
 import Navbar from '../Navbar/Navbar';
-import styles from './Layout.module.css';
 
 const Layout = ({ children }) => {
   return (
-    <div className={styles.container}>
+    <div className="bg-gray-200">
       <Navbar />
 
-      <main className={styles.content}>
-        {children} {/* This will render the child components */}
-      </main>
-      <footer>{/* Your footer content goes here */}</footer>
+      <main className="bg-white">{children}</main>
+      <footer>Bartłomiej Banach@2024</footer>
     </div>
   );
 };
