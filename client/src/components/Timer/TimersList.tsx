@@ -21,7 +21,7 @@ const TimersList = () => {
   if (habits)
     return (
       <div className="flex flex-col gap-10 items-center">
-        <TimerForm habits={habits} timers={timers} setTimers={setTimers} />
+        <TimerForm timers={timers} setTimers={setTimers} />
         <div className="grid grid-cols-2 gap-7">
           {timers.map((item) => (
             <Timer

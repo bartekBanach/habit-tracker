@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Button from '../Button/Button';
+import HabitSelect from '../../features/habits/HabitSelect';
+import { selectHabitById } from '../../features/habits/habitsApiSlice';
+import { useSelector } from 'react-redux';
 
 interface TimerFormProps {
   timers: Timer[];
   setTimers: React.Dispatch<React.SetStateAction<Timer[]>>;
-  habits: Habit[];
 }
 
-export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
-  const [selectedHabit, setSelectedHabit] = useState(
-    habits[0] ? habits[0]._id : ''
-  );
+export const TimerForm = ({ timers, setTimers }: TimerFormProps) => {
+  const [selectedHabit, setSelectedHabit] = useState('');
+  const habitItem = useSelector(selectHabitById(selectedHabit));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const habitItem = habits.find((habit) => habit._id === selectedHabit);
     if (!habitItem) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
@@ -46,16 +46,10 @@ export const TimerForm = ({ timers, setTimers, habits }: TimerFormProps) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <select
-        name="category"
-        onChange={(e) => setSelectedHabit(e.target.value)}
-      >
-        {habits.map((item: Habit) => (
-          <option key={item._id} value={item._id}>
-            {item.name}
-          </option>
-        ))}
-      </select>
+      <HabitSelect
+        habitId={selectedHabit}
+        onHabitChange={(habitId: string) => setSelectedHabit(habitId)}
+      />
 
       <input name="hours" type="number" placeholder="hours"></input>
       <input name="minutes" type="number" placeholder="minutes"></input>
