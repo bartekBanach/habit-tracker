@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import Goal, { IGoal } from '../models/goal';
+import asyncHandler from 'express-async-handler';
 
 // Controller function to create a new goal
 export const createGoal = async (req: Request, res: Response) => {
   try {
     const { habit, timeAmount, requiredTimeAmount, status, timeLimit, type } = req.body;
-    const newGoal: IGoal = new Goal({ habit, timeAmount, requiredTimeAmount, status, timeLimit, type });
+    const userId = req?.user?._id;
+
+    const newGoal: IGoal = new Goal({ habit, timeAmount, requiredTimeAmount, status, timeLimit, type, user: userId });
     await newGoal.save();
     res.status(201).json(newGoal);
   } catch (error: any) {
@@ -28,6 +31,13 @@ export const getGoals = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Failed to fetch goals' });
   }
 };
+
+export const getGoalsByUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req?.user?._id;
+
+  const goals: IGoal[] = await Goal.find({ user: userId });
+  res.json(goals);
+});
 
 // Controller function to update a goal
 export const updateGoal = async (req: Request, res: Response) => {

@@ -1,13 +1,17 @@
 import express from 'express';
-import { createGoal, getGoals, updateGoal, deleteGoal, deleteAllGoals } from '../controllers/goalController';
+import { createGoal, getGoals, getGoalsByUser, updateGoal, deleteGoal, deleteAllGoals } from '../controllers/goalController';
+import { verifyJWT } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
 // Route to create a new goal
-router.post('/', createGoal);
+router.post('/', verifyJWT, createGoal);
 
-// Route to get all goals
+// Route to get goals
 router.get('/', getGoals);
+
+// Route to get user's goals
+router.get('/user', verifyJWT, getGoalsByUser);
 
 // Route to update a goal
 router.put('/:id', updateGoal);

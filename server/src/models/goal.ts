@@ -18,6 +18,7 @@ enum GoalStatus {
 
 export interface IGoal extends Document {
   habit: mongoose.Types.ObjectId;
+  user: mongoose.Types.ObjectId;
   timeAmount: number;
   requiredTimeAmount: number;
   status: GoalStatus;
@@ -30,7 +31,12 @@ export interface IGoal extends Document {
 
 const goalSchema: Schema = new Schema({
   habit: { type: Schema.Types.ObjectId, ref: 'Habit', required: true, unique: true },
-  timeAmount: { type: Number, required: true },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  timeAmount: { type: Number, default: 0 },
   requiredTimeAmount: { type: Number, required: true },
   status: { type: String, enum: Object.values(GoalStatus), default: GoalStatus.IN_PROGRESS },
   timeLimit: {
