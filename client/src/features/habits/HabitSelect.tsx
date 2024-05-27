@@ -15,6 +15,7 @@ const HabitSelect = ({ habitId, onHabitChange }: HabitSelectProps) => {
         name="habit"
         onChange={(e) => onHabitChange(e.target.value)}
         value={habitId}
+        required
       >
         <option value="" disabled>
           Select habit
