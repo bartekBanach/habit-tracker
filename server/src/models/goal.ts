@@ -1,7 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 // Enum for goal types
-enum GoalType {
+export enum GoalType {
   ONE_TIME = 'one_time',
   DAILY = 'daily',
   WEEKLY = 'weekly',
@@ -10,7 +10,7 @@ enum GoalType {
 }
 
 // Enum for goal statuses
-enum GoalStatus {
+export enum GoalStatus {
   FULFILLED = 'fulfilled',
   FAILED = 'failed',
   IN_PROGRESS = 'in_progress',
@@ -46,5 +46,5 @@ const goalSchema: Schema = new Schema({
   type: { type: String, enum: Object.values(GoalType), required: true },
 });
 
-const Goal = mongoose.model<IGoal>('Goal', goalSchema);
+const Goal: Model<IGoal> = mongoose.model<IGoal>('Goal', goalSchema);
 export default Goal;

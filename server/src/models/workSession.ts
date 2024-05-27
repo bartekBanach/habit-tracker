@@ -1,5 +1,7 @@
 import mongoose, { Model, Schema, Document } from 'mongoose';
 import { IHabit } from './habit';
+import { IGoal } from './goal';
+import { GoalStatus } from './goal';
 
 export interface IWorkSession extends Document {
   habit: mongoose.Types.ObjectId;
@@ -28,10 +30,18 @@ workSessionSchema.pre('save', async function (next) {
   try {
     const habit = await mongoose.model<IHabit>('Habit').findById(this.habit);
     if (habit) {
-      console.log(habit);
       habit.timeSpent += this.timeDuration;
       await habit.save();
     }
+    const goal = await mongoose.model<IGoal>('Goal').findOne({ habit: this.habit });
+    if (goal) {
+      goal.timeAmount += this.timeDuration;
+      if (goal.timeAmount >= goal.requiredTimeAmount) {
+        goal.status = GoalStatus.FULFILLED;
+      }
+      await goal.save();
+    }
+
     next();
   } catch (error: any) {
     next(error);

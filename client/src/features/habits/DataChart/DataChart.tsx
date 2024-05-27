@@ -14,6 +14,7 @@ import {
   startOfDay,
   addDays,
   millisecondsToHours,
+  millisecondsToMinutes,
   differenceInDays,
 } from 'date-fns';
 import { selectHabitsByUser } from '../habitsApiSlice';
@@ -58,7 +59,8 @@ const DataChart = ({ data, from, to }: DataChartProps) => {
         }
         acc[day][item.habit] =
           ((acc[day][item.habit] || 0) as number) +
-          millisecondsToHours(item.timeDuration);
+          //millisecondsToHours(item.timeDuration);
+          millisecondsToMinutes(item.timeDuration);
         return acc;
       }, {})
     : {};

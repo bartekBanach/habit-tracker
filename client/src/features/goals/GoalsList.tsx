@@ -44,7 +44,7 @@ const GoalsList = () => {
       <h4>Goals list</h4>
       {goalsWithHabits?.map((goal) => (
         <div className="font-semibold" key={goal._id}>
-          {goal.habitName}
+          {goal.habitName}:{goal.status}
           <ProgressBar
             color={goal.habitColor}
             value={goal.timeAmount}

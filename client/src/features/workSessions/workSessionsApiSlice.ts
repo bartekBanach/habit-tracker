@@ -33,7 +33,7 @@ export const workSessionsApiSlice = apiSlice.injectEndpoints({
       query: (workSession: WorkSession) => {
         return { url: '/work-sessions', method: 'POST', body: workSession };
       },
-      invalidatesTags: ['WorkSessions', 'Habits'],
+      invalidatesTags: ['WorkSessions', 'Habits', 'Goals'],
     }),
   }),
 });
