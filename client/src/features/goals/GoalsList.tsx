@@ -5,6 +5,7 @@ import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import { intervalToDuration } from 'date-fns';
 import { IoMdRefresh } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
+import { useDeleteGoalMutation } from './goalsApiSlice';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -18,6 +19,7 @@ const convertMillisecondsToDuration = (milliseconds: number) => {
 const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
   const { data: goals } = useGetGoalsByUserQuery();
+  const [deleteGoal] = useDeleteGoalMutation();
 
   const parseDurationString = (timeAmount: number): string => {
     const { minutes, hours } = convertMillisecondsToDuration(timeAmount);
@@ -41,6 +43,11 @@ const GoalsList = () => {
     return { ...goal, habitName, habitColor };
   });
 
+  const handleDelete = async (goalId: string) => {
+    await deleteGoal(goalId);
+  };
+  const handleRestart = () => {};
+
   return (
     <div className="flex flex-col gap-5">
       {goalsWithHabits?.map((goal) => (
@@ -53,10 +60,18 @@ const GoalsList = () => {
               <h3 className="text-center font-semibold text-l">
                 {goal.habitName}
               </h3>
-              <button className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200">
+              <button
+                type="button"
+                onClick={handleRestart}
+                className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200"
+              >
                 <IoMdRefresh />
               </button>
-              <button className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200">
+              <button
+                type="button"
+                onClick={() => handleDelete(goal._id)}
+                className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200"
+              >
                 <MdDelete />
               </button>
             </div>

@@ -17,7 +17,7 @@ router.get('/user', verifyJWT, getGoalsByUser);
 router.put('/:id', updateGoal);
 
 // Route to delete a specific goal
-router.delete('/:id', deleteGoal);
+router.delete('/:id', verifyJWT, deleteGoal);
 
 // Route to delete all goals
 router.delete('/', deleteAllGoals);

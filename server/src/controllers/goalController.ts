@@ -64,6 +64,7 @@ export const updateGoal = async (req: Request, res: Response) => {
 export const deleteGoal = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
     const deletedGoal: IGoal | null = await Goal.findByIdAndDelete(id);
     if (deletedGoal) {
       res.json({ message: 'Goal deleted successfully' });

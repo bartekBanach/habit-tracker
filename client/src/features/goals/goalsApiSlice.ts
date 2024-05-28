@@ -17,11 +17,22 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: ['Goals'],
     }),
+    deleteGoal: builder.mutation({
+      query: (goalId: string) => ({
+        url: `/goals/${goalId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Goals'],
+    }),
   }),
 });
 
-export const { useGetGoalsQuery, useGetGoalsByUserQuery, useAddGoalMutation } =
-  goalsApiSlice;
+export const {
+  useGetGoalsQuery,
+  useGetGoalsByUserQuery,
+  useAddGoalMutation,
+  useDeleteGoalMutation,
+} = goalsApiSlice;
 
 export const selectGoalsResult =
   goalsApiSlice.endpoints.getGoalsByUser.select();
