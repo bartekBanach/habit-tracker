@@ -3,6 +3,8 @@ import { selectHabitsByUser } from '../habits/habitsApiSlice';
 import { useGetGoalsByUserQuery } from './goalsApiSlice';
 import ProgressBar from '../../components/ProgressBar/ProgressBar';
 import { intervalToDuration } from 'date-fns';
+import { IoMdRefresh } from 'react-icons/io';
+import { MdDelete } from 'react-icons/md';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -40,11 +42,30 @@ const GoalsList = () => {
   });
 
   return (
-    <>
-      <h4>Goals list</h4>
+    <div className="flex flex-col gap-5">
       {goalsWithHabits?.map((goal) => (
-        <div className="font-semibold" key={goal._id}>
-          {goal.habitName}:{goal.status}
+        <div
+          className="flex flex-col gap-3 shadow-md p-4 rounded-md"
+          key={goal._id}
+        >
+          <div>
+            <div className="flex flex-row gap-2 justify-center items-center">
+              <h3 className="text-center font-semibold text-l">
+                {goal.habitName}
+              </h3>
+              <button className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200">
+                <IoMdRefresh />
+              </button>
+              <button className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200">
+                <MdDelete />
+              </button>
+            </div>
+
+            <h4 className="text-center text-gray-500">
+              {goal.type} | {goal.status}
+            </h4>
+          </div>
+
           <ProgressBar
             color={goal.habitColor}
             value={goal.timeAmount}
@@ -53,7 +74,7 @@ const GoalsList = () => {
           />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

@@ -43,7 +43,7 @@ const User = () => {
           <TimersList />
         </main>
         <aside className="col-span-1 shadow-md p-5">
-          <h2 className="text-xl">Goals</h2>
+          <h2 className="text-xl text-center font-semibold">My goals</h2>
           <GoalsList />
 
           <GoalForm />

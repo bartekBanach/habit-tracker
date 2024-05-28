@@ -8,13 +8,16 @@ const ProgressBar = ({ value, maxValue, color, label }: ProgressBarProps) => {
   const percentage = (value / maxValue) * 100;
 
   return (
-    <div className="w-full bg-gray-200 rounded-full h-4 borde overflow-hidden">
+    <div className="relative w-full bg-gray-200 rounded-full h-4 border overflow-hidden">
       <div
-        className="h-4 text-xs text-center text-black font-semibold rounded-full "
+        className="absolute inset-0"
         style={{ width: `${percentage}%`, backgroundColor: `${color}` }}
-      >
-        {label}
-      </div>
+      />
+      {label && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <span className="text-xs text-black font-semibold">{label}</span>
+        </div>
+      )}
     </div>
   );
 };
