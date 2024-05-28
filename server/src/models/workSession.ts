@@ -34,7 +34,7 @@ workSessionSchema.pre('save', async function (next) {
       await habit.save();
     }
     const goal = await mongoose.model<IGoal>('Goal').findOne({ habit: this.habit });
-    if (goal) {
+    if (goal && goal.status !== GoalStatus.FAILED) {
       goal.timeAmount += this.timeDuration;
       if (goal.timeAmount >= goal.requiredTimeAmount) {
         goal.status = GoalStatus.FULFILLED;

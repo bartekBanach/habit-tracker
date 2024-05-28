@@ -8,6 +8,7 @@
     "dev": "npx nodemon --files ./src/index.ts",
     "start": "ts-node --files src/index.ts",
     "mock": "ts-node --files src/utils/generateMockData.ts",
+    "check-goals": "ts-node src/utils/checkGoals.ts",
     "lint": "eslint src/**/*.ts --fix",
     "build": "tsc"
   },
