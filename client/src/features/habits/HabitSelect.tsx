@@ -4,9 +4,14 @@ import { useSelector } from 'react-redux';
 interface HabitSelectProps {
   habitId: string;
   onHabitChange: (habit: string) => void;
+  allHabitsOption?: boolean;
 }
 
-const HabitSelect = ({ habitId, onHabitChange }: HabitSelectProps) => {
+const HabitSelect = ({
+  habitId,
+  onHabitChange,
+  allHabitsOption = false,
+}: HabitSelectProps) => {
   const habits = useSelector(selectHabitsByUser);
   if (habits)
     return (
@@ -17,9 +22,14 @@ const HabitSelect = ({ habitId, onHabitChange }: HabitSelectProps) => {
         value={habitId}
         required
       >
-        <option value="" disabled>
-          Select habit
-        </option>
+        {allHabitsOption ? (
+          <option value="">All habits</option>
+        ) : (
+          <option value="" disabled>
+            Select habit
+          </option>
+        )}
+
         {habits.map((item: Habit) => (
           <option key={item._id} value={item._id}>
             {item.name}

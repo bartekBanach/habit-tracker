@@ -1,5 +1,5 @@
 import { useGetWorkSessionsByTimeQuery } from '../../workSessions/workSessionsApiSlice';
-
+import HabitSelect from '../HabitSelect';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectHabitsByUser } from '../habitsApiSlice';
@@ -36,8 +36,6 @@ const HabitsStats = () => {
   });
 
   const handleTimeIntervalChange = (direction: string) => {
-    console.log('direction', direction);
-    console.log('from', fromDate, 'to', toDate);
     let newFromDate: Date;
     let newToDate: Date;
     if (selectedTimeUnit === 'week') {
@@ -73,14 +71,16 @@ const HabitsStats = () => {
     return (
       <div className="flex flex-col gap-1 items-center border border-gray-300 rounded-md shadow-md p-5 ">
         <h2 className="text-2xl font-semibold">Habit stats</h2>
-
+        <HabitSelect
+          habitId={selectedHabit}
+          onHabitChange={(value) => setSelectedHabit(value)}
+          allHabitsOption={true}
+        />
         <select
           name="category"
           onChange={(e) => setSelectedHabit(e.target.value)}
         >
-          <option key={0} value="">
-            Overall
-          </option>
+          <option value="">Overall</option>
           {habits.map((item: Habit) => (
             <option key={item._id} value={item._id}>
               {item.name}
