@@ -8,16 +8,20 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
+  Line,
 } from 'recharts';
 import {
   format,
   startOfDay,
   addDays,
   millisecondsToHours,
+  intervalToDuration,
   millisecondsToMinutes,
   differenceInDays,
+  hoursToMilliseconds,
 } from 'date-fns';
 import { selectHabitsByUser } from '../habitsApiSlice';
+import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
 
 type DayData = Record<string, number | string>;
@@ -27,11 +31,13 @@ interface DataChartProps {
   data: WorkSession[] | undefined;
   from: Date;
   to: Date;
+  habitId: string;
 }
 
-const DataChart = ({ data, from, to }: DataChartProps) => {
+const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
   const habits = useSelector(selectHabitsByUser);
   const habitsSet = new Set<Habit>();
+  const goal = useSelector(selectGoalByHabit(habitId));
 
   const processedData: WorkSession[] = (data ?? []).flatMap(
     (workSession: WorkSession) => {
@@ -60,7 +66,7 @@ const DataChart = ({ data, from, to }: DataChartProps) => {
         acc[day][item.habit] =
           ((acc[day][item.habit] || 0) as number) +
           //millisecondsToHours(item.timeDuration);
-          millisecondsToMinutes(item.timeDuration);
+          item.timeDuration;
         return acc;
       }, {})
     : {};
@@ -88,6 +94,33 @@ const DataChart = ({ data, from, to }: DataChartProps) => {
 
   const chartKeys = Array.from(habitsSet);
 
+  const formatTime = (value: number) => {
+    const duration = intervalToDuration({ start: 0, end: value });
+
+    if (duration.hours && duration.minutes) {
+      return `${duration.hours}h ${duration.minutes}min`;
+    }
+    if (duration.hours) {
+      return `${duration.hours}h`;
+    }
+    if (duration.minutes) {
+      return `${duration.minutes}min`;
+    }
+    /*if (!duration.hours || duration.hours < 1) {
+      return `${duration.minutes}min`;
+    }*/
+    return '';
+  };
+
+  const formatDate = (date) => {
+    if (chartData.length <= 7) {
+      const day = format(date, 'EEEE');
+      return day;
+    } else {
+      return format(date, 'dd/MM');
+    }
+  };
+
   if (chartData)
     return (
       <ResponsiveContainer width="100%" height={300}>
@@ -103,14 +136,22 @@ const DataChart = ({ data, from, to }: DataChartProps) => {
           }}
           barSize={40}
         >
-          <Tooltip />
+          <Tooltip formatter={formatTime} />
           <XAxis
             dataKey="name"
             scale="point"
             padding={{ left: 30, right: 30 }}
-            tick={{ fill: 'white' }}
+            tick={{ fill: '#6b7280' }}
+            tickFormatter={formatDate}
           />
-          <YAxis tick={{ fill: 'white' }} />
+          <YAxis
+            tick={{ fill: '#6b7280' }}
+            tickFormatter={formatTime}
+            type="number"
+            scale="time"
+            domain={['dataMin', `dataMax`]}
+            allowDataOverflow
+          />
           <Legend />
           <CartesianGrid />
 
@@ -122,12 +163,22 @@ const DataChart = ({ data, from, to }: DataChartProps) => {
               fill={item.color}
             />
           ))}
-          <ReferenceLine
-            y={1000000}
-            stroke="red"
-            strokeDasharray="3 3"
-            label="Desired Time"
-          />
+          {goal && goal.type === 'daily' && (
+            <ReferenceLine
+              y={goal.requiredTimeAmount}
+              stroke="#3b82f6"
+              strokeWidth={3}
+              strokeDasharray="10 6"
+              label={{
+                value: `Daily Goal (${formatTime(goal.requiredTimeAmount)})`,
+                position: 'top',
+                fill: '#3b82f6',
+                fontSize: 14,
+                fontWeight: '600',
+                dy: -10,
+              }}
+            />
+          )}
         </BarChart>
       </ResponsiveContainer>
     );

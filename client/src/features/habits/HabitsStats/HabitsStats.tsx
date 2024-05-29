@@ -76,17 +76,6 @@ const HabitsStats = () => {
           onHabitChange={(value) => setSelectedHabit(value)}
           allHabitsOption={true}
         />
-        <select
-          name="category"
-          onChange={(e) => setSelectedHabit(e.target.value)}
-        >
-          <option value="">Overall</option>
-          {habits.map((item: Habit) => (
-            <option key={item._id} value={item._id}>
-              {item.name}
-            </option>
-          ))}
-        </select>
 
         <div>
           <input
@@ -123,7 +112,12 @@ const HabitsStats = () => {
           to={toDate}
           isDisabled={isLoading}
         />
-        <DataChart data={workSessions} from={fromDate} to={toDate} />
+        <DataChart
+          data={workSessions}
+          from={fromDate}
+          to={toDate}
+          habitId={selectedHabit}
+        />
       </div>
     );
 };

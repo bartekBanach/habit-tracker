@@ -34,8 +34,8 @@ export const {
   useDeleteGoalMutation,
 } = goalsApiSlice;
 
-export const selectGoalsResult =
-  goalsApiSlice.endpoints.getGoalsByUser.select();
+/*export const selectGoalsResult =
+  goalsApiSlice.endpoints.getGoalsByUser.select();*/
 
 export const selectGoalsByUserResult =
   goalsApiSlice.endpoints.getGoalsByUser.select();
@@ -49,6 +49,14 @@ export const selectGoalById = (goalId: string) =>
   createSelector(selectGoalsByUserResult, (goalsResult) => {
     if (goalsResult.data) {
       return goalsResult.data.find((goal) => goal._id === goalId);
+    }
+    return null;
+  });
+
+export const selectGoalByHabit = (habitId: string) =>
+  createSelector(selectGoalsByUserResult, (goalsResult) => {
+    if (goalsResult.data) {
+      return goalsResult.data.find((goal) => goal.habit === habitId);
     }
     return null;
   });
