@@ -6,6 +6,7 @@ import { intervalToDuration } from 'date-fns';
 import { IoMdRefresh } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
 import { useDeleteGoalMutation } from './goalsApiSlice';
+import IconButton from '../../components/IconButton/IconButton';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -60,20 +61,12 @@ const GoalsList = () => {
               <h3 className="text-center font-semibold text-l">
                 {goal.habitName}
               </h3>
-              <button
-                type="button"
-                onClick={handleRestart}
-                className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200"
-              >
+              <IconButton onClick={handleRestart}>
                 <IoMdRefresh />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDelete(goal._id)}
-                className="flex items-center px-2 py-2 shadow-md space-x-2 text-gray-500 bg-white hover:bg-gray-200"
-              >
+              </IconButton>
+              <IconButton onClick={() => handleDelete(goal._id)}>
                 <MdDelete />
-              </button>
+              </IconButton>
             </div>
 
             <h4 className="text-center text-gray-500">
