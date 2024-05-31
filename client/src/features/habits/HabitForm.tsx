@@ -25,10 +25,7 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    /*if (!user) {
-      console.log('Unlogged');
-      return;
-    }*/
+
     const { name, category } = formData;
     setFormData({ ...formData, name: '' });
 

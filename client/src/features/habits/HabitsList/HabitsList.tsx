@@ -1,6 +1,9 @@
 import { useGetHabitsByUserQuery } from '../habitsApiSlice';
 import { FaEdit } from 'react-icons/fa';
 import IconButton from '../../../components/IconButton/IconButton';
+import Modal from '../../../components/Modal/Modal';
+import HabitForm from '../HabitForm';
+import { useState } from 'react';
 
 interface HabitsListProps {
   userId: string;
@@ -8,6 +11,16 @@ interface HabitsListProps {
 
 const HabitsList = ({ userId }: HabitsListProps) => {
   const { data: habits } = useGetHabitsByUserQuery();
+  const [editOpened, setEditOpened] = useState(false);
+
+  const handleModalClose = () => {
+    setEditOpened(false);
+  };
+
+  const handleModalOpen = () => {
+    setEditOpened(true);
+  };
+
   if (habits)
     return (
       <ul className="flex flex-col text-white gap-2 shadow-md p-5">
@@ -18,11 +31,18 @@ const HabitsList = ({ userId }: HabitsListProps) => {
             style={{ backgroundColor: `${item.color}` }}
           >
             {item.name}
-            <IconButton>
+            <IconButton onClick={handleModalOpen}>
               <FaEdit />
             </IconButton>
           </li>
         ))}
+        <Modal
+          header="Edit habit"
+          isOpened={editOpened}
+          onClose={handleModalClose}
+        >
+          <HabitForm userId={userId} />
+        </Modal>
       </ul>
     );
 };
