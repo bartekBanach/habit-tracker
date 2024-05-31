@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { getAllHabits, getHabitsByUser, createHabit, deleteAllHabits } from '../controllers/habitController';
+import { getAllHabits, getHabitsByUser, createHabit, updateHabit, deleteAllHabits } from '../controllers/habitController';
 import { verifyJWT } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -13,6 +13,7 @@ router.use(
 );
 
 router.post('/', verifyJWT, createHabit);
+router.put('/:id', updateHabit);
 router.get('/', verifyJWT, getAllHabits);
 router.get('/user', verifyJWT, getHabitsByUser);
 router.delete('/delete-all', deleteAllHabits);

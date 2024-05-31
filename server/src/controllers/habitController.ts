@@ -33,6 +33,32 @@ const createHabit = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const updateHabit = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { name, category, color } = req.body.habit;
+
+  try {
+    const habit: IHabit | null = await Habit.findById(id);
+
+    if (!habit) {
+      res.status(404).json({ message: 'Habit not found' });
+      return;
+    }
+    console.log(req.body);
+
+    habit.name = name || habit.name;
+    habit.category = category || habit.category;
+    habit.color = color || habit.color;
+
+    await habit.save();
+    res.json({ message: 'Habit updated successfully', habit });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: 'Failed to update habit', error: error.message });
+    }
+  }
+});
+
 const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
   try {
     // Delete all habits
@@ -44,4 +70,4 @@ const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
     }
   }
 });
-export { getAllHabits, getHabitsByUser, createHabit, deleteAllHabits };
+export { getAllHabits, getHabitsByUser, createHabit, updateHabit, deleteAllHabits };

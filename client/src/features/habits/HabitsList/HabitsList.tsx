@@ -1,24 +1,31 @@
-import { useGetHabitsByUserQuery } from '../habitsApiSlice';
+import {
+  useGetHabitsByUserQuery,
+  useUpdateHabitMutation,
+} from '../habitsApiSlice';
 import { FaEdit } from 'react-icons/fa';
 import IconButton from '../../../components/IconButton/IconButton';
 import Modal from '../../../components/Modal/Modal';
-import HabitForm from '../HabitForm';
 import { useState } from 'react';
+import HabitEditForm from '../HabitEditForm';
 
-interface HabitsListProps {
-  userId: string;
-}
-
-const HabitsList = ({ userId }: HabitsListProps) => {
+const HabitsList = () => {
   const { data: habits } = useGetHabitsByUserQuery();
   const [editOpened, setEditOpened] = useState(false);
+  const [updateHabit] = useUpdateHabitMutation();
+  const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
 
   const handleModalClose = () => {
     setEditOpened(false);
+    setSelectedHabit(null);
   };
 
-  const handleModalOpen = () => {
+  const handleModalOpen = (habit: Habit) => {
+    setSelectedHabit(habit);
     setEditOpened(true);
+  };
+  const handleUpdateHabit = async (id: string, habit: NewHabit) => {
+    await updateHabit({ id, habit });
+    handleModalClose();
   };
 
   if (habits)
@@ -31,18 +38,24 @@ const HabitsList = ({ userId }: HabitsListProps) => {
             style={{ backgroundColor: `${item.color}` }}
           >
             {item.name}
-            <IconButton onClick={handleModalOpen}>
+            <IconButton onClick={() => handleModalOpen(item)}>
               <FaEdit />
             </IconButton>
           </li>
         ))}
-        <Modal
-          header="Edit habit"
-          isOpened={editOpened}
-          onClose={handleModalClose}
-        >
-          <HabitForm userId={userId} />
-        </Modal>
+        {selectedHabit && (
+          <Modal
+            header="Edit habit"
+            isOpened={editOpened}
+            onClose={handleModalClose}
+          >
+            <HabitEditForm
+              habitId={selectedHabit._id}
+              habit={selectedHabit}
+              onSubmit={handleUpdateHabit}
+            />
+          </Modal>
+        )}
       </ul>
     );
 };

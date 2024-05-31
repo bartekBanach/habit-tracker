@@ -8,6 +8,7 @@ interface ColorPickerProps {
   onColorChange: (color: string) => void;
 }
 const ColorPicker = ({ color, onColorChange }: ColorPickerProps) => {
+  console.log('COLOR', color);
   const [display, setDisplay] = useState(false);
 
   const handleClick = () => {

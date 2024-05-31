@@ -38,7 +38,6 @@ const User = () => {
             <h2 className="text-xl text-center font-semibold">Habits</h2>
 
             <HabitsList userId={user._id} />
-            <HabitForm userId={user._id} />
           </aside>
         )}
         <main className="col-span-3 shadow-md p-10">

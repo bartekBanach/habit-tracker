@@ -14,7 +14,6 @@ interface Timer {
 
 interface NewHabit {
   name: string;
-  category: string;
   user: string;
   timeSpent?: number;
   color: string;
