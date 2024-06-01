@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { IWorkSession } from './workSession';
+import { IGoal } from './goal';
+import WorkSession from './workSession';
+import Goal from './goal';
 
 export interface IHabit extends Document {
   user: mongoose.Types.ObjectId;
@@ -33,12 +36,11 @@ const habitSchema: Schema<IHabit> = new Schema<IHabit>({
   },
 });
 
-// Define pre-remove hook to delete associated work sessions
-habitSchema.pre<IHabit>('deleteOne', async function (next) {
+habitSchema.post<IHabit>('findOneAndDelete', async function (doc: IHabit) {
   try {
-    // Delete all work sessions associated with this habit
-    await mongoose.model<IWorkSession>('WorkSession').deleteMany({ habit: this._id });
-    next();
+    // Delete all work sessions and goals associated with this habit
+    await WorkSession.deleteMany({ habit: doc._id });
+    await Goal.deleteMany({ habit: doc._id });
   } catch (error) {
     console.log(error);
     //next(error:);

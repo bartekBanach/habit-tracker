@@ -59,6 +59,27 @@ const updateHabit = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+const deleteHabit = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const habit: IHabit | null = await Habit.findById(id);
+
+    if (!habit) {
+      res.status(404).json({ message: 'Habit not found' });
+      return;
+    }
+
+    //await Habit.deleteOne({ _id: id });
+    await Habit.findOneAndDelete({ _id: id });
+    res.json({ message: 'Habit deleted successfully' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ message: 'Failed to delete habit', error: error.message });
+    }
+  }
+});
+
 const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
   try {
     // Delete all habits
@@ -70,4 +91,4 @@ const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
     }
   }
 });
-export { getAllHabits, getHabitsByUser, createHabit, updateHabit, deleteAllHabits };
+export { getAllHabits, getHabitsByUser, createHabit, updateHabit, deleteHabit, deleteAllHabits };
