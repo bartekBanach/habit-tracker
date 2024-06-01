@@ -1,41 +1,31 @@
 import { useState } from 'react';
-import { useAddHabitMutation } from './habitsApiSlice';
 import ColorPicker from '../../components/ColorPicker/ColorPicker';
 import Button from '../../components/Button/Button';
-import Input from '../../components/Input/Input';
-const options = [
-  { id: 0, label: 'Creative', value: 'Creative' },
-  { id: 1, label: 'Career', value: 'Career' },
-  { id: 2, label: 'Exercise', value: 'Exercise' },
-];
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../auth/authSlice';
 
-interface HabitsFormProps {
-  userId: string;
+interface HabitFormProps {
+  habit?: Habit | null;
+  onSubmit: (habit: NewHabit, id?: string) => Promise<void>;
 }
 
-const HabitForm = ({ userId }: HabitsFormProps) => {
-  const [addHabit] = useAddHabitMutation();
+const HabitForm = ({ onSubmit, habit }: HabitFormProps) => {
+  const [name, setName] = useState(habit?.name ?? '');
+  const [color, setColor] = useState(habit?.color ?? '#FF8A65');
 
-  const [formData, setFormData] = useState({
-    name: '',
-    category: options[0].value,
-  });
-
-  const [color, setColor] = useState('#D9E3F0');
+  const user: User | null = useSelector(selectCurrentUser);
+  if (!user) return;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { name, category } = formData;
-    setFormData({ ...formData, name: '' });
-
-    await addHabit({ name, category, user: userId, color });
-  };
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (habit) {
+      await onSubmit({ ...habit, name, color }, habit._id);
+    } else {
+      await onSubmit({ name, color, user: user._id });
+      setName('');
+      setColor('');
+    }
   };
 
   const handleColorChange = (color: string) => {
@@ -45,7 +35,7 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-wrap gap-5 items-center shadow-md p-5"
+      className="flex flex-col gap-5 border border-gray-200 rounded-md p-5"
     >
       <div className="flex flex-wrap gap-3 items-center">
         <label htmlFor="name">Name</label>
@@ -54,30 +44,16 @@ const HabitForm = ({ userId }: HabitsFormProps) => {
           type="text"
           id="name"
           name="name"
-          value={formData.name}
-          onChange={handleChange}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           required
         />
       </div>
 
       <ColorPicker color={color} onColorChange={handleColorChange} />
 
-      <div>
-        <select
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
-          {options.map((item) => (
-            <option key={item.id} value={item.value}>
-              {item.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <Button intent="primary" type="submit">
-        Create
+        Submit
       </Button>
     </form>
   );

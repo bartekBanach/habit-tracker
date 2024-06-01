@@ -12,7 +12,7 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
       providesTags: ['Habits'],
     }),
     addHabit: builder.mutation({
-      query: (habit: Habit) => {
+      query: (habit: NewHabit) => {
         return { url: '/habits', method: 'POST', body: habit };
       },
       invalidatesTags: ['Habits'],
