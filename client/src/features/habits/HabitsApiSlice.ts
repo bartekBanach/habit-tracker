@@ -23,6 +23,12 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
       },
       invalidatesTags: ['Habits'],
     }),
+    deleteHabit: builder.mutation<void, string>({
+      query: (id) => {
+        return { url: `/habits/${id}`, method: 'DELETE' };
+      },
+      invalidatesTags: ['Habits', 'Goals'],
+    }),
   }),
 });
 
@@ -31,6 +37,7 @@ export const {
   useGetHabitsByUserQuery,
   useAddHabitMutation,
   useUpdateHabitMutation,
+  useDeleteHabitMutation,
 } = habitsApiSlice;
 
 export const selectHabitsResult =
