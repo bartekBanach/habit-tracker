@@ -8,8 +8,11 @@ import {
   hoursToMilliseconds,
 } from 'date-fns';
 import { useAddGoalMutation } from './goalsApiSlice';
+interface GoalFormProps {
+  onSubmit: () => void;
+}
 
-const GoalForm = () => {
+const GoalForm = ({ onSubmit }: GoalFormProps) => {
   const [habit, setHabit] = useState('');
   const [type, setType] = useState('daily');
   const [hoursAmount, setHoursAmount] = useState('0');
@@ -46,6 +49,7 @@ const GoalForm = () => {
 
     setHoursAmount('0');
     setMinutesAmount('0');
+    onSubmit();
   };
 
   const handleTimeLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {

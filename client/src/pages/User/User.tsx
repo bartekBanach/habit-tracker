@@ -1,4 +1,4 @@
-import HabitForm from '../../features/habits/HabitForm';
+import HabitForm from '../../features/habits/HabitCreateForm';
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
 import GoalsList from '../../features/goals/GoalsList';
 import GoalForm from '../../features/goals/GoalForm';
@@ -35,7 +35,7 @@ const User = () => {
       <div className="grid grid-cols-5 gap-5">
         {user && (
           <aside className="col-span-1 flex flex-col gap-10">
-            <h2 className="text-xl text-center font-semibold">Habits</h2>
+            <h2 className="text-xl text-center font-semibold">My Habits</h2>
 
             <HabitsList userId={user._id} />
           </aside>
@@ -46,8 +46,6 @@ const User = () => {
         <aside className="col-span-1 shadow-md p-5">
           <h2 className="text-xl text-center font-semibold">My goals</h2>
           <GoalsList />
-
-          <GoalForm />
         </aside>
       </div>
     </div>

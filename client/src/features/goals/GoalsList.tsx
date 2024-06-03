@@ -7,6 +7,10 @@ import { IoMdRefresh } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
 import { useDeleteGoalMutation } from './goalsApiSlice';
 import IconButton from '../../components/IconButton/IconButton';
+import Modal from '../../components/Modal/Modal';
+import Button from '../../components/Button/Button';
+import GoalForm from './GoalForm';
+import { useState } from 'react';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -17,19 +21,21 @@ const convertMillisecondsToDuration = (milliseconds: number) => {
   };
 };
 
+const parseDurationString = (timeAmount: number): string => {
+  const { minutes, hours } = convertMillisecondsToDuration(timeAmount);
+  const hoursStr = hours ? `${hours.toString()}h` : '0h';
+  const minutesStr = minutes ? `${minutes?.toString()}m` : '';
+
+  const durationStr = `${hoursStr}${minutesStr}`;
+  return durationStr;
+};
+
 const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
   const { data: goals } = useGetGoalsByUserQuery();
   const [deleteGoal] = useDeleteGoalMutation();
 
-  const parseDurationString = (timeAmount: number): string => {
-    const { minutes, hours } = convertMillisecondsToDuration(timeAmount);
-    const hoursStr = hours ? `${hours.toString()}h` : '0h';
-    const minutesStr = minutes ? `${minutes?.toString()}m` : '';
-
-    const durationStr = `${hoursStr}${minutesStr}`;
-    return durationStr;
-  };
+  const [modalOpened, setModalOpened] = useState(false);
 
   const habitDictionary = habits?.reduce(
     (acc: Record<string, Habit>, habit) => {
@@ -82,6 +88,17 @@ const GoalsList = () => {
           />
         </div>
       ))}
+
+      <Modal
+        header="New goal"
+        isOpened={modalOpened}
+        onClose={() => setModalOpened(false)}
+      >
+        <GoalForm onSubmit={() => setModalOpened(false)} />
+      </Modal>
+      <Button onClick={() => setModalOpened(true)} intent="primary">
+        New goal
+      </Button>
     </div>
   );
 };
