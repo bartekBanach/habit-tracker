@@ -15,6 +15,12 @@ const iconButtonVariants = cva(
         default: 'bg-white hover:bg-gray-200 shadow-md',
         transparent: 'bg-opacity-0 shadow-none',
       },
+      iconSize: {
+        small: 'text-s',
+        medium: 'text-m',
+        large: 'text-l',
+        extraLarge: 'text-xl',
+      },
       size: {
         noPadding: 'p-0 text-m',
         small: 'p-2 text-s',
@@ -25,6 +31,7 @@ const iconButtonVariants = cva(
     defaultVariants: {
       background: 'default',
       size: 'small',
+      iconSize: 'medium',
     },
   }
 );
@@ -33,6 +40,7 @@ const IconButton = ({
   onClick,
   children,
   iconColor = 'text-gray-500',
+  iconSize,
   background,
   size,
 }: IconButtonProps) => {
@@ -40,7 +48,7 @@ const IconButton = ({
     <button
       type="button"
       onClick={onClick}
-      className={`${iconButtonVariants({ background, size })} ${iconColor}`}
+      className={`${iconButtonVariants({ background, size, iconSize })} ${iconColor}`}
     >
       {children}
     </button>

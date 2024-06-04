@@ -7,7 +7,7 @@ import Goal from './goal';
 export interface IHabit extends Document {
   user: mongoose.Types.ObjectId;
   name: string;
-  category: string;
+  category?: string;
   color?: string;
   timeSpent: number;
 }
@@ -24,7 +24,6 @@ const habitSchema: Schema<IHabit> = new Schema<IHabit>({
   },
   category: {
     type: String,
-    required: true,
   },
   color: {
     type: String,

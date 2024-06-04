@@ -11,6 +11,8 @@ import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
 import GoalForm from './GoalForm';
 import { useState } from 'react';
+import { useAppDispatch } from '../../app/hooks';
+import { addNotification } from '../notifications/notifications.slice';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -34,8 +36,9 @@ const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
   const { data: goals } = useGetGoalsByUserQuery();
   const [deleteGoal] = useDeleteGoalMutation();
-
   const [modalOpened, setModalOpened] = useState(false);
+
+  const dispatch = useAppDispatch();
 
   const habitDictionary = habits?.reduce(
     (acc: Record<string, Habit>, habit) => {
@@ -57,6 +60,33 @@ const GoalsList = () => {
 
   return (
     <div className="flex flex-col gap-5">
+      <Button
+        onClick={() =>
+          dispatch(
+            addNotification({
+              message: 'Hello world!',
+              type: 'info',
+              onClose: () => console.log('I was closed'),
+              autoHideDuration: 6000,
+            })
+          )
+        }
+      >
+        Click me
+      </Button>
+      <Button
+        onClick={() =>
+          dispatch(
+            addNotification({
+              message: 'Lorem ipsum costam costam nwm!',
+              type: 'warning',
+              onClose: () => console.log('I was closed'),
+            })
+          )
+        }
+      >
+        Dont Click me
+      </Button>
       {goalsWithHabits?.map((goal) => (
         <div
           className="flex flex-col gap-3 shadow-md p-4 rounded-md"

@@ -25,10 +25,10 @@ const buttonVariants = cva('py-2 px-4 shadow-md rounded-md font-semibold', {
       true: 'opacity-50',
       false: '',
     },
-    defaultVariants: {
-      intent: 'primary',
-      disabled: false,
-    },
+  },
+  defaultVariants: {
+    intent: 'primary',
+    disabled: false,
   },
 });
 export default Button;
