@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import { notFound } from './middleware/errorMiddleware';
 import { errorHandler } from './middleware/errorMiddleware';
 import cors from 'cors';
+import globalErrorHandler from './middleware/globalErrorHandler';
 
 dotenv.config();
 
@@ -36,8 +37,9 @@ app.use('/api/habits', habitRoutes);
 app.use('/api/work-sessions', workSessionRoutes);
 app.use('/api/goals', goalRoutes);
 
-app.use(notFound);
-app.use(errorHandler);
+//app.use(notFound);
+app.use('*', globalErrorHandler);
+//app.use(errorHandler);
 
 const port = process.env.PORT;
 
