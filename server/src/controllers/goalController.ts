@@ -1,25 +1,23 @@
 import { Request, Response } from 'express';
 import Goal, { IGoal } from '../models/goal';
 import asyncHandler from 'express-async-handler';
+import BadRequestError from '../errors/BadRequestError';
 
 // Controller function to create a new goal
-export const createGoal = async (req: Request, res: Response) => {
-  try {
-    const { habit, timeAmount, requiredTimeAmount, status, timeLimit, type } = req.body;
-    const userId = req?.user?._id;
+export const createGoal = asyncHandler(async (req: Request, res: Response) => {
+  const { habit, timeAmount, requiredTimeAmount, status, timeLimit, type } = req.body;
+  const userId = req?.user?._id;
 
-    const newGoal: IGoal = new Goal({ habit, timeAmount, requiredTimeAmount, status, timeLimit, type, user: userId });
-    await newGoal.save();
-    res.status(201).json(newGoal);
-  } catch (error: any) {
-    if (error.code === 11000) {
-      res.status(400).json({ message: 'A goal for this habit already exists' });
-    } else {
-      console.error('Error creating goal:', error);
-      res.status(500).json({ message: 'Failed to create goal' });
-    }
+  // Check if a goal for the given habit already exists for the user
+  const existingGoal = await Goal.findOne({ habit, user: userId });
+  if (existingGoal) {
+    throw new BadRequestError('A goal for this habit already exists');
   }
-};
+
+  const newGoal: IGoal = new Goal({ habit, timeAmount, requiredTimeAmount, status, timeLimit, type, user: userId });
+  await newGoal.save();
+  res.status(201).json(newGoal);
+});
 
 // Controller function to get all goals
 export const getGoals = async (req: Request, res: Response) => {

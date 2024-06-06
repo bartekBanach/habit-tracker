@@ -3,6 +3,7 @@ import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import generateRefreshToken from '../utils/generateRefreshToken';
+import AuthenticationError from '../errors/AuthenthicationError';
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -94,51 +95,48 @@ const logoutUser = (req: Request, res: Response) => {
   res.json({ message: 'Cookie cleared' });
 };
 
-const refresh = asyncHandler(async (req: Request, res: Response) => {
+const refresh = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const cookies = req.cookies;
+
   if (!cookies?.jwt) {
-    res.status(401);
-    throw new Error('Not authorized, no token');
+    throw new AuthenticationError('Not authorized, no token');
   }
 
   const refreshToken = cookies.jwt;
+  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as { userId: string };
+  const user = await User.findById(decoded.userId).select('-password');
 
-  try {
-    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as { userId: string };
-    const user = await User.findById(decoded.userId).select('-password');
-
-    if (!user) {
-      res.status(401);
-      throw new Error('Unauthorized');
-    }
-    const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-      },
-      process.env.ACCESS_TOKEN_SECRET as string,
-      { expiresIn: '10s' },
-    );
-
-    res.json({ accessToken });
-  } catch (error) {
-    res.status(401);
-    throw new Error('Not authorized, invalid token');
+  if (!user) {
+    throw new AuthenticationError('Unauthorized');
   }
+
+  const accessToken = jwt.sign(
+    {
+      UserInfo: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    },
+    process.env.ACCESS_TOKEN_SECRET as string,
+    { expiresIn: '10s' },
+  );
+
+  res.json({ accessToken });
 });
 
-const getProfile = (req: Request, res: Response) => {
-  if (req.user) {
-    const user = {
-      _id: req.user._id,
-      username: req.user.username,
-      email: req.user.email,
-    };
-    res.status(200).json(user);
+const getProfile = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  if (!req.user) {
+    throw new AuthenticationError('User not authenticated');
   }
-};
+
+  const user = {
+    _id: req.user._id,
+    username: req.user.username,
+    email: req.user.email,
+  };
+
+  res.status(200).json(user);
+});
 
 export { loginUser, logoutUser, registerUser, getProfile, refresh };

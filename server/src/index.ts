@@ -6,14 +6,13 @@ import goalRoutes from './routes/goalRoutes';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
-import { notFound } from './middleware/errorMiddleware';
-import { errorHandler } from './middleware/errorMiddleware';
 import cors from 'cors';
 import globalErrorHandler from './middleware/globalErrorHandler';
 
 dotenv.config();
 
 const app = express();
+
 app.use(
   cors({
     credentials: true,
@@ -21,28 +20,26 @@ app.use(
   }),
 );
 
-//db connection
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database connection
 mongoose
   .connect(process.env.MONGO_URL as string)
   .then(() => console.log('Connected to db.'))
   .catch((err) => console.log('Error connecting to db.', err));
 
-//middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/work-sessions', workSessionRoutes);
 app.use('/api/goals', goalRoutes);
 
-//app.use(notFound);
-app.use('*', globalErrorHandler);
-//app.use(errorHandler);
+// Error handling middleware should be the last middleware
+app.use(globalErrorHandler);
 
 const port = process.env.PORT;
-
 app.listen(port, () => {
   return console.log(`Express server is listening at http://localhost:${port} 🚀`);
 });
