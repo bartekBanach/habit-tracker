@@ -103,11 +103,11 @@ const refresh = asyncHandler(async (req: Request, res: Response): Promise<void> 
   }
 
   const refreshToken = cookies.jwt;
-  const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as { userId: string };
-  const user = await User.findById(decoded.userId).select('-password');
+  const decoded = verifyRefreshToken(refreshToken);
+  const user = await User.findById(decoded.userId);
 
   if (!user) {
-    throw new AuthenticationError('Unauthorized');
+    throw new AuthenticationError('User not found');
   }
 
   const accessToken = jwt.sign(
@@ -124,6 +124,16 @@ const refresh = asyncHandler(async (req: Request, res: Response): Promise<void> 
 
   res.json({ accessToken });
 });
+
+function verifyRefreshToken(refreshToken: string): { userId: string } {
+  try {
+    return jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET as string) as { userId: string };
+  } catch (error) {
+    throw new AuthenticationError('Invalid or expired refresh token');
+  }
+}
+
+export default verifyRefreshToken;
 
 const getProfile = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   if (!req.user) {

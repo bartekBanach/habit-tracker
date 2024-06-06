@@ -1,9 +1,9 @@
-import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import { NextFunction, Response } from 'express';
 import { Request } from 'express';
 import User from '../models/user';
 import AuthenticationError from '../errors/AuthenthicationError';
+import jwt from 'jsonwebtoken';
 
 interface UserInfo {
   _id: string;
@@ -25,15 +25,22 @@ const verifyJWT = asyncHandler(async (req: Request, res: Response, next: NextFun
   }
 
   const token = authHeader.split(' ')[1];
+  const decoded = verifyAccessToken(token);
 
-  const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string) as AccessJWTPayload;
   req.user = await User.findById(decoded.UserInfo._id).select('-password');
 
   if (!req.user) {
     throw new AuthenticationError('Not authorized, invalid token');
   }
-
   next();
 });
+
+function verifyAccessToken(token: string): AccessJWTPayload {
+  try {
+    return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET as string) as AccessJWTPayload;
+  } catch (error) {
+    throw new AuthenticationError('Invalid or expired access token');
+  }
+}
 
 export { verifyJWT };

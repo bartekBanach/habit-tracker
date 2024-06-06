@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import CustomError from '../errors/CustomError';
 
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error in middleware:', err, res.statusCode);
+  console.error('Error in error handling middleware:', err, 'status', res.statusCode);
 
   if (err instanceof CustomError) {
     return res.status(err.errorCode).json({ errors: err.serializeErrors() });
