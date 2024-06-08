@@ -1,12 +1,8 @@
 import { useSelector } from 'react-redux';
 import { selectHabitsByUser } from '../habits/habitsApiSlice';
 import { useGetGoalsByUserQuery } from './goalsApiSlice';
-import ProgressBar from '../../components/ProgressBar/ProgressBar';
-import { intervalToDuration } from 'date-fns';
-import { IoMdRefresh } from 'react-icons/io';
-import { MdDelete } from 'react-icons/md';
+import GoalItem from './GoalItem';
 import { useDeleteGoalMutation } from './goalsApiSlice';
-import IconButton from '../../components/IconButton/IconButton';
 import Modal from '../../components/Modal/Modal';
 import Button from '../../components/Button/Button';
 import GoalForm from './GoalForm';
@@ -16,32 +12,12 @@ import { addNotification } from '../notifications/notifications.slice';
 import { useAddGoalMutation } from './goalsApiSlice';
 import getErrors from '../../utils/getErrors';
 
-const convertMillisecondsToDuration = (milliseconds: number) => {
-  const duration = intervalToDuration({ start: 0, end: milliseconds });
-  return {
-    hours: duration.hours,
-    minutes: duration.minutes,
-    seconds: duration.seconds,
-  };
-};
-
-const parseDurationString = (timeAmount: number): string => {
-  const { minutes, hours } = convertMillisecondsToDuration(timeAmount);
-  const hoursStr = hours ? `${hours.toString()}h` : '0h';
-  const minutesStr = minutes ? `${minutes?.toString()}m` : '';
-
-  const durationStr = `${hoursStr}${minutesStr}`;
-  return durationStr;
-};
-
 const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
   const [modalOpened, setModalOpened] = useState(false);
 
   const { data: goals } = useGetGoalsByUserQuery();
   const [deleteGoal] = useDeleteGoalMutation();
-  const [addGoal, error] = useAddGoalMutation();
-
   const dispatch = useAppDispatch();
 
   const habitDictionary = habits?.reduce(
@@ -88,35 +64,12 @@ const GoalsList = () => {
   return (
     <div className="flex flex-col gap-5">
       {goalsWithHabits?.map((goal) => (
-        <div
-          className="flex flex-col gap-3 shadow-md p-4 rounded-md"
+        <GoalItem
           key={goal._id}
-        >
-          <div>
-            <div className="flex flex-row gap-2 justify-center items-center">
-              <h3 className="text-center font-semibold text-l">
-                {goal.habitName}
-              </h3>
-              <IconButton onClick={handleRestart}>
-                <IoMdRefresh />
-              </IconButton>
-              <IconButton onClick={() => handleDelete(goal._id)}>
-                <MdDelete />
-              </IconButton>
-            </div>
-
-            <h4 className="text-center text-gray-500">
-              {goal.type} | {goal.status}
-            </h4>
-          </div>
-
-          <ProgressBar
-            color={goal.habitColor}
-            value={goal.timeAmount}
-            maxValue={goal.requiredTimeAmount}
-            label={`${parseDurationString(goal.timeAmount)}/${parseDurationString(goal.requiredTimeAmount)}`}
-          />
-        </div>
+          goal={goal}
+          onDelete={handleDelete}
+          onRestart={handleRestart}
+        />
       ))}
 
       <Modal

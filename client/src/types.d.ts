@@ -38,7 +38,7 @@ interface Goal {
   requiredTimeAmount: number;
   status: string;
   type: string;
-  _id?: string;
+  _id: string;
   __v?: number;
 }
 
