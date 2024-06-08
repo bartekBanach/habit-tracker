@@ -52,3 +52,15 @@ interface User {
   username: string;
   email: string;
 }
+
+interface BackendError {
+  message: string;
+  property?: string;
+}
+
+interface ErrorResponse {
+  data: {
+    errors: BackendError[];
+  };
+  status: number;
+}

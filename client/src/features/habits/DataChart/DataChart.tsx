@@ -39,7 +39,7 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
   const habitsSet = new Set<Habit>();
   const goal = useSelector(selectGoalByHabit(habitId));
 
-  const processedData: WorkSession[] = (data ?? []).flatMap(
+  const processedData: WorkSession[] = (data || []).flatMap(
     (workSession: WorkSession) => {
       const habit = habits?.find((h: Habit) => workSession.habit === h._id);
 

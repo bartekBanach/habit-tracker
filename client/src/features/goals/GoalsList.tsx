@@ -13,6 +13,8 @@ import GoalForm from './GoalForm';
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { addNotification } from '../notifications/notifications.slice';
+import { useAddGoalMutation } from './goalsApiSlice';
+import getErrors from '../../utils/getErrors';
 
 const convertMillisecondsToDuration = (milliseconds: number) => {
   const duration = intervalToDuration({ start: 0, end: milliseconds });
@@ -34,9 +36,11 @@ const parseDurationString = (timeAmount: number): string => {
 
 const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
+  const [modalOpened, setModalOpened] = useState(false);
+
   const { data: goals } = useGetGoalsByUserQuery();
   const [deleteGoal] = useDeleteGoalMutation();
-  const [modalOpened, setModalOpened] = useState(false);
+  const [addGoal, error] = useAddGoalMutation();
 
   const dispatch = useAppDispatch();
 
@@ -54,39 +58,35 @@ const GoalsList = () => {
   });
 
   const handleDelete = async (goalId: string) => {
-    await deleteGoal(goalId);
+    try {
+      await deleteGoal(goalId).unwrap();
+
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Goal deleted successfully!',
+        })
+      );
+    } catch (error: unknown) {
+      const errors = getErrors(error);
+      errors.forEach((err: BackendError) => {
+        dispatch(
+          addNotification({
+            type: 'error',
+            message: 'Failed to delete goal: ' + err.message,
+          })
+        );
+      });
+    }
   };
   const handleRestart = () => {};
 
+  const handleCreate = () => {
+    setModalOpened(false);
+  };
+
   return (
     <div className="flex flex-col gap-5">
-      <Button
-        onClick={() =>
-          dispatch(
-            addNotification({
-              message: 'Hello world!',
-              type: 'info',
-              onClose: () => console.log('I was closed'),
-              autoHideDuration: 6000,
-            })
-          )
-        }
-      >
-        Click me
-      </Button>
-      <Button
-        onClick={() =>
-          dispatch(
-            addNotification({
-              message: 'Lorem ipsum costam costam nwm!',
-              type: 'warning',
-              onClose: () => console.log('I was closed'),
-            })
-          )
-        }
-      >
-        Dont Click me
-      </Button>
       {goalsWithHabits?.map((goal) => (
         <div
           className="flex flex-col gap-3 shadow-md p-4 rounded-md"
@@ -124,7 +124,7 @@ const GoalsList = () => {
         isOpened={modalOpened}
         onClose={() => setModalOpened(false)}
       >
-        <GoalForm onSubmit={() => setModalOpened(false)} />
+        <GoalForm onSubmit={handleCreate} />
       </Modal>
       <Button onClick={() => setModalOpened(true)} intent="primary">
         New goal

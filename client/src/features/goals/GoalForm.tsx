@@ -8,6 +8,10 @@ import {
   hoursToMilliseconds,
 } from 'date-fns';
 import { useAddGoalMutation } from './goalsApiSlice';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../notifications/notifications.slice';
+import getErrors from '../../utils/getErrors';
+
 interface GoalFormProps {
   onSubmit: () => void;
 }
@@ -23,6 +27,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
   });
 
   const [addGoal] = useAddGoalMutation();
+  const dispatch = useDispatch();
 
   const handleHabitChange = (habit: string) => {
     setHabit(habit);
@@ -36,16 +41,35 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     e.preventDefault();
-    await addGoal({
-      habit,
-      status: 'in_progress',
-      type,
-      timeAmount: 0,
-      requiredTimeAmount:
-        hoursToMilliseconds(parseInt(hoursAmount)) +
-        minutesToMilliseconds(parseInt(minutesAmount)),
-      timeLimit,
-    });
+
+    try {
+      await addGoal({
+        habit,
+        status: 'in_progress',
+        type,
+        timeAmount: 0,
+        requiredTimeAmount:
+          hoursToMilliseconds(parseInt(hoursAmount)) +
+          minutesToMilliseconds(parseInt(minutesAmount)),
+        timeLimit,
+      }).unwrap();
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Goal created successfully!',
+        })
+      );
+    } catch (error: unknown) {
+      const errors = getErrors(error);
+      errors.forEach((err: BackendError) => {
+        dispatch(
+          addNotification({
+            type: 'error',
+            message: 'Failed to create goal: ' + err.message,
+          })
+        );
+      });
+    }
 
     setHoursAmount('0');
     setMinutesAmount('0');
@@ -58,11 +82,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
   return (
     <form onSubmit={handleSubmit}>
       <HabitSelect habitId={habit} onHabitChange={handleHabitChange} />
-      {/*<select>
-        <option>Week</option>
-        <option>Month</option>
-        <option>Year</option>
-  </select>*/}
+
       <div>
         <label htmlFor="end">End date</label>
         <input
