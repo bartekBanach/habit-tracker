@@ -1,6 +1,7 @@
 import express from 'express';
 import authRoutes from './routes/authRoutes';
 import workSessionRoutes from './routes/workSessionRoutes';
+import timerRoutes from './routes/timerRoutes';
 import habitRoutes from './routes/habitRoutes';
 import goalRoutes from './routes/goalRoutes';
 import mongoose from 'mongoose';
@@ -35,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/habits', habitRoutes);
 app.use('/api/work-sessions', workSessionRoutes);
 app.use('/api/goals', goalRoutes);
+app.use('/api/timers', timerRoutes);
 
 // Error handling middleware should be the last middleware
 app.use(globalErrorHandler);
