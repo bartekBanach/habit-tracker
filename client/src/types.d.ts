@@ -5,11 +5,17 @@ interface Duration {
 }
 
 interface Timer {
-  id: string;
-  habitId: string;
-  title: string;
+  _id: string;
+  habit: string;
+  user: string;
   duration: Duration;
-  color: string;
+  remainingTime: number;
+}
+
+interface NewTimer {
+  habit: string;
+  user: string;
+  duration: Duration;
 }
 
 interface NewHabit {
@@ -27,7 +33,7 @@ interface WorkSession {
   _id?: string;
   habit: string;
   timeDuration: number;
-  finishedAt: string;
+  finishedAt: Date;
   __v?: number;
 }
 

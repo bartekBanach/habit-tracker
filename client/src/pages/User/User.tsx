@@ -5,7 +5,7 @@ import GoalForm from '../../features/goals/GoalForm';
 import { useGetHabitsByUserQuery } from '../../features/habits/habitsApiSlice';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import { useSelector } from 'react-redux';
-import TimersList from '../../components/Timer/TimersList';
+import TimersList from '../../features/timers/components/TimersList';
 import HabitsStats from '../../features/habits/HabitsStats/HabitsStats';
 
 const User = () => {

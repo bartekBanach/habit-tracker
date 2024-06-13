@@ -63,8 +63,26 @@ export default function Timer({
   }, [isRunning]);
 
   useEffect(() => {
+    if (isRunning) {
+      const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        localStorage.setItem(`timer_${id}`, remainingTime.toString());
+        event.preventDefault();
+        // Standard message for most browsers
+        event.returnValue = '';
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+        localStorage.setItem(`timer_${id}`, remainingTime.toString());
+      };
+    }
+  }, [id, remainingTime, isRunning]);
+
+  /*useEffect(() => {
     localStorage.setItem(`timer_${id}`, remainingTime.toString());
-  }, [remainingTime, id]);
+  }, [remainingTime, id]);*/
 
   function calculateRemainingTime(duration: Duration) {
     const savedTime = localStorage.getItem(`timer_${id}`);
