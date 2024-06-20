@@ -1,7 +1,5 @@
-import HabitForm from '../../features/habits/HabitCreateForm';
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
 import GoalsList from '../../features/goals/GoalsList';
-import GoalForm from '../../features/goals/GoalForm';
 import { useGetHabitsByUserQuery } from '../../features/habits/habitsApiSlice';
 import { selectCurrentUser } from '../../features/auth/authSlice';
 import { useSelector } from 'react-redux';

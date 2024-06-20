@@ -3,19 +3,23 @@ import Button from '../../../components/Button/Button';
 import HabitSelect from '../../habits/HabitSelect';
 import { selectHabitById } from '../../habits/habitsApiSlice';
 import { useSelector } from 'react-redux';
-import { useCreateTimerMutation } from '../timersApiSlice';
-import { selectCurrentUser } from '../../auth/authSlice';
 
-export const TimerForm = () => {
+interface TimerFormProps {
+  onSubmit: (
+    habitId: string,
+    color: string,
+    duration: Duration
+  ) => Promise<void>;
+}
+
+export const TimerForm = ({ onSubmit }: TimerFormProps) => {
   const [selectedHabit, setSelectedHabit] = useState('');
   const habitItem = useSelector(selectHabitById(selectedHabit));
-  const [createTimer] = useCreateTimerMutation();
-  const { _id: userId } = useSelector(selectCurrentUser);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!habitItem || !userId) return;
+    if (!habitItem) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
     if (
@@ -25,23 +29,17 @@ export const TimerForm = () => {
     )
       return;
 
-    const newTimer = {
-      habit: selectedHabit,
-      user: userId,
-      color: habitItem.color,
-      duration: {
-        hours: parseInt(formData.get('hours') || '0', 10),
-        minutes: parseInt((formData.get('minutes') || '0') as string),
-        seconds: parseInt((formData.get('seconds') || '0') as string),
-      },
-    };
+    await onSubmit(selectedHabit, habitItem.color, {
+      hours: parseInt(formData.get('hours') || '0', 10),
+      minutes: parseInt((formData.get('minutes') || '0') as string),
+      seconds: parseInt((formData.get('seconds') || '0') as string),
+    });
 
-    await createTimer(newTimer);
     e.target.reset();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-7 p-5">
       <HabitSelect
         habitId={selectedHabit}
         onHabitChange={(habitId: string) => setSelectedHabit(habitId)}
