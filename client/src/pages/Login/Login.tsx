@@ -36,7 +36,8 @@ const Login = () => {
       };
 
       const decoded = jwtDecode(accessToken);
-      const { _id } = decoded;
+      const { _id } = decoded.UserInfo;
+      console.log('decoded access token', decoded);
 
       dispatch(setCredentials({ token: accessToken, email, _id }));
       setFormData({ email: '', password: '' });

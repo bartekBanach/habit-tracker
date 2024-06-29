@@ -32,6 +32,7 @@ export default function Timer({ timer }: TimerProps) {
   } = timer;
 
   const habit = useAppSelector(selectHabitById(habitId));
+  if (!habit) return <p>No habit</p>;
   const { color: habitColor, name: habitName } = habit;
 
   const [isRunning, setIsRunning] = useState(false);
@@ -61,7 +62,6 @@ export default function Timer({ timer }: TimerProps) {
 
   function getRemainingTime() {
     const savedTime = localStorage.getItem(`timer_${id}`);
-    console.log(savedTime);
 
     if (savedTime !== null && parseInt(savedTime) < remainingTimeDb) {
       /*await updateTimer({
@@ -108,7 +108,6 @@ export default function Timer({ timer }: TimerProps) {
       const handleBeforeUnload = (event: BeforeUnloadEvent) => {
         localStorage.setItem(`timer_${id}`, remainingTime.toString());
         event.preventDefault();
-        // Standard message for most browsers
         event.returnValue = '';
       };
 
@@ -121,6 +120,7 @@ export default function Timer({ timer }: TimerProps) {
     }
   }, [id, remainingTime, isRunning]);
 
+  if (!habit) return <>No matching habit!!!</>;
   if (habit)
     return (
       <div className="flex flex-col justify-center items-center border shadow-md py-6 px-7">

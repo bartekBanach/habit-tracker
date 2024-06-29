@@ -8,10 +8,10 @@ import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import { useState } from 'react';
 import { useCreateTimerMutation } from '../timersApiSlice';
-import Button from '../../../components/Button/Button';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser);
+  console.log('userid', userId);
   const { data: timers, isLoading, error } = useGetTimersByUserQuery(userId);
   const [createTimer] = useCreateTimerMutation();
   const [modalOpened, setModalOpened] = useState(false);
@@ -31,6 +31,8 @@ const TimersList = () => {
     await createTimer(newTimer);
     setModalOpened(false);
   };
+  console.log('timers', timers);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

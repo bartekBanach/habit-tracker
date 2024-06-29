@@ -9,7 +9,6 @@ import GoalForm from './GoalForm';
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { addNotification } from '../notifications/notifications.slice';
-import { useAddGoalMutation } from './goalsApiSlice';
 import getErrors from '../../utils/getErrors';
 
 const GoalsList = () => {
@@ -29,6 +28,11 @@ const GoalsList = () => {
   );
 
   const goalsWithHabits = goals?.map((goal) => {
+    console.log('GOAALS LIST', goals);
+    console.log('habitditct', habitDictionary);
+    if (!habitDictionary || !habitDictionary[goal.habit])
+      return { goal: 'none', habitName: 'None', habitColor: '#' };
+
     const { name: habitName, color: habitColor } = habitDictionary[goal.habit];
     return { ...goal, habitName, habitColor };
   });

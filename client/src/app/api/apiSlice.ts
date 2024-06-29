@@ -38,7 +38,6 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const { getState, dispatch } = api;
   let result = await baseQuery(args, api, extraOptions);
-  console.log(result.error);
   if (result.error && result.error.status === 401) {
     const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
 
@@ -66,3 +65,5 @@ export const apiSlice = createApi({
   endpoints: (builder) => ({}),
   tagTypes: ['Habits', 'WorkSessions', 'Goals', 'Timers'],
 });
+
+export const { resetApiState } = apiSlice.util;

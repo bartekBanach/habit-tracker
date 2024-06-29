@@ -70,3 +70,13 @@ interface ErrorResponse {
   };
   status: number;
 }
+
+interface UserInfo {
+  _id: string;
+  email: string;
+  username: string;
+}
+
+interface DecodedToken {
+  UserInfo: UserInfo;
+}

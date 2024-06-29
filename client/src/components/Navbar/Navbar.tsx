@@ -7,6 +7,7 @@ import { clearCredentials } from '../../features/auth/authSlice';
 import { useLogoutMutation } from '../../features/auth/authApiSlice';
 import { selectCurrentToken } from '../../features/auth/authSlice';
 import Button from '../Button/Button';
+import { resetApiState } from '../../app/api/apiSlice';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -20,8 +21,9 @@ const Navbar = () => {
   ) => {
     e.preventDefault();
     try {
-      await logout();
+      await logout({});
       dispatch(clearCredentials());
+      dispatch(resetApiState());
       navigate('/login');
     } catch (err) {
       console.log(err);
@@ -50,7 +52,9 @@ const Navbar = () => {
         </Link>
         {token && (
           <div>
-            <span>Logged as {user.email}</span>
+            <span>
+              Logged as {user.email} id: {user._id}
+            </span>
             <Button className="bg-red-500 text-white" onClick={handleLogout}>
               Logout
             </Button>
