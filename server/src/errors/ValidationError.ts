@@ -9,7 +9,7 @@ class ValidationError extends CustomError {
     private property: string,
   ) {
     super(message);
-    Object.setPrototypeOf(this, ValidationError);
+    Object.setPrototypeOf(this, ValidationError.prototype);
   }
 
   serializeErrors(): { message: string; property?: string | undefined }[] {

@@ -26,7 +26,6 @@ const verifyJWT = asyncHandler(async (req: Request, res: Response, next: NextFun
 
   const token = authHeader.split(' ')[1];
   const decoded = verifyAccessToken(token);
-  console.log('DECODED TOKEN\n', decoded.UserInfo._id);
 
   req.user = await User.findById(decoded.UserInfo._id).select('-password');
 

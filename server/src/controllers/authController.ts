@@ -4,25 +4,30 @@ import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
 import generateRefreshToken from '../utils/generateRefreshToken';
 import AuthenticationError from '../errors/AuthenthicationError';
+import ValidationError from '../errors/ValidationError';
+import AggregateError from '../errors/AggregateError';
 
 const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+[{\]};:'",/?]).{8,}$/;
+  const errors: ValidationError[] = [];
 
   if (!username) {
-    res.status(400);
-    throw new Error('Username is required.');
+    errors.push(new ValidationError('Username is required.', 'username'));
   }
   if (!passwordRegex.test(password)) {
-    res.status(400);
-    throw new Error('Password must be at least 8 characters long and contain at least one special character and one number');
+    errors.push(
+      new ValidationError('Password must be at least 8 characters long and contain at least one special character and one number', 'password'),
+    );
   }
-
   const userExists = await User.findOne({ email });
   if (userExists) {
-    res.status(400);
-    throw new Error('User already exists.');
+    errors.push(new ValidationError('User with this email already exists.', 'email'));
+  }
+
+  if (errors.length > 0) {
+    throw new AggregateError(errors);
   }
 
   const user = await User.create({
@@ -32,7 +37,7 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
   });
 
   if (user) {
-    const accessToken = jwt.sign(
+    /*const accessToken = jwt.sign(
       {
         UserInfo: {
           _id: user._id,
@@ -48,10 +53,11 @@ const registerUser = asyncHandler(async (req: Request, res: Response) => {
 
     res.status(201).json({
       accessToken,
-    });
+    });*/
+
+    res.status(201).json('User registered.');
   } else {
-    res.status(400);
-    throw new Error('Invalid user data');
+    throw new ValidationError('Invalid user data', '');
   }
 });
 

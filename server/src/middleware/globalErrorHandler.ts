@@ -5,9 +5,13 @@ import CustomError from '../errors/CustomError';
 
 const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error in error handling middleware:', err, 'status', res.statusCode);
+  console.log('constructor', err.constructor);
+  console.log('proto', Object.getPrototypeOf(err));
 
   if (err instanceof CustomError) {
     //return res.status(err.errorCode).json({ errors: err.serializeErrors() });
+    console.log('hell oworldldldl');
+
     return res.status(err.errorCode).json({ errors: err.serializeErrors() });
   }
 
