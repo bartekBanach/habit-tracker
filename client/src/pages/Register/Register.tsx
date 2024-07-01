@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Button from '../../components/Button/Button';
+import { useRegisterMutation } from '../../features/auth/authApiSlice';
+import getErrors from '../../utils/getErrors';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../../features/notifications/notifications.slice';
+import FormInput from '../../components/FormInput/FormInput';
+import useHandleErrors from '../../hooks/useHandleErrors';
 
 interface RegisterFormData {
   email: string;
   username: string;
   password: string;
+  confirmPassword: string;
 }
 
 const Register = () => {
@@ -13,12 +20,62 @@ const Register = () => {
     email: '',
     username: '',
     password: '',
+    confirmPassword: '',
   });
-  const [error, setError] = useState('');
+
+  const [register] = useRegisterMutation();
+  const handleErrors = useHandleErrors();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const inputs = [
+    {
+      id: 1,
+      name: 'email',
+      type: 'email',
+      placeholder: 'Email',
+      label: 'Email',
+      errorMessage: 'Email address must be valid!',
+      required: true,
+    },
+    {
+      id: 2,
+      name: 'username',
+      type: 'text',
+      placeholder: 'Username',
+      label: 'Username',
+      errorMessage: 'Username must be valid!',
+      required: true,
+    },
+    {
+      id: 3,
+      name: 'password',
+      type: 'password',
+      placeholder: 'Password',
+      label: 'Password',
+      errorMessage:
+        'Password should be 8-20 characters, contain at least 1 uppercase letter, 1 number and 1 special character!',
+      pattern:
+        // prettier-ignore
+        '(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}',
+      required: true,
+    },
+
+    {
+      id: 4,
+      name: 'confirmPassword',
+      type: 'password',
+      placeholder: 'Confirm Password',
+      label: 'Confirm Password',
+      errorMessage: 'Passwords must match!',
+      pattern: formData.password,
+      required: true,
+    },
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log(name, ':', value);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -28,60 +85,52 @@ const Register = () => {
     const { email, username, password } = formData;
 
     try {
-      const { data } = await axios.post('/api/auth/register', {
-        username,
-        email,
-        password,
-      });
+      await register({ email, username, password }).unwrap();
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'User registered successfuly',
+        })
+      );
 
-      if (data.error) {
-        setError(data.error as string);
-      } else {
-        setFormData({});
-        navigate('/login');
-      }
-    } catch (err) {
-      console.log(err);
+      navigate('/login');
+    } catch (error: unknown) {
+      /*const errors = getErrors(error);
+      errors.forEach((err: BackendError) => {
+        dispatch(
+          addNotification({
+            type: 'error',
+            message: err.message,
+          })
+        );
+      });*/
+      handleErrors(error);
+    } finally {
+      setFormData({
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: '',
+      });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <span>{error}</span>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-4/12 mx-auto"
+    >
+      <h2 className="text-3xl font-semibold">Register</h2>
+      {inputs.map((input) => (
+        <FormInput
+          key={input.id}
+          {...input}
+          value={formData[input.name]}
           onChange={handleChange}
-          required
         />
-      </div>
-      <div>
-        <label htmlFor="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <button type="submit">Register</button>
+      ))}
+
+      <Button type="submit">Register</Button>
     </form>
   );
 };

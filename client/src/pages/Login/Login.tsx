@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { setCredentials } from '../../features/auth/authSlice';
 import { useLoginMutation } from '../../features/auth/authApiSlice';
-import { useDispatch } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
-import Input from '../../components/Input/Input';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../../features/notifications/notifications.slice';
+import getErrors from '../../utils/getErrors';
+import FormInput from '../../components/FormInput/FormInput';
+import Button from '../../components/Button/Button';
+import useHandleErrors from '../../hooks/useHandleErrors';
 
 interface LoginFormData {
   email: string;
@@ -13,6 +17,7 @@ interface LoginFormData {
 
 const Login = () => {
   const navigate = useNavigate();
+  const handleErrors = useHandleErrors();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -20,6 +25,26 @@ const Login = () => {
 
   const [login, isLoading] = useLoginMutation();
   const dispatch = useDispatch();
+
+  const inputs = [
+    {
+      id: 1,
+      name: 'email',
+      type: 'email',
+      placeholder: 'Email',
+      label: 'Email',
+      required: true,
+    },
+
+    {
+      id: 3,
+      name: 'password',
+      type: 'password',
+      placeholder: 'Password',
+      label: 'Password',
+      required: true,
+    },
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -37,42 +62,46 @@ const Login = () => {
 
       const decoded = jwtDecode(accessToken);
       const { _id } = decoded.UserInfo;
-      console.log('decoded access token', decoded);
 
       dispatch(setCredentials({ token: accessToken, email, _id }));
       setFormData({ email: '', password: '' });
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Logged in successfully.',
+        })
+      );
       navigate('/');
-    } catch (err) {
-      console.log(err);
+    } catch (error: unknown) {
+      handleErrors(error);
+      /*const errors = getErrors(error);
+      errors.forEach((err: BackendError) => {
+        dispatch(
+          addNotification({
+            type: 'error',
+            message: err.message,
+          })
+        );
+      });*/
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Input id="test" label="login" placeholder="login"></Input>
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-4/12 mx-auto"
+    >
+      <h2 className="text-3xl font-semibold">Login</h2>
+      {inputs.map((input) => (
+        <FormInput
+          key={input.id}
+          {...input}
+          value={formData[input.name]}
           onChange={handleChange}
-          required
         />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <button type="submit">Login</button>
+      ))}
+
+      <Button type="submit">Login</Button>
     </form>
   );
 };

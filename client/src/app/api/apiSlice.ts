@@ -21,16 +21,6 @@ const baseQuery = fetchBaseQuery({
   },
 });
 
-interface UserInfo {
-  _id: string;
-  email: string;
-  username: string;
-}
-
-interface DecodedToken {
-  UserInfo: UserInfo;
-}
-
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,
   unknown,
