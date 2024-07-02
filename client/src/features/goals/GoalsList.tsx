@@ -28,8 +28,6 @@ const GoalsList = () => {
   );
 
   const goalsWithHabits = goals?.map((goal) => {
-    console.log('GOAALS LIST', goals);
-    console.log('habitditct', habitDictionary);
     if (!habitDictionary || !habitDictionary[goal.habit])
       return { goal: 'none', habitName: 'None', habitColor: '#' };
 

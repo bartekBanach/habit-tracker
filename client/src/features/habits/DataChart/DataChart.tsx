@@ -23,6 +23,7 @@ import {
 import { selectHabitsByUser } from '../habitsApiSlice';
 import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 
 type DayData = Record<string, number | string>;
 type AccumulatedData = Record<string, DayData>;
@@ -38,6 +39,7 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
   const habits = useSelector(selectHabitsByUser);
   const habitsSet = new Set<Habit>();
   const goal = useSelector(selectGoalByHabit(habitId));
+  let noData = false;
 
   const processedData: WorkSession[] = (data || []).flatMap(
     (workSession: WorkSession) => {
@@ -72,6 +74,7 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
     : {};
 
   const fillMissingWeekdays = (data: AccumulatedData): AccumulatedData => {
+    if (Object.keys(data).length === 0) noData = true;
     const currentWeekData: AccumulatedData = {};
     const daysAmount = Math.abs(differenceInDays(from, to));
 
@@ -121,66 +124,84 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
     }
   };
 
+  const getNextTimeUnitIncrement = (maxValue: number) => {
+    const maxValueInHours = millisecondsToHours(maxValue);
+    const hoursToAdd = Math.max(Math.floor(maxValueInHours / 5), 1);
+    return hoursToMilliseconds(maxValueInHours + hoursToAdd);
+  };
+
   if (chartData)
     return (
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          width={700}
-          height={300}
-          data={chartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-          barSize={40}
-        >
-          <Tooltip formatter={formatTime} />
-          <XAxis
-            dataKey="name"
-            scale="point"
-            padding={{ left: 30, right: 30 }}
-            tick={{ fill: '#6b7280' }}
-            tickFormatter={formatDate}
-          />
-          <YAxis
-            tick={{ fill: '#6b7280' }}
-            tickFormatter={formatTime}
-            type="number"
-            scale="time"
-            domain={['dataMin', `dataMax`]}
-            allowDataOverflow
-          />
-          <Legend />
-          <CartesianGrid />
+      <div className="relative w-full h-80">
+        {noData && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60 z-10">
+            <p className="text-xl font-semibold text-gray-400">
+              No data recorded for this period.
+            </p>
+          </div>
+        )}
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            width={700}
+            height={300}
+            data={chartData}
+            margin={{
+              top: 5,
+              right: 30,
+              left: 20,
+              bottom: 5,
+            }}
+            barSize={40}
+          >
+            <Tooltip formatter={formatTime} />
+            <XAxis
+              dataKey="name"
+              scale="point"
+              padding={{ left: 30, right: 30 }}
+              tick={{ fill: '#6b7280' }}
+              tickFormatter={formatDate}
+            />
+            <YAxis
+              tick={{ fill: '#6b7280' }}
+              tickFormatter={formatTime}
+              type="number"
+              scale="time"
+              domain={[
+                'dataMin',
+                (dataMax) => getNextTimeUnitIncrement(dataMax),
+              ]}
+              allowDataOverflow
+            />
+            <Legend />
+            <CartesianGrid />
 
-          {chartKeys.map((item) => (
-            <Bar
-              key={item._id}
-              dataKey={item.name}
-              stackId="a"
-              fill={item.color}
-            />
-          ))}
-          {goal && goal.type === 'daily' && (
-            <ReferenceLine
-              y={goal.requiredTimeAmount}
-              stroke="#3b82f6"
-              strokeWidth={3}
-              strokeDasharray="10 6"
-              label={{
-                value: `Daily Goal (${formatTime(goal.requiredTimeAmount)})`,
-                position: 'top',
-                fill: '#3b82f6',
-                fontSize: 14,
-                fontWeight: '600',
-                dy: -10,
-              }}
-            />
-          )}
-        </BarChart>
-      </ResponsiveContainer>
+            {chartKeys.map((item) => (
+              <Bar
+                key={item._id}
+                dataKey={item.name}
+                stackId="a"
+                fill={item.color}
+              />
+            ))}
+            {goal && goal.type === 'daily' && (
+              <ReferenceLine
+                y={goal.requiredTimeAmount}
+                stroke="#3b82f6"
+                strokeWidth={3}
+                strokeDasharray="10 6"
+                label={{
+                  value: `Daily Goal (${formatTime(goal.requiredTimeAmount)})`,
+                  position: 'top',
+                  fill: '#3b82f6',
+                  fontSize: 14,
+                  fontWeight: '600',
+                  dy: -10,
+                }}
+              />
+            )}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     );
 };
 

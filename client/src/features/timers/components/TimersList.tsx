@@ -11,7 +11,6 @@ import { useCreateTimerMutation } from '../timersApiSlice';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser);
-  console.log('userid', userId);
   const { data: timers, isLoading, error } = useGetTimersByUserQuery(userId);
   const [createTimer] = useCreateTimerMutation();
   const [modalOpened, setModalOpened] = useState(false);
@@ -31,7 +30,6 @@ const TimersList = () => {
     await createTimer(newTimer);
     setModalOpened(false);
   };
-  console.log('timers', timers);
 
   if (isLoading) {
     return <div>Loading...</div>;

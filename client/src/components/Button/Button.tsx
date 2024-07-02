@@ -10,6 +10,7 @@ const Button = ({ className, intent, disabled, ...props }: ButtonProps) => {
   return (
     <button
       className={cn(buttonVariants({ intent, disabled }), className)}
+      disabled={disabled}
       {...props}
     ></button>
   );

@@ -30,7 +30,7 @@ const Navbar = () => {
     }
   };
   return (
-    <nav className="text-black bg-gray-300 flex justify-between items-center px-4 py-4 sticky top-0 z-10">
+    <nav className="text-black bg-gray-300 flex justify-between items-center px-4 py-4 sticky top-0 z-50">
       <Link to="/">
         <div className="bg-yellow-300 text-black rounded-md px-4 py-2 shadow-md">
           <h1 className=" text-3xl">habitTracker</h1>

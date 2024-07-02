@@ -13,7 +13,6 @@ const HabitSelect = ({
   allHabitsOption = false,
 }: HabitSelectProps) => {
   const habits = useSelector(selectHabitsByUser);
-  console.log('habits', habits);
   if (habits)
     return (
       <select

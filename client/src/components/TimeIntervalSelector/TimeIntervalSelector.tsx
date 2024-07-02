@@ -1,6 +1,7 @@
 import React from 'react';
 import { format } from 'date-fns';
 import Button from '../Button/Button';
+import { isAfter, add } from 'date-fns';
 
 interface WeekSelectorProps {
   onWeekChange: (direction: string) => void;
@@ -22,22 +23,22 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
     onWeekChange(direction);
   };
   return (
-    <div>
+    <div className="flex gap-2 items-center">
       <Button
-        intent="secondary"
+        intent="primary"
         disabled={isDisabled}
         onClick={() => handleTimeIntervalChange('prev')}
       >
         Previous
       </Button>
 
-      <span>
+      <span className="text-md font-semibold">
         {formattedFrom} - {formattedTo}
       </span>
 
       <Button
-        intent="secondary"
-        disabled={isDisabled}
+        intent="primary"
+        disabled={isDisabled || isAfter(add(from, { weeks: 1 }), new Date())}
         onClick={() => handleTimeIntervalChange('next')}
       >
         Next{' '}
