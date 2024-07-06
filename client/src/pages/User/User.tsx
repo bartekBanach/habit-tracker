@@ -1,52 +1,83 @@
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
 import GoalsList from '../../features/goals/GoalsList';
-import { useGetHabitsByUserQuery } from '../../features/habits/habitsApiSlice';
-import { selectCurrentUser } from '../../features/auth/authSlice';
-import { useSelector } from 'react-redux';
 import TimersList from '../../features/timers/components/TimersList';
 import HabitsStats from '../../features/habits/HabitsStats/HabitsStats';
+import Button from '../../components/Button/Button';
+import { useState } from 'react';
 
 const User = () => {
-  const user = useSelector(selectCurrentUser);
-  const { data: habits, isLoading } = useGetHabitsByUserQuery();
-
-  if (isLoading) return <p>Loading.....</p>;
-
-  if (!user)
-    return (
-      <>
-        <p>No user</p>
-      </>
-    );
-
-  if (!habits)
-    return (
-      <>
-        <p>No habits</p>
-      </>
-    );
+  const [activeComponent, setActiveComponent] = useState('TimersList');
+  const options = [
+    {
+      id: 0,
+      label: 'Timers',
+      value: 'TimersList',
+      icon: '',
+    },
+    {
+      id: 3,
+      label: 'Habits',
+      value: 'HabitsList',
+      icon: '',
+    },
+    {
+      id: 1,
+      label: 'Goals',
+      value: 'GoalsList',
+      icon: '',
+    },
+    {
+      id: 2,
+      label: 'Stats',
+      value: 'HabitsStats',
+      icon: '',
+    },
+  ];
+  let mobileContent;
+  if (activeComponent === 'TimersList') mobileContent = <TimersList />;
+  else if (activeComponent === 'HabitsList') mobileContent = <HabitsList />;
+  else if (activeComponent === 'GoalsList') mobileContent = <GoalsList />;
+  else mobileContent = <HabitsStats />;
 
   return (
-    <div className="flex flex-col gap-10 p-10 ">
-      <HabitsStats />
+    <>
+      <div className="lg:hidden">
+        {mobileContent}
+        <div className="sticky bottom-0 z-10 my-3 bg-white p-2 w-full  flex gap-2 justify-center">
+          {options.map((option) => (
+            <Button
+              intent={
+                activeComponent === option.value ? 'primary' : 'secondary'
+              }
+              key={option.id}
+              onClick={() => setActiveComponent(option.value)}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+      </div>
 
-      <div className="grid grid-cols-5 gap-5">
-        {user && (
+      <div className="hidden lg:flex flex-col gap-10 p-10">
+        <HabitsStats />
+
+        <div className="grid grid-cols-5 gap-5">
           <aside className="col-span-1 flex flex-col gap-10">
             <h2 className="text-xl text-center font-semibold">My Habits</h2>
 
-            <HabitsList userId={user._id} />
+            <HabitsList />
           </aside>
-        )}
-        <main className="col-span-3 shadow-md p-10">
-          <TimersList />
-        </main>
-        <aside className="col-span-1 shadow-md p-5">
-          <h2 className="text-xl text-center font-semibold">My goals</h2>
-          <GoalsList />
-        </aside>
+
+          <main className="col-span-3 shadow-md p-10">
+            <TimersList />
+          </main>
+          <aside className="col-span-1 shadow-md p-5">
+            <h2 className="text-xl text-center font-semibold">My goals</h2>
+            <GoalsList />
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

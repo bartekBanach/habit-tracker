@@ -1,8 +1,6 @@
-import styles from './Home.module.css';
-
 const Home = () => {
   return (
-    <div className={styles.container}>
+    <div className="">
       <h1 className="text-3xl font-bold underline">Hello world</h1>
     </div>
   );

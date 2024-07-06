@@ -59,11 +59,10 @@ const TimersList = () => {
       {!timers || timers.length === 0 ? (
         <div>No timers found.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-7">
+        <div className="grid gap-7 grid-cols-1 sm:grid-cols-2">
           {timers.map((timer) => (
             <Timer key={timer._id} timer={timer} />
           ))}
-          <div className="border shadow-md p-5">Add new timer placeholder</div>
         </div>
       )}
     </div>

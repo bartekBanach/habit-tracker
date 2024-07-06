@@ -32,8 +32,9 @@ export default function Timer({ timer }: TimerProps) {
   } = timer;
 
   const habit = useAppSelector(selectHabitById(habitId));
-  if (!habit) return <p>No habit</p>;
-  const { color: habitColor, name: habitName } = habit;
+
+  const habitColor = habit?.color ?? '';
+  const habitName = habit?.name ?? '';
 
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(getRemainingTime());
