@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
+import { cn } from '../../utils/cn';
 
 interface IconButtonProps extends VariantProps<typeof iconButtonVariants> {
   onClick?: () => void;
@@ -37,6 +38,7 @@ const iconButtonVariants = cva(
 );
 
 const IconButton = ({
+  className,
   onClick,
   children,
   iconColor = 'text-gray-500',
@@ -48,7 +50,12 @@ const IconButton = ({
     <button
       type="button"
       onClick={onClick}
-      className={`${iconButtonVariants({ background, size, iconSize })} ${iconColor}`}
+      //className={`${iconButtonVariants({ background, size, iconSize })} ${iconColor} ${className}`}
+      className={cn(
+        iconButtonVariants({ background, size, iconSize }),
+        className,
+        iconColor
+      )}
     >
       {children}
     </button>
