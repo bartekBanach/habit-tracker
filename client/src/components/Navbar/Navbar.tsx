@@ -12,6 +12,14 @@ import IconButton from '../IconButton/IconButton';
 import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 
+interface NavLink {
+  id: number;
+  text: string;
+  to?: string;
+  type: 'link' | 'button' | 'span';
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,95 +42,58 @@ const Navbar = () => {
       console.log(err);
     }
   };
-  let navlinks;
-  let navlinksMobile;
-  if (user) {
-    navlinks = (
-      <>
-        <Link className="bg-white p-2 rounded-md shadow-md" to="/">
-          Home
-        </Link>
-        <Link className="bg-white p-2 rounded-md shadow-md" to="/user">
-          User
-        </Link>
-        <span>
-          Logged as {user.email} id: {user._id}
-        </span>
-        <Button className="bg-red-500 text-white" onClick={handleLogout}>
-          Logout
-        </Button>
-      </>
-    );
 
-    navlinksMobile = (
-      <>
-        <span className="bg-white text-center border p-4 w-full font-semibold">
-          Logged as {user.email} id: {user._id}
-        </span>
-        <Link
-          className="bg-white text-center border p-4 w-full"
-          to="/"
-          onClick={() => setIsOpen(false)}
-        >
-          Home
-        </Link>
-        <Link
-          className="bg-white text-center border p-4 w-full"
-          to="/user"
-          onClick={() => setIsOpen(false)}
-        >
-          User
-        </Link>
-        <Button
-          className="text-black bg-white w-full p-4"
-          onClick={handleLogout}
-        >
-          Logout
-        </Button>
-      </>
-    );
-  } else {
-    navlinks = (
-      <>
-        <Link className="bg-white p-2 rounded-md shadow-md" to="/">
-          Home
-        </Link>
-        <Link className="bg-white p-2 rounded-md shadow-md" to="/login">
-          Login
-        </Link>
-        <Link className="bg-white p-2 rounded-md shadow-md" to="/register">
-          Register
-        </Link>
-      </>
-    );
-    navlinksMobile = (
-      <>
-        <Link
-          className="bg-white text-center border p-4 w-full"
-          to="/"
-          onClick={() => setIsOpen(false)}
-        >
-          Home
-        </Link>
-        <>
+  const authLinks: NavLink[] = [
+    { id: 0, text: 'Home', to: '/', type: 'link' },
+    { id: 1, text: 'User', to: '/user', type: 'link' },
+    { id: 2, text: `Logged as ${user?.email} id: ${user?._id}`, type: 'span' },
+    { id: 3, text: 'Logout', type: 'button', onClick: handleLogout },
+  ];
+
+  const unauthLinks: NavLink[] = [
+    { id: 0, text: 'Home', to: '/', type: 'link' },
+    { id: 1, text: 'Login', to: '/login', type: 'link' },
+    { id: 2, text: 'Register', to: '/register', type: 'link' },
+  ];
+
+  const renderLinks = (links: NavLink[], isMobile = false) => {
+    return links.map((link, index) => {
+      if (link.type === 'link' && link.to) {
+        return (
           <Link
-            className="bg-white text-center border p-4 w-full"
-            to="/login"
-            onClick={() => setIsOpen(false)}
+            key={index}
+            className={`bg-white ${isMobile ? 'text-center border p-4 w-full' : 'p-2 rounded-md shadow-md'}`}
+            to={link.to}
+            onClick={() => isMobile && setIsOpen(false)}
           >
-            Login
+            {link.text}
           </Link>
-          <Link
-            className="bg-white text-center border p-4 w-full"
-            onClick={() => setIsOpen(false)}
-            to="/register"
+        );
+      }
+      if (link.type === 'button') {
+        return (
+          <Button
+            key={index}
+            className={`bg-red-500 text-white ${isMobile ? 'w-full p-4' : ''}`}
+            onClick={link.onClick}
           >
-            Register
-          </Link>
-        </>
-      </>
-    );
-  }
+            {link.text}
+          </Button>
+        );
+      }
+      if (link.type === 'span') {
+        return (
+          <span
+            key={index}
+            className={`${isMobile ? 'text-center border p-4 w-full font-semibold' : ''}`}
+          >
+            {link.text}
+          </span>
+        );
+      }
+      return null;
+    });
+  };
 
   return (
     <div className=" text-black bg-gray-300 w-full flex justify-between items-center px-4 py-4 sticky top-0 z-50">
@@ -141,11 +112,13 @@ const Navbar = () => {
       </IconButton>
       {isOpen && (
         <nav className="md:hidden absolute top-full left-0 w-full h-screen bg-white flex flex-col items-center">
-          {navlinksMobile}
+          {user ? renderLinks(authLinks, true) : renderLinks(unauthLinks, true)}
         </nav>
       )}
 
-      <nav className="hidden md:flex gap-5 items-center">{navlinks}</nav>
+      <nav className="hidden md:flex gap-5 items-center">
+        {user ? renderLinks(authLinks, false) : renderLinks(unauthLinks, false)}
+      </nav>
     </div>
   );
 };
