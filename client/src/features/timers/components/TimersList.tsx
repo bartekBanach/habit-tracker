@@ -40,7 +40,7 @@ const TimersList = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10 items-center">
+    <div className="flex flex-col gap-10 items-center py-5">
       <div className="flex flex-row gap-3 items-center">
         <h2 className="text-xl font-semibold">Timers list</h2>
         <IconButton onClick={() => setModalOpened(true)}>

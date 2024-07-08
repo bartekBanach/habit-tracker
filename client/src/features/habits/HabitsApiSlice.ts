@@ -27,7 +27,7 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
       query: (id) => {
         return { url: `/habits/${id}`, method: 'DELETE' };
       },
-      invalidatesTags: ['Habits', 'Goals'],
+      invalidatesTags: ['Habits', 'Goals', 'WorkSessions', 'Timers'],
     }),
   }),
 });

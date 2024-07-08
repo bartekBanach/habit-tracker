@@ -36,7 +36,7 @@ interface GoalWithHabit extends Goal {
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
   return (
-    <div className="flex flex-col gap-3 shadow-md p-4 rounded-md">
+    <div className="border border-gray-300 flex flex-col gap-3 shadow-md p-4 rounded-md">
       <div>
         <div className="flex flex-row gap-2 justify-center items-center">
           <h3 className="text-center font-semibold text-l">{goal.habitName}</h3>

@@ -14,12 +14,13 @@ const HabitForm = ({ onSubmit, habit }: HabitFormProps) => {
   const [color, setColor] = useState(habit?.color ?? '#FF8A65');
 
   const user: User | null = useSelector(selectCurrentUser);
-  if (!user) return;
+  //if (!user) return;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (habit) {
+      console.log(habit, 'habit present -editing');
       await onSubmit({ ...habit, name, color }, habit._id);
     } else {
       await onSubmit({ name, color, user: user._id });

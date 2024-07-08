@@ -10,6 +10,9 @@ import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
 import { addNotification } from '../notifications/notifications.slice';
 import getErrors from '../../utils/getErrors';
+import IconButton from '../../components/IconButton/IconButton';
+import { IoAdd } from 'react-icons/io5';
+import SectionHeader from '../../components/SectionHeader/SectionHeader';
 
 const GoalsList = () => {
   const habits = useSelector(selectHabitsByUser);
@@ -64,15 +67,22 @@ const GoalsList = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      {goalsWithHabits?.map((goal) => (
-        <GoalItem
-          key={goal._id}
-          goal={goal}
-          onDelete={handleDelete}
-          onRestart={handleRestart}
-        />
-      ))}
+    <div className=" border border-gray-300 rounded-md overflow-hidden shadow-md">
+      <SectionHeader text="My Goals">
+        <IconButton onClick={() => setModalOpened(true)}>
+          <IoAdd />
+        </IconButton>
+      </SectionHeader>
+      <div className="flex flex-col gap-5 p-5">
+        {goalsWithHabits?.map((goal) => (
+          <GoalItem
+            key={goal._id}
+            goal={goal}
+            onDelete={handleDelete}
+            onRestart={handleRestart}
+          />
+        ))}
+      </div>
 
       <Modal
         header="New goal"
@@ -81,9 +91,6 @@ const GoalsList = () => {
       >
         <GoalForm onSubmit={handleCreate} />
       </Modal>
-      <Button onClick={() => setModalOpened(true)} intent="primary">
-        New goal
-      </Button>
     </div>
   );
 };

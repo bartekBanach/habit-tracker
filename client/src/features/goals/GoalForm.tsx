@@ -80,7 +80,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
     setTimeLimit((prev) => ({ ...prev, endDate: e.target.value }));
   };
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3 items-center">
       <HabitSelect habitId={habit} onHabitChange={handleHabitChange} />
 
       <div>
@@ -94,7 +94,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
         ></input>
       </div>
       <div>
-        <label htmlFor="hours-amount">Hours amount</label>
+        <label htmlFor="hours-amount">Hours</label>
         <input
           className="border border-gray-300 rounded-md p-2"
           type="number"
@@ -102,7 +102,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
           value={hoursAmount}
           onChange={(e) => setHoursAmount(e.target.value)}
         ></input>
-        <label htmlFor="minutes-amount">Minutes amount</label>
+        <label htmlFor="minutes-amount">Minutes</label>
         <input
           className="border border-gray-300 rounded-md p-2"
           type="number"
@@ -111,25 +111,27 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
           onChange={(e) => setMinutesAmount(e.target.value)}
         ></input>
       </div>
-      <input
-        name="goal-type"
-        type="radio"
-        id="one-time"
-        value="one_time"
-        checked={type === 'one_time'}
-        onChange={handleTypeChange}
-      />
-      <label htmlFor="one-time">One time</label>
+      <div>
+        <input
+          name="goal-type"
+          type="radio"
+          id="one-time"
+          value="one_time"
+          checked={type === 'one_time'}
+          onChange={handleTypeChange}
+        />
+        <label htmlFor="one-time">One time</label>
 
-      <input
-        name="goal-type"
-        type="radio"
-        id="daily"
-        value="daily"
-        checked={type === 'daily'}
-        onChange={handleTypeChange}
-      />
-      <label htmlFor="daily">Daily goal</label>
+        <input
+          name="goal-type"
+          type="radio"
+          id="daily"
+          value="daily"
+          checked={type === 'daily'}
+          onChange={handleTypeChange}
+        />
+        <label htmlFor="daily">Daily goal</label>
+      </div>
 
       <Button intent="primary" type="submit">
         Add goal

@@ -42,8 +42,8 @@ const User = () => {
   return (
     <>
       <div className="lg:hidden">
-        {mobileContent}
-        <div className="sticky bottom-0 z-10 my-3 bg-white p-2 w-full  flex gap-2 justify-center">
+        <div className="min-h-screen">{mobileContent}</div>
+        <div className="sticky bottom-0 z-10 my-3 bg-white p-2 w-full flex gap-2 justify-center">
           {options.map((option) => (
             <Button
               intent={
@@ -62,17 +62,14 @@ const User = () => {
         <HabitsStats />
 
         <div className="grid grid-cols-5 gap-5">
-          <aside className="col-span-1 flex flex-col gap-10">
-            <h2 className="text-xl text-center font-semibold">My Habits</h2>
-
+          <aside className="col-span-1">
             <HabitsList />
           </aside>
 
           <main className="col-span-3 shadow-md p-10">
             <TimersList />
           </main>
-          <aside className="col-span-1 shadow-md p-5">
-            <h2 className="text-xl text-center font-semibold">My goals</h2>
+          <aside className="col-span-1">
             <GoalsList />
           </aside>
         </div>

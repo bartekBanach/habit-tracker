@@ -4,6 +4,8 @@ import { IGoal } from './goal';
 import WorkSession from './workSession';
 import Goal from './goal';
 
+import Timer from './timer';
+
 export interface IHabit extends Document {
   user: mongoose.Types.ObjectId;
   name: string;
@@ -40,9 +42,9 @@ habitSchema.post<IHabit>('findOneAndDelete', async function (doc: IHabit) {
     // Delete all work sessions and goals associated with this habit
     await WorkSession.deleteMany({ habit: doc._id });
     await Goal.deleteMany({ habit: doc._id });
+    await Timer.deleteMany({ habit: doc._id });
   } catch (error) {
     console.log(error);
-    //next(error:);
   }
 });
 
