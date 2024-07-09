@@ -98,7 +98,7 @@ const Navbar = () => {
   return (
     <div className=" text-black bg-gray-300 w-full flex justify-between items-center px-4 py-4 sticky top-0 z-50">
       <Link to="/">
-        <div className="bg-yellow-300 text-black rounded-md px-4 py-2 shadow-md">
+        <div className="bg-orange-500 text-white rounded-md px-4 py-2 shadow-md font-semibold">
           <h1 className=" text-3xl">habitTracker</h1>
         </div>
       </Link>
