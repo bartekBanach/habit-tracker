@@ -4,23 +4,25 @@ import Button from '../Button/Button';
 import { isAfter, add } from 'date-fns';
 
 interface WeekSelectorProps {
-  onWeekChange: (direction: string) => void;
+  onIntervalChange: (direction: string) => void;
   isDisabled: boolean;
   from: Date;
   to: Date;
+  formatting: string;
 }
 
 const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
-  onWeekChange,
+  onIntervalChange,
   isDisabled,
   from,
   to,
+  formatting,
 }) => {
-  const formattedFrom = format(from, 'MMM do');
-  const formattedTo = format(to, 'MMM do');
+  const formattedFrom = format(from, formatting);
+  const formattedTo = format(to, formatting);
 
   const handleTimeIntervalChange = (direction: 'prev' | 'next'): void => {
-    onWeekChange(direction);
+    onIntervalChange(direction);
   };
   return (
     <div className="flex gap-2 items-center">

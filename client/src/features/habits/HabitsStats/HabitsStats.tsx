@@ -8,24 +8,25 @@ import {
   endOfWeek,
   startOfMonth,
   endOfMonth,
+  startOfYear,
+  endOfYear,
   format,
   subWeeks,
   addWeeks,
   subMonths,
   addMonths,
+  subYears,
+  addYears,
 } from 'date-fns';
 import DataChart from '../DataChart/DataChart';
 import TimeIntervalSelector from '../../../components/TimeIntervalSelector/TimeIntervalSelector';
 
 const HabitsStats = () => {
   const habits = useSelector(selectHabitsByUser);
-
   const [selectedHabit, setSelectedHabit] = useState('');
-
   const [selectedTimeUnit, setSelectedTimeUnit] = useState('week');
   const { from: startOfTimePeriod, to: endOfTimePeriod } =
     getTimePeriod(selectedTimeUnit);
-
   const [fromDate, setFromDate] = useState<Date>(startOfTimePeriod);
   const [toDate, setToDate] = useState<Date>(endOfTimePeriod);
 
@@ -42,10 +43,14 @@ const HabitsStats = () => {
       newFromDate =
         direction === 'prev' ? subWeeks(fromDate, 1) : addWeeks(fromDate, 1);
       newToDate = endOfWeek(newFromDate);
-    } else {
+    } else if (selectedTimeUnit === 'month') {
       newFromDate =
         direction === 'prev' ? subMonths(fromDate, 1) : addMonths(fromDate, 1);
       newToDate = endOfMonth(newFromDate);
+    } else {
+      newFromDate =
+        direction === 'prev' ? subYears(fromDate, 1) : addYears(fromDate, 1);
+      newToDate = endOfYear(newFromDate);
     }
     setFromDate(newFromDate);
     setToDate(newToDate);
@@ -62,8 +67,10 @@ const HabitsStats = () => {
     const currentDate = new Date();
     if (timeUnit === 'week') {
       return { from: startOfWeek(currentDate), to: endOfWeek(currentDate) };
-    } else {
+    } else if (timeUnit === 'month') {
       return { from: startOfMonth(currentDate), to: endOfMonth(currentDate) };
+    } else {
+      return { from: startOfYear(currentDate), to: endOfYear(currentDate) };
     }
   }
 
@@ -107,16 +114,18 @@ const HabitsStats = () => {
         </div>
 
         <TimeIntervalSelector
-          onWeekChange={handleTimeIntervalChange}
+          onIntervalChange={handleTimeIntervalChange}
           from={fromDate}
           to={toDate}
           isDisabled={isLoading}
+          formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
         />
         <DataChart
           data={workSessions}
           from={fromDate}
           to={toDate}
           habitId={selectedHabit}
+          timeUnit={selectedTimeUnit}
         />
       </div>
     );

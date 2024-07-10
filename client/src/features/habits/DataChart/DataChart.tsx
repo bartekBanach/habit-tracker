@@ -8,22 +8,22 @@ import {
   Legend,
   ResponsiveContainer,
   ReferenceLine,
-  Line,
 } from 'recharts';
 import {
   format,
   startOfDay,
   addDays,
+  addMonths,
   millisecondsToHours,
-  intervalToDuration,
-  millisecondsToMinutes,
   differenceInDays,
+  differenceInMonths,
   hoursToMilliseconds,
+  startOfMonth,
 } from 'date-fns';
 import { selectHabitsByUser } from '../habitsApiSlice';
 import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { formatTime } from '../../../utils/timeUtils';
 
 type DayData = Record<string, number | string>;
 type AccumulatedData = Record<string, DayData>;
@@ -33,9 +33,10 @@ interface DataChartProps {
   from: Date;
   to: Date;
   habitId: string;
+  timeUnit: string;
 }
 
-const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
+const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
   const habits = useSelector(selectHabitsByUser);
   const habitsSet = new Set<Habit>();
   const goal = useSelector(selectGoalByHabit(habitId));
@@ -61,66 +62,73 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
 
   const accumulatedData = processedData
     ? processedData.reduce((acc: AccumulatedData, item: WorkSession) => {
-        const day = format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
+        const day =
+          timeUnit === 'year'
+            ? format(startOfMonth(item.finishedAt), 'MM/dd/yyyy')
+            : format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
         if (!acc[day]) {
           acc[day] = { name: day };
         }
         acc[day][item.habit] =
-          ((acc[day][item.habit] || 0) as number) +
-          //millisecondsToHours(item.timeDuration);
-          item.timeDuration;
+          ((acc[day][item.habit] || 0) as number) + item.timeDuration;
         return acc;
       }, {})
     : {};
 
-  const fillMissingWeekdays = (data: AccumulatedData): AccumulatedData => {
+  const fillMissingDays = (data: AccumulatedData): AccumulatedData => {
+    console.log('data to fill', data);
+
     if (Object.keys(data).length === 0) noData = true;
-    const currentWeekData: AccumulatedData = {};
+    const currentPeriodData: AccumulatedData = {};
     const daysAmount = Math.abs(differenceInDays(from, to));
 
-    for (let i = 0; i < daysAmount; i++) {
+    for (let i = 0; i <= daysAmount; i++) {
       const currentDate = addDays(from, i);
       const formattedDate = format(currentDate, 'MM/dd/yyyy');
 
       if (!data[formattedDate]) {
-        currentWeekData[formattedDate] = { name: formattedDate };
+        currentPeriodData[formattedDate] = { name: formattedDate };
       } else {
-        currentWeekData[formattedDate] = data[formattedDate];
+        currentPeriodData[formattedDate] = data[formattedDate];
       }
     }
-    return currentWeekData;
+    return currentPeriodData;
+  };
+
+  const fillMissingMonths = (data: AccumulatedData): AccumulatedData => {
+    if (Object.keys(data).length === 0) noData = true;
+    const currentPeriodData: AccumulatedData = {};
+    const monthsAmount = Math.abs(differenceInMonths(from, to));
+
+    for (let i = 0; i <= monthsAmount; i++) {
+      const currentDate = addMonths(from, i);
+      const formattedDate = format(currentDate, 'MM/dd/yyyy');
+
+      if (!data[formattedDate]) {
+        currentPeriodData[formattedDate] = { name: formattedDate };
+      } else {
+        currentPeriodData[formattedDate] = data[formattedDate];
+      }
+    }
+    return currentPeriodData;
   };
 
   const chartData: DayData[] = Object.values(
-    fillMissingWeekdays(accumulatedData)
+    timeUnit === 'year'
+      ? fillMissingMonths(accumulatedData)
+      : fillMissingDays(accumulatedData)
   );
 
   const chartKeys = Array.from(habitsSet);
 
-  const formatTime = (value: number) => {
-    const duration = intervalToDuration({ start: 0, end: value });
-
-    if (duration.hours && duration.minutes) {
-      return `${duration.hours}h ${duration.minutes}min`;
-    }
-    if (duration.hours) {
-      return `${duration.hours}h`;
-    }
-    if (duration.minutes) {
-      return `${duration.minutes}min`;
-    }
-    /*if (!duration.hours || duration.hours < 1) {
-      return `${duration.minutes}min`;
-    }*/
-    return '';
-  };
-
-  const formatDate = (date) => {
-    if (chartData.length <= 7) {
+  const formatDate = (date: string) => {
+    if (timeUnit === 'week') {
       const day = format(date, 'EEEE');
       return day;
-    } else {
+    } else if (timeUnit === 'month') {
       return format(date, 'dd/MM');
+    } else {
+      return format(date, 'MMMM');
     }
   };
 
@@ -153,7 +161,7 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
             }}
             barSize={40}
           >
-            <Tooltip formatter={formatTime} />
+            <Tooltip labelFormatter={formatDate} formatter={formatTime} />
             <XAxis
               dataKey="name"
               scale="point"
@@ -183,7 +191,7 @@ const DataChart = ({ data, from, to, habitId }: DataChartProps) => {
                 fill={item.color}
               />
             ))}
-            {goal && goal.type === 'daily' && (
+            {goal && goal.type === 'daily' && timeUnit !== 'year' && (
               <ReferenceLine
                 y={goal.requiredTimeAmount}
                 stroke="#3b82f6"

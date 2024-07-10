@@ -1,3 +1,5 @@
+import { intervalToDuration } from 'date-fns';
+
 function getHours(milliseconds: number) {
   const diffrenceInSeconds = Math.floor(milliseconds / 1000);
   return Math.floor(diffrenceInSeconds / 60 / 60);
@@ -27,10 +29,29 @@ const durationToMilliseconds = (duration: Duration): number => {
   );
 };
 
+const formatTime = (value: number) => {
+  const duration = intervalToDuration({ start: 0, end: value });
+
+  if (duration.hours && duration.minutes) {
+    return `${duration.hours}h ${duration.minutes}min`;
+  }
+  if (duration.hours) {
+    return `${duration.hours}h`;
+  }
+  if (duration.minutes) {
+    return `${duration.minutes}min`;
+  }
+  /*if (!duration.hours || duration.hours < 1) {
+    return `${duration.minutes}min`;
+  }*/
+  return '';
+};
+
 export {
   getHours,
   getMinutes,
   getSeconds,
   getMilliseconds,
   durationToMilliseconds,
+  formatTime,
 };
