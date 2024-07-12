@@ -26,9 +26,6 @@ export const updateTimer = asyncHandler(async (req: Request, res: Response) => {
     throw new NotFoundError('Timer not found');
   }
 
-  const updates = req.body.updates;
-  console.log('UPDATES ITEM', updates);
-  console.log(Object.assign(timer, updates));
   await timer.save();
 
   res.status(200).json(timer);

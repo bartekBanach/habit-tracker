@@ -13,9 +13,9 @@ router.use(
 );
 
 router.post('/', verifyJWT, createHabit);
-router.put('/:id', updateHabit);
+router.put('/:id', verifyJWT, updateHabit);
 router.get('/', verifyJWT, getAllHabits);
-router.get('/user', verifyJWT, getHabitsByUser);
+router.get('/user/:id', verifyJWT, getHabitsByUser);
 router.delete('/:id', verifyJWT, deleteHabit);
 router.delete('/delete-all', deleteAllHabits);
 

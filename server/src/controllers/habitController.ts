@@ -1,94 +1,89 @@
 import { Request, Response } from 'express';
 import Habit, { IHabit } from '../models/habit';
 import asyncHandler from 'express-async-handler';
+import NotFoundError from '../errors/NotFoundError';
+import BadRequestError from '../errors/BadRequestError';
+import DatabaseError from '../errors/DatabaseError';
 
-const getAllHabits = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const habits: IHabit[] = await Habit.find();
-    res.json(habits);
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'Failed to get habits', error: error.message });
-    }
-  }
-};
-
-const getHabitsByUser = asyncHandler(async (req: Request, res: Response) => {
-  const userId = req?.user?._id;
-  const habits: IHabit[] = await Habit.find({ user: userId });
+const getAllHabits = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const habits: IHabit[] = await Habit.find();
+  if (!habits) throw new NotFoundError('No habits found');
   res.json(habits);
 });
 
-const createHabit = async (req: Request, res: Response): Promise<void> => {
-  const { name, category, user, color } = req.body;
+const getHabitsByUser = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.params.id;
 
+  const habits: IHabit[] = await Habit.find({ user: userId });
+  if (!habits) throw new NotFoundError('No habits found for this user.');
+  res.json(habits);
+});
+
+const createHabit = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const { name, user, color } = req.body;
+  if (!name || !user || !color) {
+    throw new BadRequestError('Missing required fields');
+  }
   try {
-    const habit: IHabit = new Habit({ name, category, user, color });
+    const habit: IHabit = new Habit({ name, user, color });
     await habit.save();
     res.status(201).json({ message: 'Habit created successfully', habit });
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'Failed to create habit', error: error.message });
-    }
+    throw new DatabaseError('Failed to create new habit.');
   }
-};
+});
 
 const updateHabit = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, category, color } = req.body.habit;
+  const { name, color } = req.body.habit;
 
+  if (!id) {
+    throw new BadRequestError('ID parameter is missing');
+  }
+
+  const habit: IHabit | null = await Habit.findById(id);
+
+  if (!habit) {
+    throw new NotFoundError('Habit not found');
+  }
+
+  habit.name = name || habit.name;
+  habit.color = color || habit.color;
   try {
-    const habit: IHabit | null = await Habit.findById(id);
-
-    if (!habit) {
-      res.status(404).json({ message: 'Habit not found' });
-      return;
-    }
-    console.log(req.body);
-
-    habit.name = name || habit.name;
-    habit.category = category || habit.category;
-    habit.color = color || habit.color;
-
     await habit.save();
     res.json({ message: 'Habit updated successfully', habit });
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'Failed to update habit', error: error.message });
-    }
+    throw new DatabaseError('Failed to update habit.');
   }
 });
 
 const deleteHabit = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
 
+  if (!id) {
+    throw new BadRequestError('ID parameter is missing');
+  }
+
+  const habit: IHabit | null = await Habit.findById(id);
+
+  if (!habit) {
+    throw new NotFoundError('Habit not found.');
+  }
+
   try {
-    const habit: IHabit | null = await Habit.findById(id);
-
-    if (!habit) {
-      res.status(404).json({ message: 'Habit not found' });
-      return;
-    }
-
-    //await Habit.deleteOne({ _id: id });
     await Habit.findOneAndDelete({ _id: id });
     res.json({ message: 'Habit deleted successfully' });
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'Failed to delete habit', error: error.message });
-    }
+    throw new DatabaseError('Failed to delete habit');
   }
 });
 
 const deleteAllHabits = asyncHandler(async (req: Request, res: Response) => {
   try {
-    // Delete all habits
     await Habit.deleteMany({});
     res.json({ message: 'All habits deleted successfully' });
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: 'Failed to delete habits', error: error.message });
-    }
+    throw new DatabaseError('Failed to delete habits');
   }
 });
 export { getAllHabits, getHabitsByUser, createHabit, updateHabit, deleteHabit, deleteAllHabits };

@@ -4,6 +4,7 @@ import workSessionRoutes from './routes/workSessionRoutes';
 import timerRoutes from './routes/timerRoutes';
 import habitRoutes from './routes/habitRoutes';
 import goalRoutes from './routes/goalRoutes';
+import meRoutes from './routes/meRoutes';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -33,7 +34,9 @@ mongoose
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/me', meRoutes);
 app.use('/api/habits', habitRoutes);
+
 app.use('/api/work-sessions', workSessionRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/timers', timerRoutes);
