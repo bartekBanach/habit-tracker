@@ -1,10 +1,7 @@
-import { useSelector } from 'react-redux';
-import { selectHabitsByUser } from '../habits/habitsApiSlice';
 import { useGetGoalsByUserQuery } from './goalsApiSlice';
 import GoalItem from './GoalItem';
 import { useDeleteGoalMutation } from './goalsApiSlice';
 import Modal from '../../components/Modal/Modal';
-import Button from '../../components/Button/Button';
 import GoalForm from './GoalForm';
 import { useState } from 'react';
 import { useAppDispatch } from '../../app/hooks';
@@ -13,9 +10,11 @@ import getErrors from '../../utils/getErrors';
 import IconButton from '../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import SectionHeader from '../../components/SectionHeader/SectionHeader';
+import { useGetUserHabitsQuery } from '../habits/habitsApiSlice';
 
 const GoalsList = () => {
-  const habits = useSelector(selectHabitsByUser);
+  const { data: habits } = useGetUserHabitsQuery();
+
   const [modalOpened, setModalOpened] = useState(false);
 
   const { data: goals } = useGetGoalsByUserQuery();

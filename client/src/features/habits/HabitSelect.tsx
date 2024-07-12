@@ -1,5 +1,4 @@
-import { selectHabitsByUser } from './habitsApiSlice';
-import { useSelector } from 'react-redux';
+import { useGetUserHabitsQuery } from './habitsApiSlice';
 
 interface HabitSelectProps {
   habitId: string;
@@ -12,7 +11,8 @@ const HabitSelect = ({
   onHabitChange,
   allHabitsOption = false,
 }: HabitSelectProps) => {
-  const habits = useSelector(selectHabitsByUser);
+  const { data: habits } = useGetUserHabitsQuery();
+
   if (habits)
     return (
       <select

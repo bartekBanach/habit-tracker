@@ -24,6 +24,7 @@ import { selectHabitsByUser } from '../habitsApiSlice';
 import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
 import { formatTime } from '../../../utils/timeUtils';
+import { useGetUserHabitsQuery } from '../habitsApiSlice';
 
 type DayData = Record<string, number | string>;
 type AccumulatedData = Record<string, DayData>;
@@ -37,12 +38,12 @@ interface DataChartProps {
 }
 
 const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
-  const habits = useSelector(selectHabitsByUser);
+  const { data: habits } = useGetUserHabitsQuery();
   const habitsSet = new Set<Habit>();
   const goal = useSelector(selectGoalByHabit(habitId));
   let noData = false;
 
-  const processedData: WorkSession[] = (data || []).flatMap(
+  const processedData: WorkSession[] = (data ?? []).flatMap(
     (workSession: WorkSession) => {
       const habit = habits?.find((h: Habit) => workSession.habit === h._id);
 
@@ -76,8 +77,6 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
     : {};
 
   const fillMissingDays = (data: AccumulatedData): AccumulatedData => {
-    console.log('data to fill', data);
-
     if (Object.keys(data).length === 0) noData = true;
     const currentPeriodData: AccumulatedData = {};
     const daysAmount = Math.abs(differenceInDays(from, to));
@@ -176,7 +175,7 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
               scale="time"
               domain={[
                 'dataMin',
-                (dataMax) => getNextTimeUnitIncrement(dataMax),
+                (dataMax: number) => getNextTimeUnitIncrement(dataMax),
               ]}
               allowDataOverflow
             />

@@ -1,8 +1,8 @@
 import {
   useDeleteHabitMutation,
-  useGetHabitsByUserQuery,
   useUpdateHabitMutation,
   useAddHabitMutation,
+  useGetUserHabitsQuery,
 } from '../habitsApiSlice';
 import { FaEdit } from 'react-icons/fa';
 import Modal from '../../../components/Modal/Modal';
@@ -13,9 +13,12 @@ import Button from '../../../components/Button/Button';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import SectionHeader from '../../../components/SectionHeader/SectionHeader';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../../notifications/notifications.slice';
+import useHandleErrors from '../../../hooks/useHandleErrors';
 
 const HabitsList = () => {
-  const { data: habits } = useGetHabitsByUserQuery();
+  const { data: habits } = useGetUserHabitsQuery();
   const [habitModalOpened, setHabitModalOpened] = useState(false);
   const [deleteOpened, setDeleteOpened] = useState(false);
 
@@ -24,6 +27,8 @@ const HabitsList = () => {
   const [updateHabit] = useUpdateHabitMutation();
   const [deleteHabit] = useDeleteHabitMutation();
   const [addHabit] = useAddHabitMutation();
+  const dispatch = useDispatch();
+  const handleErrors = useHandleErrors();
 
   const handleEditModalClose = () => {
     setHabitModalOpened(false);
@@ -48,18 +53,51 @@ const HabitsList = () => {
   };
 
   const handleDeleteHabit = async (id: string) => {
-    await deleteHabit(id);
-    handleDeleteModalClose();
+    try {
+      await deleteHabit(id).unwrap();
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Habit deleted successfully!',
+        })
+      );
+    } catch (error) {
+      handleErrors(error);
+    } finally {
+      handleDeleteModalClose();
+    }
   };
 
   const handleUpdateHabit = async (habit: NewHabit, id: string) => {
-    await updateHabit({ id, habit });
-    handleEditModalClose();
+    try {
+      await updateHabit({ id, habit }).unwrap();
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Habit updated successfully!',
+        })
+      );
+    } catch (error) {
+      handleErrors(error);
+    } finally {
+      handleEditModalClose();
+    }
   };
 
   const handleCreateHabit = async (habit: NewHabit) => {
-    await addHabit(habit);
-    handleEditModalClose();
+    try {
+      await addHabit(habit).unwrap();
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Habit created successfully!',
+        })
+      );
+    } catch (error: unknown) {
+      handleErrors(error);
+    } finally {
+      handleEditModalClose();
+    }
   };
 
   if (habits)
@@ -72,6 +110,18 @@ const HabitsList = () => {
         </SectionHeader>
 
         <ul className="flex flex-col gap-2 shadow-md p-5">
+          {habits.length === 0 && (
+            <p className="text-lg text-gray-400">
+              No habits yet. Click{' '}
+              <span
+                className="text-blue-400 cursor-pointer"
+                onClick={() => handleEditModalOpen()}
+              >
+                here
+              </span>{' '}
+              to add your first habit.
+            </p>
+          )}
           {habits.map((item: Habit) => (
             <li
               className="flex justify-between items-center shadow-md text-white border rounded-md py-2 px-4 font-semibold"

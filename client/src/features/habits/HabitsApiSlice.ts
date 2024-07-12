@@ -8,7 +8,12 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
       providesTags: ['Habits'],
     }),
     getHabitsByUser: builder.query<Habit[], void>({
-      query: () => ({ url: `/habits/user` }),
+      //query: () => ({ url: `/habits/user` }),
+      query: () => ({ url: `/me/habits` }),
+      providesTags: ['Habits'],
+    }),
+    getUserHabits: builder.query<Habit[], void>({
+      query: () => ({ url: `/me/habits` }),
       providesTags: ['Habits'],
     }),
     addHabit: builder.mutation({
@@ -35,24 +40,22 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetHabitsQuery,
   useGetHabitsByUserQuery,
+  useGetUserHabitsQuery,
   useAddHabitMutation,
   useUpdateHabitMutation,
   useDeleteHabitMutation,
 } = habitsApiSlice;
 
-export const selectHabitsResult =
-  habitsApiSlice.endpoints.getHabitsByUser.select();
-
-export const selectGetHabitsByUserResult =
-  habitsApiSlice.endpoints.getHabitsByUser.select();
+export const selectGetUserHabitsResult =
+  habitsApiSlice.endpoints.getUserHabits.select();
 
 export const selectHabitsByUser = createSelector(
-  selectGetHabitsByUserResult,
+  selectGetUserHabitsResult,
   (habitsResult) => habitsResult.data
 );
 
 export const selectHabitById = (habitId: string) =>
-  createSelector(selectGetHabitsByUserResult, (habitsResult) => {
+  createSelector(selectGetUserHabitsResult, (habitsResult) => {
     if (habitsResult.data) {
       return habitsResult.data.find((habit) => habit._id === habitId);
     }
