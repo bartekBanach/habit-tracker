@@ -1,4 +1,3 @@
-import { useGetGoalsByUserQuery } from './goalsApiSlice';
 import GoalItem from './GoalItem';
 import { useDeleteGoalMutation } from './goalsApiSlice';
 import Modal from '../../components/Modal/Modal';
@@ -11,13 +10,14 @@ import IconButton from '../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import SectionHeader from '../../components/SectionHeader/SectionHeader';
 import { useGetUserHabitsQuery } from '../habits/habitsApiSlice';
+import { useGetUserGoalsQuery } from './goalsApiSlice';
 
 const GoalsList = () => {
   const { data: habits } = useGetUserHabitsQuery();
 
   const [modalOpened, setModalOpened] = useState(false);
 
-  const { data: goals } = useGetGoalsByUserQuery();
+  const { data: goals } = useGetUserGoalsQuery();
   const [deleteGoal] = useDeleteGoalMutation();
   const dispatch = useAppDispatch();
 

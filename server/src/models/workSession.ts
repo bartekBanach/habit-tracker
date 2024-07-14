@@ -7,12 +7,18 @@ export interface IWorkSession extends Document {
   habit: mongoose.Types.ObjectId;
   timeDuration: Number;
   finishedAt: Date;
+  user: mongoose.Types.ObjectId;
 }
 
 const workSessionSchema = new Schema({
   habit: {
     type: Schema.Types.ObjectId,
     ref: 'Habit',
+    required: true,
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
   },
   timeDuration: {

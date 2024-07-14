@@ -1,4 +1,5 @@
 import { useGetWorkSessionsByTimeQuery } from '../../workSessions/workSessionsApiSlice';
+import { useGetUserWorkSessionsQuery } from '../../workSessions/workSessionsApiSlice';
 import HabitSelect from '../HabitSelect';
 import { useState } from 'react';
 
@@ -28,11 +29,13 @@ const HabitsStats = () => {
   const [fromDate, setFromDate] = useState<Date>(startOfTimePeriod);
   const [toDate, setToDate] = useState<Date>(endOfTimePeriod);
 
-  const { data: workSessions, isLoading } = useGetWorkSessionsByTimeQuery({
+  const { data: workSessions, isLoading } = useGetUserWorkSessionsQuery({
     from: format(fromDate, 'MM/dd/yyyy'),
     to: format(toDate, 'MM/dd/yyyy'),
     habitId: selectedHabit,
   });
+
+  console.log(workSessions);
 
   const handleTimeIntervalChange = (direction: string) => {
     let newFromDate: Date;

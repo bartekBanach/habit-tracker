@@ -7,10 +7,11 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       query: () => ({ url: '/goals' }),
       providesTags: ['Goals'],
     }),
-    getGoalsByUser: builder.query<Goal[], void>({
-      query: () => ({ url: `/goals/user` }),
+    getUserGoals: builder.query<Goal[], void>({
+      query: () => ({ url: `/me/goals` }),
       providesTags: ['Goals'],
     }),
+
     addGoal: builder.mutation({
       query: (goal: Goal) => {
         return { url: '/goals', method: 'POST', body: goal };
@@ -29,24 +30,21 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetGoalsQuery,
-  useGetGoalsByUserQuery,
+  useGetUserGoalsQuery,
   useAddGoalMutation,
   useDeleteGoalMutation,
 } = goalsApiSlice;
 
-/*export const selectGoalsResult =
-  goalsApiSlice.endpoints.getGoalsByUser.select();*/
-
-export const selectGoalsByUserResult =
-  goalsApiSlice.endpoints.getGoalsByUser.select();
+export const selectUserGoalsResult =
+  goalsApiSlice.endpoints.getUserGoals.select();
 
 export const selectGoalsByUser = createSelector(
-  selectGoalsByUserResult,
+  selectUserGoalsResult,
   (goalsResult) => goalsResult.data
 );
 
 export const selectGoalById = (goalId: string) =>
-  createSelector(selectGoalsByUserResult, (goalsResult) => {
+  createSelector(selectUserGoalsResult, (goalsResult) => {
     if (goalsResult.data) {
       return goalsResult.data.find((goal) => goal._id === goalId);
     }
@@ -54,7 +52,7 @@ export const selectGoalById = (goalId: string) =>
   });
 
 export const selectGoalByHabit = (habitId: string) =>
-  createSelector(selectGoalsByUserResult, (goalsResult) => {
+  createSelector(selectUserGoalsResult, (goalsResult) => {
     if (goalsResult.data) {
       return goalsResult.data.find((goal) => goal.habit === habitId);
     }

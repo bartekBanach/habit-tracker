@@ -18,6 +18,7 @@ import { useUpdateTimerMutation } from '../timersApiSlice';
 import { selectHabitById } from '../../habits/habitsApiSlice';
 import { useDeleteTimerMutation } from '../timersApiSlice';
 import { useAppSelector } from '../../../app/hooks';
+import { selectCurrentUser } from '../../auth/authSlice';
 
 interface TimerProps {
   timer: Timer;
@@ -32,6 +33,7 @@ export default function Timer({ timer }: TimerProps) {
   } = timer;
 
   const habit = useAppSelector(selectHabitById(habitId));
+  const { _id: userId } = useAppSelector(selectCurrentUser);
 
   const habitColor = habit?.color ?? '';
   const habitName = habit?.name ?? '';
@@ -46,11 +48,13 @@ export default function Timer({ timer }: TimerProps) {
     setIsRunning(false);
     await addWorkSession({
       habit: habitId,
+      user: userId,
       timeDuration: durationToMilliseconds(duration) - remainingTime,
       finishedAt: new Date(),
     });
-    await deleteTimer(id);
-    localStorage.removeItem(`timer_${id}`);
+    await handleRestart();
+    /*await deleteTimer(id);
+    localStorage.removeItem(`timer_${id}`);*/
   };
 
   const updateRemainingTime = async (time: number) => {
@@ -65,10 +69,6 @@ export default function Timer({ timer }: TimerProps) {
     const savedTime = localStorage.getItem(`timer_${id}`);
 
     if (savedTime !== null && parseInt(savedTime) < remainingTimeDb) {
-      /*await updateTimer({
-        id,
-        updates: { ...timer, remainingTime: parseInt(savedTime) },
-      });*/
       return parseInt(savedTime);
     }
     return remainingTimeDb;

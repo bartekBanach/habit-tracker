@@ -6,12 +6,12 @@ import DatabaseError from '../errors/DatabaseError';
 import BadRequestError from '../errors/BadRequestError';
 
 const createWorkSession = asyncHandler(async (req: Request, res: Response) => {
-  const { habit, timeDuration } = req.body;
-  if (!habit || !timeDuration) {
+  const { habit, user, timeDuration } = req.body;
+  if (!habit || !timeDuration || !user) {
     throw new BadRequestError('Missing required fields');
   }
   try {
-    const workSession: IWorkSession = new WorkSession({ habit, timeDuration });
+    const workSession: IWorkSession = new WorkSession({ habit, timeDuration, user });
     await workSession.save();
     res.status(201).json({ message: 'Work Session created successfully', workSession });
   } catch (error) {

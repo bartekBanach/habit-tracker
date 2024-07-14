@@ -20,7 +20,6 @@ import {
   hoursToMilliseconds,
   startOfMonth,
 } from 'date-fns';
-import { selectHabitsByUser } from '../habitsApiSlice';
 import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
 import { formatTime } from '../../../utils/timeUtils';

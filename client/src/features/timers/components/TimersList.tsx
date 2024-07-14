@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import Timer from './Timer';
-import { useGetTimersByUserQuery } from '../timersApiSlice';
 import { selectCurrentUser } from '../../auth/authSlice';
 import Modal from '../../../components/Modal/Modal';
 import { TimerForm } from './TimerForm';
@@ -8,10 +7,12 @@ import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import { useState } from 'react';
 import { useCreateTimerMutation } from '../timersApiSlice';
+import { useGetUserTimersQuery } from '../timersApiSlice';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser);
-  const { data: timers, isLoading, error } = useGetTimersByUserQuery(userId);
+  const { data: timers, isLoading, error } = useGetUserTimersQuery({});
+
   const [createTimer] = useCreateTimerMutation();
   const [modalOpened, setModalOpened] = useState(false);
 

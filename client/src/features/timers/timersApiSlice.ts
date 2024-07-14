@@ -2,8 +2,8 @@ import { apiSlice } from '../../app/api/apiSlice';
 
 export const timersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getTimersByUser: builder.query({
-      query: (userId: string) => `timers/${userId}`,
+    getUserTimers: builder.query({
+      query: () => 'me/timers',
       providesTags: ['Timers'],
     }),
     createTimer: builder.mutation({
@@ -33,7 +33,7 @@ export const timersApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetTimersByUserQuery,
+  useGetUserTimersQuery,
   useCreateTimerMutation,
   useUpdateTimerMutation,
   useDeleteTimerMutation,
