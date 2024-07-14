@@ -41,7 +41,7 @@ const User = () => {
 
   return (
     <>
-      <div className="lg:hidden">
+      <div className="lg:hidden min-h-full">
         <div className="min-h-screen">{mobileContent}</div>
         <div className="sticky bottom-0 z-10 my-3 bg-white p-2 w-full flex gap-2 justify-center">
           {options.map((option) => (
@@ -58,15 +58,14 @@ const User = () => {
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-col gap-10 p-10">
+      <div className="hidden lg:flex flex-col gap-10 p-10 min-h-full">
         <HabitsStats />
 
         <div className="grid grid-cols-5 gap-5">
           <aside className="col-span-1">
             <HabitsList />
           </aside>
-
-          <main className="col-span-3 shadow-md p-10">
+          <main className="col-span-3">
             <TimersList />
           </main>
           <aside className="col-span-1">

@@ -8,6 +8,8 @@ import { IoAdd } from 'react-icons/io5';
 import { useState } from 'react';
 import { useCreateTimerMutation } from '../timersApiSlice';
 import { useGetUserTimersQuery } from '../timersApiSlice';
+import { RiTimerFill } from 'react-icons/ri';
+import SectionContainer from '../../../components/SectionContainer/SectionContainer';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser);
@@ -40,33 +42,46 @@ const TimersList = () => {
     return <div>Error loading timers.</div>;
   }
 
+  const headerContent = (
+    <>
+      <IconButton onClick={() => setModalOpened(true)}>
+        <IoAdd />
+      </IconButton>
+    </>
+  );
+
   return (
-    <div className="flex flex-col gap-10 items-center py-5">
-      <div className="flex flex-row gap-3 items-center">
-        <h2 className="text-xl font-semibold">Timers list</h2>
-        <IconButton onClick={() => setModalOpened(true)}>
-          <IoAdd />
-        </IconButton>
-      </div>
+    <SectionContainer headerText="Timers" headerChildren={headerContent}>
+      <div className="items-center border border-gray-300 rounded-md overflow-hidden shadow-md min-h-max">
+        <Modal
+          isOpened={modalOpened}
+          header="New Timer"
+          onClose={() => setModalOpened(false)}
+        >
+          <TimerForm onSubmit={handleNewTimer} />
+        </Modal>
 
-      <Modal
-        isOpened={modalOpened}
-        header="New Timer"
-        onClose={() => setModalOpened(false)}
-      >
-        <TimerForm onSubmit={handleNewTimer} />
-      </Modal>
-
-      {!timers || timers.length === 0 ? (
-        <div>No timers found.</div>
-      ) : (
-        <div className="grid gap-7 grid-cols-1 sm:grid-cols-2">
-          {timers.map((timer) => (
-            <Timer key={timer._id} timer={timer} />
-          ))}
+        <div className="p-10">
+          {!timers || timers.length === 0 ? (
+            <div className="flex flex-col items-center ">
+              <RiTimerFill className="text-5xl text-gray-500" />
+              <p className="text-2xl font-semibold">
+                {`You don't have any timers.`}
+              </p>
+              <p className="text-lg text-gray-400">
+                {`Press '+' to add new timer.`}
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 p-5">
+              {timers.map((timer) => (
+                <Timer key={timer._id} timer={timer} />
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </SectionContainer>
   );
 };
 

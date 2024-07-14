@@ -16,6 +16,7 @@ import SectionHeader from '../../../components/SectionHeader/SectionHeader';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../notifications/notifications.slice';
 import useHandleErrors from '../../../hooks/useHandleErrors';
+import SectionContainer from '../../../components/SectionContainer/SectionContainer';
 
 const HabitsList = () => {
   const { data: habits } = useGetUserHabitsQuery();
@@ -100,16 +101,17 @@ const HabitsList = () => {
     }
   };
 
+  const headerContent = (
+    <>
+      <IconButton onClick={() => handleEditModalOpen()}>
+        <IoAdd />
+      </IconButton>
+    </>
+  );
   if (habits)
     return (
-      <div className="border border-gray-300 rounded-md overflow-hidden shadow-md">
-        <SectionHeader text="My Habits">
-          <IconButton onClick={() => handleEditModalOpen()}>
-            <IoAdd />
-          </IconButton>
-        </SectionHeader>
-
-        <ul className="flex flex-col gap-2 shadow-md p-5">
+      <SectionContainer headerText="My Habits" headerChildren={headerContent}>
+        <ul className="flex flex-col gap-2 p-5">
           {habits.length === 0 && (
             <p className="text-lg text-gray-400">
               No habits yet. Click{' '}
@@ -187,7 +189,7 @@ const HabitsList = () => {
             </Modal>
           )}
         </ul>
-      </div>
+      </SectionContainer>
     );
 };
 

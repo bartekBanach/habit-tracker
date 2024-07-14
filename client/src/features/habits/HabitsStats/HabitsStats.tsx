@@ -1,7 +1,7 @@
-import { useGetWorkSessionsByTimeQuery } from '../../workSessions/workSessionsApiSlice';
 import { useGetUserWorkSessionsQuery } from '../../workSessions/workSessionsApiSlice';
 import HabitSelect from '../HabitSelect';
 import { useState } from 'react';
+import SectionContainer from '../../../components/SectionContainer/SectionContainer';
 
 import {
   startOfWeek,
@@ -75,59 +75,64 @@ const HabitsStats = () => {
     }
   }
 
-  return (
-    <div className="flex flex-col gap-1 items-center border border-gray-300 rounded-md shadow-md p-5 ">
-      <h2 className="text-2xl font-semibold">Habit stats</h2>
+  const headerContent = (
+    <>
       <HabitSelect
         habitId={selectedHabit}
         onHabitChange={(value) => setSelectedHabit(value)}
         allHabitsOption={true}
       />
+    </>
+  );
 
-      <div>
-        <input
-          type="radio"
-          id="week"
-          value="week"
-          checked={selectedTimeUnit === 'week'}
-          onChange={(e) => handleTimeUnitChange(e.target.value)}
-        />
-        <label htmlFor="week">Week</label>
+  return (
+    <SectionContainer headerText="Habit stats" headerChildren={headerContent}>
+      <div className="flex flex-col gap-1 items-center p-5 ">
+        <div>
+          <input
+            type="radio"
+            id="week"
+            value="week"
+            checked={selectedTimeUnit === 'week'}
+            onChange={(e) => handleTimeUnitChange(e.target.value)}
+          />
+          <label htmlFor="week">Week</label>
 
-        <input
-          type="radio"
-          id="month"
-          value="month"
-          checked={selectedTimeUnit === 'month'}
-          onChange={(e) => handleTimeUnitChange(e.target.value)}
-        />
-        <label htmlFor="month">Month</label>
+          <input
+            type="radio"
+            id="month"
+            value="month"
+            checked={selectedTimeUnit === 'month'}
+            onChange={(e) => handleTimeUnitChange(e.target.value)}
+          />
+          <label htmlFor="month">Month</label>
 
-        <input
-          type="radio"
-          id="year"
-          value="year"
-          checked={selectedTimeUnit === 'year'}
-          onChange={(e) => handleTimeUnitChange(e.target.value)}
+          <input
+            type="radio"
+            id="year"
+            value="year"
+            checked={selectedTimeUnit === 'year'}
+            onChange={(e) => handleTimeUnitChange(e.target.value)}
+          />
+          <label htmlFor="year">Year</label>
+        </div>
+
+        <TimeIntervalSelector
+          onIntervalChange={handleTimeIntervalChange}
+          from={fromDate}
+          to={toDate}
+          isDisabled={isLoading}
+          formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
         />
-        <label htmlFor="year">Year</label>
+        <DataChart
+          data={workSessions}
+          from={fromDate}
+          to={toDate}
+          habitId={selectedHabit}
+          timeUnit={selectedTimeUnit}
+        />
       </div>
-
-      <TimeIntervalSelector
-        onIntervalChange={handleTimeIntervalChange}
-        from={fromDate}
-        to={toDate}
-        isDisabled={isLoading}
-        formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
-      />
-      <DataChart
-        data={workSessions}
-        from={fromDate}
-        to={toDate}
-        habitId={selectedHabit}
-        timeUnit={selectedTimeUnit}
-      />
-    </div>
+    </SectionContainer>
   );
 };
 

@@ -4,6 +4,7 @@ import { useAddWorkSessionMutation } from '../../workSessions/workSessionsApiSli
 import IconButton from '../../../components/IconButton/IconButton';
 
 import { MdOutlineRestartAlt } from 'react-icons/md';
+import { IoClose } from 'react-icons/io5';
 
 import {
   getHours,
@@ -53,8 +54,6 @@ export default function Timer({ timer }: TimerProps) {
       finishedAt: new Date(),
     });
     await handleRestart();
-    /*await deleteTimer(id);
-    localStorage.removeItem(`timer_${id}`);*/
   };
 
   const updateRemainingTime = async (time: number) => {
@@ -77,6 +76,11 @@ export default function Timer({ timer }: TimerProps) {
   const handlePlayPause = async () => {
     setIsRunning((prev) => !prev);
     await updateRemainingTime(remainingTime);
+  };
+
+  const handleDelete = async (id: string) => {
+    await deleteTimer(id);
+    localStorage.removeItem(`timer_${id}`);
   };
 
   const handleRestart = async () => {
@@ -125,7 +129,12 @@ export default function Timer({ timer }: TimerProps) {
   if (habit)
     return (
       <div className="flex flex-col justify-center items-center border shadow-md py-6 px-7">
-        <h2 className="text-xl font-semibold">{habitName}</h2>
+        <h2 className="flex items-center gap-3 text-xl font-semibold">
+          {habitName}{' '}
+          <IconButton onClick={() => handleDelete(id)}>
+            <IoClose />
+          </IconButton>
+        </h2>
 
         <CircularProgressbar
           angle={(remainingTime / durationToMilliseconds(duration)) * 360}

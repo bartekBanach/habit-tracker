@@ -11,6 +11,7 @@ import { IoAdd } from 'react-icons/io5';
 import SectionHeader from '../../components/SectionHeader/SectionHeader';
 import { useGetUserHabitsQuery } from '../habits/habitsApiSlice';
 import { useGetUserGoalsQuery } from './goalsApiSlice';
+import SectionContainer from '../../components/SectionContainer/SectionContainer';
 
 const GoalsList = () => {
   const { data: habits } = useGetUserHabitsQuery();
@@ -65,14 +66,23 @@ const GoalsList = () => {
     setModalOpened(false);
   };
 
+  const headerContent = (
+    <>
+      <IconButton onClick={() => setModalOpened(true)}>
+        <IoAdd />
+      </IconButton>
+    </>
+  );
+  if (!goals) return;
+
   return (
-    <div className=" border border-gray-300 rounded-md overflow-hidden shadow-md">
-      <SectionHeader text="My Goals">
-        <IconButton onClick={() => setModalOpened(true)}>
-          <IoAdd />
-        </IconButton>
-      </SectionHeader>
+    <SectionContainer headerText="My Goals" headerChildren={headerContent}>
       <div className="flex flex-col gap-5 p-5">
+        {goals.length === 0 && (
+          <p className="text-lg text-gray-400">
+            No goals yet. Click {`'+'`} button to add your first habit.
+          </p>
+        )}
         {goalsWithHabits?.map((goal) => (
           <GoalItem
             key={goal._id}
@@ -90,7 +100,7 @@ const GoalsList = () => {
       >
         <GoalForm onSubmit={handleCreate} />
       </Modal>
-    </div>
+    </SectionContainer>
   );
 };
 
