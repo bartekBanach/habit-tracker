@@ -13,7 +13,7 @@ const SectionContainer = ({
   headerChildren,
 }: SectionContainerProps) => {
   return (
-    <div className="border border-gray-300 rounded-md overflow-hidden shadow-md">
+    <div className="border border-gray-300 rounded-md overflow-hidden shadow-md flex-grow md:flex-grow-0 min-h-full">
       <SectionHeader text={headerText}>{headerChildren}</SectionHeader>
       {children}
     </div>

@@ -23,9 +23,10 @@ import { selectCurrentUser } from '../../auth/authSlice';
 
 interface TimerProps {
   timer: Timer;
+  isEditing: boolean;
 }
 
-export default function Timer({ timer }: TimerProps) {
+export default function Timer({ timer, isEditing }: TimerProps) {
   const {
     _id: id,
     habit: habitId,
@@ -128,33 +129,48 @@ export default function Timer({ timer }: TimerProps) {
   if (!habit) return <>No matching habit!!!</>;
   if (habit)
     return (
-      <div className="flex flex-col justify-center items-center border shadow-md py-6 px-7">
-        <h2 className="flex items-center gap-3 text-xl font-semibold">
-          {habitName}{' '}
-          <IconButton onClick={() => handleDelete(id)}>
-            <IoClose />
-          </IconButton>
+      <div
+        className={`flex flex-col justify-center items-center border shadow-md py-6 px-7 `}
+      >
+        <h2
+          className={` relative w-full flex justify-center items-center jusitfy-center gap-3 text-xl font-semibold`}
+        >
+          {habitName}
+          {isEditing && (
+            <IconButton className="absolute top-0 right-0">
+              <IoClose onClick={() => handleDelete(id)} className="" />
+            </IconButton>
+          )}
         </h2>
 
-        <CircularProgressbar
-          angle={(remainingTime / durationToMilliseconds(duration)) * 360}
-          text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
-          color={habitColor}
-        />
-        <div className="flex flex-row justify-center items-center space-x-5">
-          <Button
-            onClick={() => handlePlayPause()}
-            disabled={remainingTime === 0}
-            type="button"
-          >
-            {isRunning ? 'Pause' : 'Start'}
-          </Button>
-          <Button disabled={isRunning} onClick={() => logTime()} type="button">
-            Save time
-          </Button>
-          <IconButton disabled={isRunning} onClick={handleRestart}>
-            <MdOutlineRestartAlt />
-          </IconButton>
+        <div className={`${isEditing && 'opacity-50'}`}>
+          <CircularProgressbar
+            angle={(remainingTime / durationToMilliseconds(duration)) * 360}
+            text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
+            color={habitColor}
+          />
+          <div className="flex flex-row justify-center items-center space-x-5">
+            <Button
+              onClick={() => handlePlayPause()}
+              disabled={remainingTime === 0 || isEditing}
+              type="button"
+            >
+              {isRunning ? 'Pause' : 'Start'}
+            </Button>
+            <Button
+              disabled={isRunning || isEditing}
+              onClick={() => logTime()}
+              type="button"
+            >
+              Save time
+            </Button>
+            <IconButton
+              disabled={isRunning || isEditing}
+              onClick={handleRestart}
+            >
+              <MdOutlineRestartAlt />
+            </IconButton>
+          </div>
         </div>
       </div>
     );

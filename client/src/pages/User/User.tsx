@@ -42,7 +42,7 @@ const User = () => {
   return (
     <>
       <div className="lg:hidden min-h-full">
-        <div className="min-h-screen">{mobileContent}</div>
+        <div className="min-h-screen flex flex-col">{mobileContent}</div>
         <div className="sticky bottom-0 z-10 my-3 bg-white p-2 w-full flex gap-2 justify-center">
           {options.map((option) => (
             <Button

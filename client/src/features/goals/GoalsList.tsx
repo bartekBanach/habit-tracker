@@ -80,7 +80,7 @@ const GoalsList = () => {
       <div className="flex flex-col gap-5 p-5">
         {goals.length === 0 && (
           <p className="text-lg text-gray-400">
-            No goals yet. Click {`'+'`} button to add your first habit.
+            No goals yet. Click {`'+'`} button to add your first goal.
           </p>
         )}
         {goalsWithHabits?.map((goal) => (

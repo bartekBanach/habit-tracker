@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button/Button';
 import { useRegisterMutation } from '../../features/auth/authApiSlice';
-import getErrors from '../../utils/getErrors';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../features/notifications/notifications.slice';
 import FormInput from '../../components/FormInput/FormInput';
@@ -95,15 +94,6 @@ const Register = () => {
 
       navigate('/login');
     } catch (error: unknown) {
-      /*const errors = getErrors(error);
-      errors.forEach((err: BackendError) => {
-        dispatch(
-          addNotification({
-            type: 'error',
-            message: err.message,
-          })
-        );
-      });*/
       handleErrors(error);
     } finally {
       setFormData({
@@ -117,7 +107,11 @@ const Register = () => {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => {
+        void (async () => {
+          await handleSubmit(e);
+        })();
+      }}
       className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-4/12 mx-auto"
     >
       <h2 className="text-3xl font-semibold">Register</h2>

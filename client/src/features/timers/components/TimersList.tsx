@@ -10,10 +10,14 @@ import { useCreateTimerMutation } from '../timersApiSlice';
 import { useGetUserTimersQuery } from '../timersApiSlice';
 import { RiTimerFill } from 'react-icons/ri';
 import SectionContainer from '../../../components/SectionContainer/SectionContainer';
+import { FiEdit2 } from 'react-icons/fi';
+import { IoMdCheckmark } from 'react-icons/io';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser);
   const { data: timers, isLoading, error } = useGetUserTimersQuery({});
+
+  const [isEditingList, setIsEditingList] = useState(false);
 
   const [createTimer] = useCreateTimerMutation();
   const [modalOpened, setModalOpened] = useState(false);
@@ -47,12 +51,21 @@ const TimersList = () => {
       <IconButton onClick={() => setModalOpened(true)}>
         <IoAdd />
       </IconButton>
+      {isEditingList ? (
+        <IconButton onClick={() => setIsEditingList((prev) => !prev)}>
+          <IoMdCheckmark />
+        </IconButton>
+      ) : (
+        <IconButton onClick={() => setIsEditingList((prev) => !prev)}>
+          <FiEdit2 />
+        </IconButton>
+      )}
     </>
   );
 
   return (
     <SectionContainer headerText="Timers" headerChildren={headerContent}>
-      <div className="items-center border border-gray-300 rounded-md overflow-hidden shadow-md min-h-max">
+      <div className="items-center border overflow-hidden min-h-max">
         <Modal
           isOpened={modalOpened}
           header="New Timer"
@@ -75,7 +88,11 @@ const TimersList = () => {
           ) : (
             <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 p-5">
               {timers.map((timer) => (
-                <Timer key={timer._id} timer={timer} />
+                <Timer
+                  key={timer._id}
+                  timer={timer}
+                  isEditing={isEditingList}
+                />
               ))}
             </div>
           )}

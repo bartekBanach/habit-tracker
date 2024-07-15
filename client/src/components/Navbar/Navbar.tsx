@@ -46,7 +46,7 @@ const Navbar = () => {
   const authLinks: NavLink[] = [
     { id: 0, text: 'Home', to: '/', type: 'link' },
     { id: 1, text: 'User', to: '/user', type: 'link' },
-    { id: 2, text: `Logged as ${user?.email} id: ${user?._id}`, type: 'span' },
+    { id: 2, text: `Logged as ${user?.email}`, type: 'span' },
     { id: 3, text: 'Logout', type: 'button', onClick: handleLogout },
   ];
 
@@ -85,7 +85,7 @@ const Navbar = () => {
         return (
           <span
             key={index}
-            className={`${isMobile ? 'text-center border p-4 w-full font-semibold' : ''}`}
+            className={`${isMobile ? 'text-center border p-4 w-full font-semibold' : 'font-semibold'}`}
           >
             {link.text}
           </span>
@@ -96,9 +96,9 @@ const Navbar = () => {
   };
 
   return (
-    <div className=" text-black bg-gray-300 w-full flex justify-between items-center px-4 py-4 sticky top-0 z-50">
+    <div className=" text-black bg-cyan-300 shadow-md w-full flex justify-between items-center px-4 py-4 sticky top-0 z-50">
       <Link to="/">
-        <div className="bg-orange-500 text-white rounded-md px-4 py-2 shadow-md font-semibold">
+        <div className="bg-orange-500 text-white rounded-md px-4 py-2 font-semibold">
           <h1 className=" text-3xl">habitTracker</h1>
         </div>
       </Link>
