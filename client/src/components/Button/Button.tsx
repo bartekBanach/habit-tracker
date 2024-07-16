@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
-type ButtonProps = React.HTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   intent?: 'primary' | 'secondary';
   disabled?: boolean;
 };

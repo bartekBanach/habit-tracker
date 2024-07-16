@@ -12,7 +12,6 @@ import { RiDeleteBin6Fill } from 'react-icons/ri';
 import Button from '../../../components/Button/Button';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
-import SectionHeader from '../../../components/SectionHeader/SectionHeader';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../notifications/notifications.slice';
 import useHandleErrors from '../../../hooks/useHandleErrors';

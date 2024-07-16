@@ -5,10 +5,10 @@ import { useLoginMutation } from '../../features/auth/authApiSlice';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../features/notifications/notifications.slice';
-import getErrors from '../../utils/getErrors';
 import FormInput from '../../components/FormInput/FormInput';
 import Button from '../../components/Button/Button';
 import useHandleErrors from '../../hooks/useHandleErrors';
+import Spinner from '../../components/Spinner/Spinner';
 
 interface LoginFormData {
   email: string;
@@ -23,12 +23,12 @@ const Login = () => {
     password: '',
   });
 
-  const [login, isLoading] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();
 
   const inputs = [
     {
-      id: 1,
+      id: '1',
       name: 'email',
       type: 'email',
       placeholder: 'Email',
@@ -37,7 +37,7 @@ const Login = () => {
     },
 
     {
-      id: 3,
+      id: '2',
       name: 'password',
       type: 'password',
       placeholder: 'Password',
@@ -60,7 +60,7 @@ const Login = () => {
         accessToken: string;
       };
 
-      const decoded = jwtDecode(accessToken);
+      const decoded: DecodedToken = jwtDecode(accessToken);
       const { _id } = decoded.UserInfo;
 
       dispatch(setCredentials({ token: accessToken, email, _id }));
@@ -74,35 +74,42 @@ const Login = () => {
       navigate('/');
     } catch (error: unknown) {
       handleErrors(error);
-      /*const errors = getErrors(error);
-      errors.forEach((err: BackendError) => {
-        dispatch(
-          addNotification({
-            type: 'error',
-            message: err.message,
-          })
-        );
-      });*/
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-4/12 mx-auto"
-    >
-      <h2 className="text-3xl font-semibold">Login</h2>
-      {inputs.map((input) => (
-        <FormInput
-          key={input.id}
-          {...input}
-          value={formData[input.name]}
-          onChange={handleChange}
-        />
-      ))}
+    <>
+      <div className="p-10 md:p-0 flex-1 flex flex-col items-center justify-start md:justify-center">
+        <form
+          onSubmit={(e) => {
+            void (async () => {
+              await handleSubmit(e);
+            })();
+          }}
+          className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-full md:w-6/12 lg:w-4/12 mx-auto border"
+        >
+          <h2 className="text-3xl font-semibold">Login</h2>
+          {inputs.map((input) => (
+            <FormInput
+              key={input.id}
+              {...input}
+              value={formData[input.name as keyof LoginFormData]}
+              onChange={handleChange}
+            />
+          ))}
 
-      <Button type="submit">Login</Button>
-    </form>
+          <div className="relative">
+            <Button type="submit">Login</Button>
+            {isLoading && (
+              <Spinner
+                color="secondary"
+                className="absolute left-full top-1 mx-3"
+              />
+            )}
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

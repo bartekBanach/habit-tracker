@@ -6,12 +6,24 @@ import { useDispatch } from 'react-redux';
 import { addNotification } from '../../features/notifications/notifications.slice';
 import FormInput from '../../components/FormInput/FormInput';
 import useHandleErrors from '../../hooks/useHandleErrors';
+import Spinner from '../../components/Spinner/Spinner';
 
 interface RegisterFormData {
   email: string;
   username: string;
   password: string;
   confirmPassword: string;
+}
+
+interface RegisterFormInput {
+  id: string;
+  name: string;
+  type: string;
+  placeholder: string;
+  label: string;
+  errorMessage: string;
+  pattern?: string;
+  required: boolean;
 }
 
 const Register = () => {
@@ -22,14 +34,16 @@ const Register = () => {
     confirmPassword: '',
   });
 
-  const [register] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
   const handleErrors = useHandleErrors();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  console.log('loading status', isLoading);
+
   const inputs = [
     {
-      id: 1,
+      id: '1',
       name: 'email',
       type: 'email',
       placeholder: 'Email',
@@ -38,7 +52,7 @@ const Register = () => {
       required: true,
     },
     {
-      id: 2,
+      id: '2',
       name: 'username',
       type: 'text',
       placeholder: 'Username',
@@ -47,7 +61,7 @@ const Register = () => {
       required: true,
     },
     {
-      id: 3,
+      id: '3',
       name: 'password',
       type: 'password',
       placeholder: 'Password',
@@ -61,7 +75,7 @@ const Register = () => {
     },
 
     {
-      id: 4,
+      id: '4',
       name: 'confirmPassword',
       type: 'password',
       placeholder: 'Confirm Password',
@@ -74,7 +88,6 @@ const Register = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(name, ':', value);
     setFormData({ ...formData, [name]: value });
   };
 
@@ -106,26 +119,35 @@ const Register = () => {
   };
 
   return (
-    <form
-      onSubmit={(e) => {
-        void (async () => {
-          await handleSubmit(e);
-        })();
-      }}
-      className="flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-4/12 mx-auto"
-    >
-      <h2 className="text-3xl font-semibold">Register</h2>
-      {inputs.map((input) => (
-        <FormInput
-          key={input.id}
-          {...input}
-          value={formData[input.name]}
-          onChange={handleChange}
-        />
-      ))}
-
-      <Button type="submit">Register</Button>
-    </form>
+    <div className="p-10 flex-1 flex flex-col items-center justify-start md:justify-center">
+      <form
+        onSubmit={(e) => {
+          void (async () => {
+            await handleSubmit(e);
+          })();
+        }}
+        className=" flex flex-col gap-5 rounded-md shadow-md items-center p-4 w-full md:w-6/12 lg:w-4/12 mx-auto border"
+      >
+        <h2 className="text-3xl font-semibold">Register</h2>
+        {inputs.map((input: RegisterFormInput) => (
+          <FormInput
+            key={input.id}
+            {...input}
+            value={formData[input.name as keyof RegisterFormData]}
+            onChange={handleChange}
+          />
+        ))}
+        <div className="relative">
+          <Button type="submit">Register</Button>
+          {isLoading && (
+            <Spinner
+              color="secondary"
+              className="absolute left-full top-1 mx-3"
+            />
+          )}
+        </div>
+      </form>
+    </div>
   );
 };
 

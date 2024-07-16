@@ -1,7 +1,10 @@
-interface FormInputProps {}
+interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  errorMessage?: string;
+}
 
 const FormInput = (props: FormInputProps) => {
-  const { label, onChange, id, errorMessage, ...inputProps } = props;
+  const { label, onChange, errorMessage, ...inputProps } = props;
 
   return (
     <div className="flex flex-col gap-3 w-6/12">
