@@ -29,6 +29,12 @@ interface Habit extends NewHabit {
   _id: string;
 }
 
+interface NewWorkSession {
+  habit: string;
+  user: string;
+  timeDuration: number;
+}
+
 interface WorkSession {
   _id?: string;
   habit: string;

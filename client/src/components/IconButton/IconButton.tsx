@@ -2,11 +2,17 @@ import { ReactNode } from 'react';
 import { cva, VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
-interface IconButtonProps extends VariantProps<typeof iconButtonVariants> {
+/*interface IconButtonProps extends VariantProps<typeof iconButtonVariants> {
   onClick?: () => void;
   children: ReactNode;
   iconColor?: string;
-}
+}*/
+
+type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  onClick?: () => void;
+  children: ReactNode;
+  iconColor?: string;
+};
 
 const iconButtonVariants = cva(
   'flex items-center justify-center rounded-md space-x-2',
@@ -28,6 +34,10 @@ const iconButtonVariants = cva(
         medium: 'p-4 text-m',
         large: 'p-6 text-l',
       },
+      disabled: {
+        true: 'opacity-50',
+        false: '',
+      },
     },
     defaultVariants: {
       background: 'default',
@@ -45,6 +55,8 @@ const IconButton = ({
   iconSize,
   background,
   size,
+  disabled,
+  ...props
 }: IconButtonProps) => {
   return (
     <button
@@ -52,10 +64,12 @@ const IconButton = ({
       onClick={onClick}
       //className={`${iconButtonVariants({ background, size, iconSize })} ${iconColor} ${className}`}
       className={cn(
-        iconButtonVariants({ background, size, iconSize }),
+        iconButtonVariants({ background, size, iconSize, disabled }),
         className,
         iconColor
       )}
+      disabled={disabled}
+      {...props}
     >
       {children}
     </button>

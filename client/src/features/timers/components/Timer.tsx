@@ -20,6 +20,9 @@ import { selectHabitById } from '../../habits/habitsApiSlice';
 import { useDeleteTimerMutation } from '../timersApiSlice';
 import { useAppSelector } from '../../../app/hooks';
 import { selectCurrentUser } from '../../auth/authSlice';
+import useHandleErrors from '../../../hooks/useHandleErrors';
+import { useDispatch } from 'react-redux';
+import { addNotification } from '../../notifications/notifications.slice';
 
 interface TimerProps {
   timer: Timer;
@@ -35,7 +38,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   } = timer;
 
   const habit = useAppSelector(selectHabitById(habitId));
-  const { _id: userId } = useAppSelector(selectCurrentUser);
+  const { _id: userId } = useAppSelector(selectCurrentUser) ?? {};
 
   const habitColor = habit?.color ?? '';
   const habitName = habit?.name ?? '';
@@ -45,16 +48,33 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   const [addWorkSession] = useAddWorkSessionMutation();
   const [updateTimer] = useUpdateTimerMutation();
   const [deleteTimer] = useDeleteTimerMutation();
+  const handleErrors = useHandleErrors();
+  const dispatch = useDispatch();
 
   const logTime = async () => {
     setIsRunning(false);
-    await addWorkSession({
-      habit: habitId,
-      user: userId,
-      timeDuration: durationToMilliseconds(duration) - remainingTime,
-      finishedAt: new Date(),
-    });
-    await handleRestart();
+    if (!userId) return;
+
+    try {
+      if (!userId) {
+        throw new Error('User unauthenthicated.');
+      }
+      await addWorkSession({
+        habit: habitId,
+        user: userId,
+        timeDuration: durationToMilliseconds(duration) - remainingTime,
+      });
+      await handleRestart();
+
+      dispatch(
+        addNotification({
+          type: 'success',
+          message: 'Work session logged in database.',
+        })
+      );
+    } catch (error: unknown) {
+      handleErrors(error);
+    }
   };
 
   const updateRemainingTime = async (time: number) => {
@@ -126,52 +146,70 @@ export default function Timer({ timer, isEditing }: TimerProps) {
     }
   }, [id, remainingTime, isRunning]);
 
-  if (!habit) return <>No matching habit!!!</>;
-  if (habit)
-    return (
-      <div
-        className={`flex flex-col justify-center items-center border shadow-md py-6 px-7 `}
+  if (!habit || !userId) return;
+  return (
+    <div
+      className={`flex flex-col justify-center items-center border shadow-md py-6 px-7 `}
+    >
+      <h2
+        className={` relative w-full flex justify-center items-center jusitfy-center gap-3 text-xl font-semibold`}
       >
-        <h2
-          className={` relative w-full flex justify-center items-center jusitfy-center gap-3 text-xl font-semibold`}
-        >
-          {habitName}
-          {isEditing && (
-            <IconButton className="absolute top-0 right-0">
-              <IoClose onClick={() => handleDelete(id)} className="" />
-            </IconButton>
-          )}
-        </h2>
+        {habitName}
+        {isEditing && (
+          <IconButton className="absolute top-0 right-0">
+            <IoClose
+              onClick={() => {
+                void (async () => {
+                  await handleDelete(id);
+                })();
+              }}
+            />
+          </IconButton>
+        )}
+      </h2>
 
-        <div className={`${isEditing && 'opacity-50'}`}>
-          <CircularProgressbar
-            angle={(remainingTime / durationToMilliseconds(duration)) * 360}
-            text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
-            color={habitColor}
-          />
-          <div className="flex flex-row justify-center items-center space-x-5">
-            <Button
-              onClick={() => handlePlayPause()}
-              disabled={remainingTime === 0 || isEditing}
-              type="button"
-            >
-              {isRunning ? 'Pause' : 'Start'}
-            </Button>
-            <Button
-              disabled={isRunning || isEditing}
-              onClick={() => logTime()}
-              type="button"
-            >
-              Save time
-            </Button>
-            <IconButton
-              disabled={isRunning || isEditing}
-              onClick={handleRestart}
-            >
-              <MdOutlineRestartAlt />
-            </IconButton>
-          </div>
+      <div className={`${isEditing && 'opacity-50'}`}>
+        <CircularProgressbar
+          angle={(remainingTime / durationToMilliseconds(duration)) * 360}
+          text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
+          color={habitColor}
+        />
+        <div className="flex flex-row justify-center items-center space-x-5">
+          <Button
+            onClick={() => {
+              void (async () => {
+                await handlePlayPause();
+              })();
+            }}
+            disabled={remainingTime === 0 || isEditing}
+            type="button"
+          >
+            {isRunning ? 'Pause' : 'Start'}
+          </Button>
+          <Button
+            disabled={isRunning || isEditing}
+            onClick={() => {
+              void (async () => {
+                await logTime();
+              })();
+            }}
+            type="button"
+            className="bg-green-500"
+          >
+            Save time
+          </Button>
+          <IconButton
+            disabled={isRunning || isEditing}
+            onClick={() => {
+              void (async () => {
+                await handleRestart();
+              })();
+            }}
+          >
+            <MdOutlineRestartAlt />
+          </IconButton>
         </div>
       </div>
-    );
+    </div>
+  );
 }

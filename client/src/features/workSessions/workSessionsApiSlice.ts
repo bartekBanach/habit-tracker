@@ -51,7 +51,7 @@ export const workSessionsApiSlice = apiSlice.injectEndpoints({
       providesTags: ['WorkSessions'],
     }),
     addWorkSession: builder.mutation({
-      query: (workSession: WorkSession) => {
+      query: (workSession: NewWorkSession) => {
         return { url: '/work-sessions', method: 'POST', body: workSession };
       },
       invalidatesTags: ['WorkSessions', 'Habits', 'Goals'],

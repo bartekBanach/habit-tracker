@@ -23,7 +23,7 @@ const buttonVariants = cva('py-2 px-4 shadow-md rounded-md font-semibold', {
       secondary: 'bg-secondary text-black',
     },
     disabled: {
-      true: 'opacity-50',
+      true: 'opacity-30',
       false: '',
     },
   },

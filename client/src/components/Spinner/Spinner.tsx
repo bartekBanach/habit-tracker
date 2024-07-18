@@ -14,7 +14,7 @@ const Spinner = ({ className, size, color, ...props }: SpinnerProps) => {
   );
 };
 
-const spinnerVariants = cva('border-4 border-solid rounded-full animate-spin', {
+const spinnerVariants = cva('border-8 border-solid rounded-full animate-spin', {
   variants: {
     size: {
       small: 'w-4 h-4',

@@ -22,24 +22,29 @@ export const TimerForm = ({ onSubmit }: TimerFormProps) => {
     if (!habitItem) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
-    if (
-      !formData.get('hours') &&
-      !formData.get('minutes') &&
-      !formData.get('seconds')
-    )
+
+    const hours = parseInt(formData.get('hours') as string) || 0;
+    const minutes = parseInt(formData.get('minutes') as string) || 0;
+    const seconds = parseInt(formData.get('seconds') as string) || 0;
+
+    if (hours === 0 && minutes === 0 && seconds === 0) {
       return;
+    }
 
-    await onSubmit(selectedHabit, habitItem.color, {
-      hours: parseInt(formData.get('hours') || '0', 10),
-      minutes: parseInt((formData.get('minutes') || '0') as string),
-      seconds: parseInt((formData.get('seconds') || '0') as string),
-    });
+    await onSubmit(selectedHabit, habitItem.color, { hours, minutes, seconds });
 
-    e.target.reset();
+    e.currentTarget.reset();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-7 p-5">
+    <form
+      onSubmit={(e) => {
+        void (async () => {
+          await handleSubmit(e);
+        })();
+      }}
+      className="flex flex-col gap-7 p-5"
+    >
       <HabitSelect
         habitId={selectedHabit}
         onHabitChange={(habitId: string) => setSelectedHabit(habitId)}
