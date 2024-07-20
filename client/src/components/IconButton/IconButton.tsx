@@ -1,17 +1,14 @@
 import { ReactNode } from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
-
-/*interface IconButtonProps extends VariantProps<typeof iconButtonVariants> {
-  onClick?: () => void;
-  children: ReactNode;
-  iconColor?: string;
-}*/
 
 type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   onClick?: () => void;
   children: ReactNode;
   iconColor?: string;
+  background?: string;
+  size?: string;
+  iconSize?: string;
 };
 
 const iconButtonVariants = cva(

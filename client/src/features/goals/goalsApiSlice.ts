@@ -13,7 +13,7 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
     }),
 
     addGoal: builder.mutation({
-      query: (goal: Goal) => {
+      query: (goal: NewGoal) => {
         return { url: '/goals', method: 'POST', body: goal };
       },
       invalidatesTags: ['Goals'],
@@ -25,6 +25,14 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ['Goals'],
     }),
+
+    updateGoal: builder.mutation({
+      query: (goal: Goal) => {
+        const { _id } = goal;
+        return { url: `/goals/${_id}`, method: 'PUT', body: goal };
+      },
+      invalidatesTags: ['Goals'],
+    }),
   }),
 });
 
@@ -33,6 +41,7 @@ export const {
   useGetUserGoalsQuery,
   useAddGoalMutation,
   useDeleteGoalMutation,
+  useUpdateGoalMutation,
 } = goalsApiSlice;
 
 export const selectUserGoalsResult =

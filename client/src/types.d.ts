@@ -1,8 +1,8 @@
-interface Duration {
+/*interface Duration {
   hours: number;
   minutes: number;
   seconds: number;
-}
+}*/
 
 interface Timer {
   _id: string;
@@ -40,18 +40,22 @@ interface WorkSession {
   habit: string;
   timeDuration: number;
   finishedAt: Date;
-  __v?: number;
 }
 
-interface Goal {
+interface NewGoal {
   timeLimit: TimeInterval;
   habit: string;
   timeAmount: number;
   requiredTimeAmount: number;
   status: string;
   type: string;
+}
+interface Goal extends NewGoal {
   _id: string;
-  __v?: number;
+}
+interface GoalWithHabit extends Goal {
+  habitName: string;
+  habitColor: string;
 }
 
 interface TimeInterval {

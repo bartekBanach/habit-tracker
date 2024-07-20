@@ -68,9 +68,9 @@ const HabitsList = () => {
     }
   };
 
-  const handleUpdateHabit = async (habit: NewHabit, id: string) => {
+  const handleUpdateHabit = async (habit: Habit) => {
     try {
-      await updateHabit({ id, habit }).unwrap();
+      await updateHabit({ id: habit._id, habit }).unwrap();
       dispatch(
         addNotification({
           type: 'success',
@@ -157,11 +157,7 @@ const HabitsList = () => {
               isOpened={habitModalOpened}
               onClose={handleEditModalClose}
             >
-              <HabitForm
-                habitId={editingHabit._id}
-                habit={editingHabit}
-                onSubmit={handleUpdateHabit}
-              />
+              <HabitForm onUpdate={handleUpdateHabit} habit={editingHabit} />
             </Modal>
           )}
           <Modal
@@ -169,7 +165,7 @@ const HabitsList = () => {
             onClose={handleEditModalClose}
             header="Create new habit"
           >
-            <HabitForm onSubmit={handleCreateHabit} />
+            <HabitForm onCreate={handleCreateHabit} />
           </Modal>
           {deletingHabit && (
             <Modal
@@ -181,7 +177,13 @@ const HabitsList = () => {
                 Are you sure you want to delete this habit? It will delete all
                 you progress and associated goals.
               </p>
-              <Button onClick={() => handleDeleteHabit(deletingHabit)}>
+              <Button
+                onClick={() => {
+                  void (async () => {
+                    await handleDeleteHabit(deletingHabit);
+                  })();
+                }}
+              >
                 Yes
               </Button>
               <Button onClick={handleDeleteModalClose}>No</Button>

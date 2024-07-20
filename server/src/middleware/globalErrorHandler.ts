@@ -10,7 +10,6 @@ const errorHandler = (err: Error, req: Request, res: Response, next: NextFunctio
 
   if (err instanceof CustomError) {
     //return res.status(err.errorCode).json({ errors: err.serializeErrors() });
-    console.log('hell oworldldldl');
 
     return res.status(err.errorCode).json({ errors: err.serializeErrors() });
   }

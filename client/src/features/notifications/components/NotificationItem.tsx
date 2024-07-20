@@ -15,36 +15,16 @@ import useTimeoutFn from '../../../hooks/useTimeoutFn';
 export type NotificationTypes = 'success' | 'error' | 'warning' | 'info';
 
 export interface Notification {
-  /**
-   * The notification id.
-   */
   id: string;
 
-  /**
-   * The message of the notification
-   */
   message: string;
 
-  /**
-   * An optional dismiss duration time
-   *
-   * @default 6000
-   */
   autoHideDuration?: number;
 
-  /**
-   * The type of notification to show.
-   */
   type?: NotificationTypes;
 
-  /**
-   * Optional callback function to run side effects after the notification has closed.
-   */
   onClose?: () => void;
 
-  /**
-   * Optionally add an action to the notification through a ReactNode
-   */
   action?: ReactNode;
 }
 
@@ -56,12 +36,6 @@ const notificationIcons: Record<
   error: <FaExclamation />,
   info: <FaInfoCircle />,
   warning: <ImWarning />,
-};
-const notificationHeaders = {
-  success: 'Success!',
-  error: 'Error!',
-  info: 'Info',
-  warning: 'Warning!',
 };
 
 const notificationStyleVariants = {
@@ -75,13 +49,7 @@ interface NotificationItemProps {
   notification: Notification;
 }
 const NotificationItem = ({ notification }: NotificationItemProps) => {
-  const {
-    id,
-    autoHideDuration,
-    message,
-    onClose,
-    type = 'info',
-  } = notification;
+  const { id, autoHideDuration, message, type = 'info' } = notification;
   const dispatch = useAppDispatch();
   const isPresent = useIsPresent();
 

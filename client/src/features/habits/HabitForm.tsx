@@ -6,24 +6,24 @@ import { selectCurrentUser } from '../auth/authSlice';
 
 interface HabitFormProps {
   habit?: Habit | null;
-  onSubmit: (habit: NewHabit, id?: string) => Promise<void>;
+  onCreate?: (habit: NewHabit) => Promise<void>;
+  onUpdate?: (habit: Habit) => Promise<void>;
 }
 
-const HabitForm = ({ onSubmit, habit }: HabitFormProps) => {
+const HabitForm = ({ onCreate, onUpdate, habit }: HabitFormProps) => {
   const [name, setName] = useState(habit?.name ?? '');
   const [color, setColor] = useState(habit?.color ?? '#FF8A65');
 
-  const user: User | null = useSelector(selectCurrentUser);
-  //if (!user) return;
+  const { _id: userId } = useSelector(selectCurrentUser) ?? {};
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!userId) return;
 
-    if (habit) {
-      console.log(habit, 'habit present -editing');
-      await onSubmit({ ...habit, name, color }, habit._id);
-    } else {
-      await onSubmit({ name, color, user: user._id });
+    if (habit && onUpdate) {
+      await onUpdate({ ...habit, name, color });
+    } else if (onCreate) {
+      await onCreate({ name, color, user: userId });
       setName('');
       setColor('');
     }
@@ -35,7 +35,11 @@ const HabitForm = ({ onSubmit, habit }: HabitFormProps) => {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => {
+        void (async () => {
+          await handleSubmit(e);
+        })();
+      }}
       className="flex flex-col gap-5 border border-gray-200 rounded-md p-5"
     >
       <div className="flex flex-wrap gap-3 items-center">

@@ -36,10 +36,11 @@ export const getGoalsByUser = asyncHandler(async (req: Request, res: Response) =
 export const updateGoal = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { habit, timeAmount, requiredTimeAmount, status, timeLimit, type } = req.body;
+
   if (!id) {
     throw new BadRequestError('ID parameter is missing');
   }
-  if (!habit || !timeAmount || !requiredTimeAmount || !status || !timeLimit || !type) {
+  if (!habit || timeAmount === undefined || requiredTimeAmount === undefined || !status || !timeLimit || !type) {
     throw new BadRequestError('One or more required parameters are missing');
   }
 

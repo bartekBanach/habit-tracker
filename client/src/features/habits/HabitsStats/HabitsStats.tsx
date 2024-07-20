@@ -35,8 +35,6 @@ const HabitsStats = () => {
     habitId: selectedHabit,
   });
 
-  console.log(workSessions);
-
   const handleTimeIntervalChange = (direction: string) => {
     let newFromDate: Date;
     let newToDate: Date;

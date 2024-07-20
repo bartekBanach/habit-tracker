@@ -7,7 +7,10 @@ export const workSessionsApiSlice = apiSlice.injectEndpoints({
       providesTags: ['WorkSessions'],
     }),
 
-    getUserWorkSessions: builder.query({
+    getUserWorkSessions: builder.query<
+      WorkSession[],
+      { from: string; to: string; habitId: string | null }
+    >({
       query: ({
         from,
         to,

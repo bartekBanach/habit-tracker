@@ -1,5 +1,5 @@
 import HabitsList from '../../features/habits/HabitsList/HabitsList';
-import GoalsList from '../../features/goals/GoalsList';
+import GoalsList from '../../features/goals/components/GoalsList';
 import TimersList from '../../features/timers/components/TimersList';
 import HabitsStats from '../../features/habits/HabitsStats/HabitsStats';
 import Button from '../../components/Button/Button';

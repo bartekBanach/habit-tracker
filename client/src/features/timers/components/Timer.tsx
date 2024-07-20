@@ -152,7 +152,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
       className={`flex flex-col justify-center items-center border shadow-md py-6 px-7 `}
     >
       <h2
-        className={` relative w-full flex justify-center items-center jusitfy-center gap-3 text-xl font-semibold`}
+        className={` bg-white shadow-md rounded-md p-1 relative w-full flex justify-center items-center jusitfy-center gap-3 text-xl font-semibold`}
       >
         {habitName}
         {isEditing && (

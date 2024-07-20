@@ -4,13 +4,20 @@ import { cn } from '../../utils/cn';
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   intent?: 'primary' | 'secondary';
   disabled?: boolean;
+  isLoading?: boolean;
 };
 
-const Button = ({ className, intent, disabled, ...props }: ButtonProps) => {
+const Button = ({
+  className,
+  intent,
+  disabled,
+  isLoading,
+  ...props
+}: ButtonProps) => {
   return (
     <button
       className={cn(buttonVariants({ intent, disabled }), className)}
-      disabled={disabled}
+      disabled={disabled === true || isLoading}
       {...props}
     ></button>
   );
