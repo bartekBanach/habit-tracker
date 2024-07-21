@@ -16,7 +16,7 @@ const PersistLogin = () => {
   useEffect(() => {
     const verifyRefreshToken = async () => {
       try {
-        await refresh({});
+        await refresh();
         setTrueSuccess(true);
       } catch (error) {
         console.log(error);
@@ -24,12 +24,13 @@ const PersistLogin = () => {
     };
 
     if (effectRan.current === true || process.env.NODE_ENV !== 'development') {
-      if (!token) verifyRefreshToken();
+      if (!token) verifyRefreshToken().catch((error) => console.error(error));
     }
 
     return () => {
       effectRan.current = true;
     };
+    // eslint-disable-next-line
   }, []);
 
   let content;

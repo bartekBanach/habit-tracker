@@ -19,7 +19,7 @@ const Input = ({
 
   ...rest
 }: InputProps) => {
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement>(null);
   return (
     <div>
       <div
@@ -28,7 +28,7 @@ const Input = ({
             ? 'focus-within:border-red border-red'
             : 'focus-within:border-primary border-gray-gray4'
         }`}
-        onClick={() => inputRef.current.focus()}
+        onClick={() => inputRef.current?.focus()}
       >
         <label
           htmlFor={id}

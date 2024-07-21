@@ -17,15 +17,16 @@ function getSeconds(milliseconds: number) {
 
 function getMilliseconds(duration: Duration) {
   const { hours, minutes, seconds } = duration;
-  return hours * 3600000 + minutes * 60000 + seconds * 1000;
+  return (
+    (hours ?? 0) * 3600000 + (minutes ?? 0) * 60000 + (seconds ?? 0) * 1000
+  );
 }
 
-// Helper function to convert duration to milliseconds
 const durationToMilliseconds = (duration: Duration): number => {
   return (
-    (duration.hours || 0) * 60 * 60 * 1000 +
-    (duration.minutes || 0) * 60 * 1000 +
-    (duration.seconds || 0) * 1000
+    (duration.hours ?? 0) * 60 * 60 * 1000 +
+    (duration.minutes ?? 0) * 60 * 1000 +
+    (duration.seconds ?? 0) * 1000
   );
 };
 

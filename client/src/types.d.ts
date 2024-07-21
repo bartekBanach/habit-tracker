@@ -1,8 +1,9 @@
-/*interface Duration {
-  hours: number;
-  minutes: number;
-  seconds: number;
-}*/
+interface Duration {
+  days?: number;
+  hours?: number;
+  minutes?: number;
+  seconds?: number;
+}
 
 interface Timer {
   _id: string;
@@ -65,7 +66,7 @@ interface TimeInterval {
 
 interface User {
   _id: string;
-  username: string;
+  username?: string;
   email: string;
 }
 

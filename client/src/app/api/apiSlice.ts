@@ -33,7 +33,11 @@ const baseQueryWithReauth: BaseQueryFn<
 
     if (refreshResult.data) {
       const { accessToken } = refreshResult.data as { accessToken: string };
-      let { email, _id } = (getState() as RootState).auth;
+
+      const authUser = (getState() as RootState).auth.user;
+      let email = authUser?.email;
+      let _id = authUser?._id;
+
       if (!email || !_id) {
         const decoded: DecodedToken = jwtDecode(accessToken);
         email = decoded.UserInfo.email;
@@ -52,7 +56,7 @@ const baseQueryWithReauth: BaseQueryFn<
 
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
   tagTypes: ['Habits', 'WorkSessions', 'Goals', 'Timers'],
 });
 

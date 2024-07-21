@@ -1,6 +1,7 @@
 import Navbar from '../Navbar/Navbar';
+import { ReactNode } from 'react';
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen  flex flex-col bg-gray-200">
       <Navbar />

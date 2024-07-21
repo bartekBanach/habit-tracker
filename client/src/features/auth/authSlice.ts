@@ -26,7 +26,7 @@ const authSlice = createSlice({
         token: string | null;
       }>
     ) => {
-      console.log('_id in auhtslice', _id);
+      if (!email || !_id || !token) return;
       state.user = { _id, email };
       state.token = token;
     },

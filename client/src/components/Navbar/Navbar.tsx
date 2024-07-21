@@ -17,6 +17,7 @@ interface NavLink {
   text: string;
   to?: string;
   type: 'link' | 'button' | 'span';
+  //onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
@@ -47,7 +48,16 @@ const Navbar = () => {
     { id: 0, text: 'Home', to: '/', type: 'link' },
     { id: 1, text: 'User', to: '/user', type: 'link' },
     { id: 2, text: `Logged as ${user?.email}`, type: 'span' },
-    { id: 3, text: 'Logout', type: 'button', onClick: handleLogout },
+    {
+      id: 3,
+      text: 'Logout',
+      type: 'button',
+      onClick: (e) => {
+        void (async () => {
+          await handleLogout(e);
+        })();
+      },
+    },
   ];
 
   const unauthLinks: NavLink[] = [
