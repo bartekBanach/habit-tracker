@@ -40,22 +40,29 @@ const HabitForm = ({ onCreate, onUpdate, habit }: HabitFormProps) => {
           await handleSubmit(e);
         })();
       }}
-      className="flex flex-col gap-5 border border-gray-200 rounded-md p-5"
+      className="flex flex-col items-center gap-5 border border-gray-200 rounded-md p-5"
     >
-      <div className="flex flex-wrap gap-3 items-center">
-        <label htmlFor="name">Name</label>
-        <input
-          className="border border-gray400 p-2 rounded-md"
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-      </div>
+      <div className="flex flex-col items-start flex-wrap gap-3">
+        <div className="flex gap-2 items-center">
+          <label className="font-semibold" htmlFor="name">
+            Name
+          </label>
+          <input
+            className="border border-gray400 p-2 rounded-md"
+            type="text"
+            id="name"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
 
-      <ColorPicker color={color} onColorChange={handleColorChange} />
+        <div className="flex gap-2">
+          <span className="font-semibold">Color</span>
+          <ColorPicker color={color} onColorChange={handleColorChange} />
+        </div>
+      </div>
 
       <Button intent="primary" type="submit">
         Submit

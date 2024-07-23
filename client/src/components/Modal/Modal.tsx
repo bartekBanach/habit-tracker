@@ -16,7 +16,7 @@ const Modal = ({ children, isOpened, onClose, header }: ModalProps) => {
         onClick={onClose}
       >
         <div
-          className="p-5 bg-white shadow-md text-black text-center rounded-md "
+          className=" flex flex-col gap-5 p-5 bg-white shadow-md text-black text-center rounded-md "
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-row justify-between items-center">
@@ -25,7 +25,7 @@ const Modal = ({ children, isOpened, onClose, header }: ModalProps) => {
               <IoClose />
             </IconButton>
           </div>
-          {children}
+          <div>{children}</div>
         </div>
       </div>
     );

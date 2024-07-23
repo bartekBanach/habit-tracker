@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useAddWorkSessionMutation } from '../../workSessions/workSessionsApiSlice';
 import IconButton from '../../../components/IconButton/IconButton';
-
-import { MdOutlineRestartAlt } from 'react-icons/md';
 import { IoClose } from 'react-icons/io5';
+import { IoMdRefresh } from 'react-icons/io';
 
 import {
   getHours,
@@ -206,7 +205,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
               })();
             }}
           >
-            <MdOutlineRestartAlt />
+            <IoMdRefresh />
           </IconButton>
         </div>
       </div>

@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { ColorResult } from 'react-color';
-import styles from './ColorPicker.module.css';
-import { BlockPicker } from 'react-color';
+import { SketchPicker } from 'react-color';
 
 interface ColorPickerProps {
   color: string;
   onColorChange: (color: string) => void;
 }
+
 const ColorPicker = ({ color, onColorChange }: ColorPickerProps) => {
-  console.log('COLOR', color);
   const [display, setDisplay] = useState(false);
 
   const handleClick = () => {
@@ -24,16 +23,19 @@ const ColorPicker = ({ color, onColorChange }: ColorPickerProps) => {
   };
 
   return (
-    <div>
-      <div className={styles.swatch} onClick={handleClick}>
-        <div className={styles.color} style={{ backgroundColor: color }} />
+    <div className="relative inline-block">
+      <div
+        className="p-1 bg-white rounded shadow-sm cursor-pointer border border-gray-300 w-fit"
+        onClick={handleClick}
+      >
+        <div className="w-9 h-4 rounded" style={{ backgroundColor: color }} />
       </div>
-      {display ? (
-        <div className={styles.popover}>
-          <div className={styles.cover} onClick={handleClose} />
-          <BlockPicker color={color} onChange={handleChange} triangle={'top'} />
+      {display && (
+        <div className="absolute z-10">
+          <div className="fixed inset-0" onClick={handleClose} />
+          <SketchPicker color={color} onChange={handleChange} />
         </div>
-      ) : null}
+      )}
     </div>
   );
 };

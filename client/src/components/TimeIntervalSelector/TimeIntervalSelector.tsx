@@ -25,26 +25,28 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
     onIntervalChange(direction);
   };
   return (
-    <div className="flex gap-2 items-center">
-      <Button
-        intent="primary"
-        disabled={isDisabled}
-        onClick={() => handleTimeIntervalChange('prev')}
-      >
-        Previous
-      </Button>
+    <div className="flex flex-col gap-2 items-center">
+      <div className="flex items-center gap-2">
+        <Button
+          intent="primary"
+          disabled={isDisabled}
+          onClick={() => handleTimeIntervalChange('prev')}
+        >
+          Previous
+        </Button>
 
-      <span className="text-md font-semibold">
-        {formattedFrom} - {formattedTo}
-      </span>
+        <span className="text-md font-semibold">
+          {formattedFrom} - {formattedTo}
+        </span>
 
-      <Button
-        intent="primary"
-        disabled={isDisabled || isAfter(add(from, { weeks: 1 }), new Date())}
-        onClick={() => handleTimeIntervalChange('next')}
-      >
-        Next{' '}
-      </Button>
+        <Button
+          intent="primary"
+          disabled={isDisabled || isAfter(add(from, { weeks: 1 }), new Date())}
+          onClick={() => handleTimeIntervalChange('next')}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 };

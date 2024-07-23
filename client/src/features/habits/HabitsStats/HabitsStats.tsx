@@ -85,43 +85,55 @@ const HabitsStats = () => {
 
   return (
     <SectionContainer headerText="Habit stats" headerChildren={headerContent}>
-      <div className="flex flex-col gap-1 items-center p-5 ">
-        <div>
-          <input
-            type="radio"
-            id="week"
-            value="week"
-            checked={selectedTimeUnit === 'week'}
-            onChange={(e) => handleTimeUnitChange(e.target.value)}
-          />
-          <label htmlFor="week">Week</label>
+      <div className="flex flex-col gap-3 items-center p-5 ">
+        <div className="flex flex-col gap-3 items-center border border-gray-300 rounded-md p-5">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">Time unit</h3>
 
-          <input
-            type="radio"
-            id="month"
-            value="month"
-            checked={selectedTimeUnit === 'month'}
-            onChange={(e) => handleTimeUnitChange(e.target.value)}
-          />
-          <label htmlFor="month">Month</label>
+            <div className="flex gap-1">
+              <div>
+                <input
+                  type="radio"
+                  id="week"
+                  value="week"
+                  checked={selectedTimeUnit === 'week'}
+                  onChange={(e) => handleTimeUnitChange(e.target.value)}
+                />
+                <label htmlFor="week">Week</label>
+              </div>
 
-          <input
-            type="radio"
-            id="year"
-            value="year"
-            checked={selectedTimeUnit === 'year'}
-            onChange={(e) => handleTimeUnitChange(e.target.value)}
+              <div>
+                <input
+                  type="radio"
+                  id="month"
+                  value="month"
+                  checked={selectedTimeUnit === 'month'}
+                  onChange={(e) => handleTimeUnitChange(e.target.value)}
+                />
+                <label htmlFor="month">Month</label>
+              </div>
+              <div>
+                <input
+                  type="radio"
+                  id="year"
+                  value="year"
+                  checked={selectedTimeUnit === 'year'}
+                  onChange={(e) => handleTimeUnitChange(e.target.value)}
+                />
+                <label htmlFor="year">Year</label>
+              </div>
+            </div>
+          </div>
+
+          <TimeIntervalSelector
+            onIntervalChange={handleTimeIntervalChange}
+            from={fromDate}
+            to={toDate}
+            isDisabled={isLoading}
+            formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
           />
-          <label htmlFor="year">Year</label>
         </div>
 
-        <TimeIntervalSelector
-          onIntervalChange={handleTimeIntervalChange}
-          from={fromDate}
-          to={toDate}
-          isDisabled={isLoading}
-          formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
-        />
         <DataChart
           data={workSessions}
           from={fromDate}

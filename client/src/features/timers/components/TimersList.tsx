@@ -81,7 +81,7 @@ const TimersList = () => {
               </p>
             </div>
           ) : (
-            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 p-5">
+            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 p-10">
               {timers?.map((timer) => (
                 <Timer
                   key={timer._id}
@@ -127,9 +127,7 @@ const TimersList = () => {
 
   return (
     <SectionContainer headerText="Timers" headerChildren={headerContent}>
-      <div className="flex-grow py-10 px-5 flex flex-col items-center justify-start lg:justify-center border-2">
-        {content}
-      </div>
+      <div className="flex-grow flex flex-col">{content}</div>
     </SectionContainer>
   );
 };

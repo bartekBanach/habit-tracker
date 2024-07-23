@@ -75,10 +75,10 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
   }, [goal]);
 
   return (
-    <div className="border border-gray-300 flex flex-col gap-3 shadow-md p-4 rounded-md">
-      <div>
-        <div className="flex flex-row gap-2 justify-center items-center">
-          <h3 className="text-center font-semibold text-l">{habitName}</h3>
+    <div className="border border-gray-300 shadow-md rounded-md overflow-hidden">
+      <div className="bg-gray-200 p-3 w-full flex items-center justify-between  ">
+        <h3 className="text-center font-semibold text-l ">{habitName}</h3>
+        <div className="flex gap-3">
           <IconButton onClick={onRestart}>
             <IoMdRefresh />
           </IconButton>
@@ -92,26 +92,30 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
             <MdDelete />
           </IconButton>
         </div>
-
-        <h4 className="text-center text-gray-500">
-          {type} | {status}
-        </h4>
       </div>
 
-      <p className={`text-center ${timeLeftColor}`}>
-        Time left:{' '}
-        {millisecondsToDurationStr(timeLeft.milliseconds, timeLeftStrFormat)}
-      </p>
+      <div className=" w-full p-5 flex flex-col items-center gap-3">
+        <h4 className="text-center text-gray-500 flex items-center">
+          <p>
+            {type} | {status}
+          </p>
+        </h4>
 
-      <ProgressBar
-        color={habitColor}
-        value={timeAmount}
-        maxValue={requiredTimeAmount}
-        label={`${millisecondsToDurationStr(timeAmount, timeAmountStrFormat)}/${millisecondsToDurationStr(
-          requiredTimeAmount,
-          requriedTimeAmountStrFormat
-        )}`}
-      />
+        <p className={`text-center ${timeLeftColor}`}>
+          Time left:{' '}
+          {millisecondsToDurationStr(timeLeft.milliseconds, timeLeftStrFormat)}
+        </p>
+
+        <ProgressBar
+          color={habitColor}
+          value={timeAmount}
+          maxValue={requiredTimeAmount}
+          label={`${millisecondsToDurationStr(timeAmount, timeAmountStrFormat)}/${millisecondsToDurationStr(
+            requiredTimeAmount,
+            requriedTimeAmountStrFormat
+          )}`}
+        />
+      </div>
     </div>
   );
 };
