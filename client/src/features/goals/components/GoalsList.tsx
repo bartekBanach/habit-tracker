@@ -7,11 +7,11 @@ import { useAppDispatch } from '../../../app/hooks';
 import { addNotification } from '../../notifications/notifications.slice';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
-import { useGetUserHabitsQuery } from '../../habits/habitsApiSlice';
 import { useGetUserGoalsQuery } from '../goalsApiSlice';
 import SectionContainer from '../../../components/SectionContainer/SectionContainer';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import useHandleErrors from '../../../hooks/useHandleErrors';
+import { useGetUserHabitsQuery } from '../../habits/habitsApiSlice';
 
 const GoalsList = () => {
   const { data: habits } = useGetUserHabitsQuery();

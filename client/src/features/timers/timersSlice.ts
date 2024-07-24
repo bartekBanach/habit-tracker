@@ -29,7 +29,7 @@ const timersSlice = createSlice({
     },
     deleteTimer: (state, action: PayloadAction<string>) => {
       state.timers = state.timers.filter(
-        (timer) => timer.id !== action.payload
+        (timer) => timer._id !== action.payload
       );
       localStorage.setItem('timers', JSON.stringify(state.timers));
     },

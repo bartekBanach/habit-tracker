@@ -6,9 +6,9 @@ type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   onClick?: () => void;
   children: ReactNode;
   iconColor?: string;
-  background?: string;
-  size?: string;
-  iconSize?: string;
+  background?: 'default' | 'transparent';
+  size?: 'noPadding' | 'small' | 'medium' | 'large';
+  iconSize?: 'small' | 'medium' | 'large' | 'extraLarge';
 };
 
 const iconButtonVariants = cva(
@@ -59,7 +59,6 @@ const IconButton = ({
     <button
       type="button"
       onClick={onClick}
-      //className={`${iconButtonVariants({ background, size, iconSize })} ${iconColor} ${className}`}
       className={cn(
         iconButtonVariants({ background, size, iconSize, disabled }),
         className,
