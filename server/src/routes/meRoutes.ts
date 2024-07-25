@@ -8,13 +8,6 @@ import { verifyJWT } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.use(
-  cors({
-    credentials: true,
-    origin: 'http://localhost:5173',
-  }),
-);
-
 router.get('/habits', verifyJWT, getMyHabits);
 router.get('/timers', verifyJWT, getMyTimers);
 router.get('/goals', verifyJWT, getMyGoals);
