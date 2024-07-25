@@ -10,7 +10,7 @@ import { RootState } from '../store';
 import { jwtDecode } from 'jwt-decode';
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: 'http://localhost:4000/api',
+  baseUrl: `${import.meta.env.VITE_PROXY_URL}/api`,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;

@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import heroImage from '../../assets/heroSection.jpg';
+import heroImage from '../../assets/heroSection.png';
 import { ImStatsBars } from 'react-icons/im';
 import { GiStairsGoal } from 'react-icons/gi';
 import { IoIosTimer } from 'react-icons/io';
@@ -32,12 +31,6 @@ const Home = () => {
                 <GiStairsGoal className="text-gray-500 text-2xl" />
               </li>
             </ul>
-            <Link
-              to="/register"
-              className="self-center md:self-start inline-block bg-blue-500 border border-gray300 shadow-md text-white py-2 px-6 rounded-full text-lg font-semibold hover:bg-blue-400"
-            >
-              Get Started
-            </Link>
           </div>
           <div className="md:w-1/2 flex justify-center">
             <img
