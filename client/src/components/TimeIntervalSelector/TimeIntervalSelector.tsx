@@ -9,6 +9,7 @@ interface WeekSelectorProps {
   from: Date;
   to: Date;
   formatting: string;
+  timeUnit: string;
 }
 
 const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
@@ -17,6 +18,7 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
   from,
   to,
   formatting,
+  timeUnit,
 }) => {
   const formattedFrom = format(from, formatting);
   const formattedTo = format(to, formatting);
@@ -24,6 +26,21 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
   const handleTimeIntervalChange = (direction: 'prev' | 'next'): void => {
     onIntervalChange(direction);
   };
+
+  const isCurrentTimeInterval = () => {
+    let result = false;
+
+    if (timeUnit === 'week') {
+      result = isAfter(add(from, { weeks: 1 }), new Date());
+    } else if (timeUnit === 'month') {
+      result = isAfter(add(from, { months: 1 }), new Date());
+    } else {
+      result = isAfter(add(from, { years: 1 }), new Date());
+    }
+
+    return result;
+  };
+
   return (
     <div className="flex flex-col gap-2 items-center">
       <div className="flex items-center gap-2">
@@ -41,7 +58,7 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
 
         <Button
           intent="primary"
-          disabled={isDisabled || isAfter(add(from, { weeks: 1 }), new Date())}
+          disabled={isDisabled || isCurrentTimeInterval()}
           onClick={() => handleTimeIntervalChange('next')}
         >
           Next

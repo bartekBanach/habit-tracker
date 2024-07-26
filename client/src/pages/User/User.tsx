@@ -61,14 +61,14 @@ const User = () => {
       <div className="flex-1 hidden lg:flex flex-col gap-10 p-10">
         <HabitsStats />
 
-        <div className="grid grid-cols-5 gap-5">
-          <aside className="col-span-1">
+        <div className="grid grid-cols-10 gap-5">
+          <aside className="col-span-2">
             <HabitsList />
           </aside>
-          <main className="col-span-3">
+          <main className="col-span-6">
             <TimersList />
           </main>
-          <aside className="col-span-1">
+          <aside className="col-span-2">
             <GoalsList />
           </aside>
         </div>

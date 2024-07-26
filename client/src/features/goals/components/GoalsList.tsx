@@ -63,8 +63,8 @@ const GoalsList = () => {
     let newTimeLimit = null;
     if (timeLimit.endDate) {
       const timeLimitDuration = differenceInMilliseconds(
-        timeLimit.startDate,
-        timeLimit.endDate
+        timeLimit.endDate,
+        timeLimit.startDate
       );
       const newStartDate = new Date();
       const newEndDate = addMilliseconds(newStartDate, timeLimitDuration);

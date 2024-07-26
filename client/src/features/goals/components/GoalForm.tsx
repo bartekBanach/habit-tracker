@@ -51,7 +51,10 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
         requiredTimeAmount:
           hoursToMilliseconds(parseInt(hoursAmount)) +
           minutesToMilliseconds(parseInt(minutesAmount)),
-        timeLimit,
+        timeLimit: {
+          startDate: timeLimit.startDate,
+          endDate: isDeadlineEnabled ? timeLimit.endDate : null,
+        },
       }).unwrap();
       dispatch(
         addNotification({

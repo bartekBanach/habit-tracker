@@ -85,7 +85,7 @@ const HabitsStats = () => {
 
   return (
     <SectionContainer headerText="Habit stats" headerChildren={headerContent}>
-      <div className="flex flex-col gap-3 items-center p-5 ">
+      <div className="flex flex-col gap-3 items-center md: p-5 ">
         <div className="flex flex-col gap-3 items-center border border-gray-300 rounded-md p-5">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold">Time unit</h3>
@@ -129,6 +129,7 @@ const HabitsStats = () => {
             onIntervalChange={handleTimeIntervalChange}
             from={fromDate}
             to={toDate}
+            timeUnit={selectedTimeUnit}
             isDisabled={isLoading}
             formatting={selectedTimeUnit === 'year' ? 'MMMM yyyy' : 'MMM do'}
           />

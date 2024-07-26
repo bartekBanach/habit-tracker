@@ -138,7 +138,7 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
 
   if (chartData)
     return (
-      <div className="relative w-full h-80">
+      <div className="relative w-full min-w-full h-80">
         {noData && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60 z-10">
             <p className="text-xl font-semibold text-gray-400">
@@ -146,7 +146,7 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
             </p>
           </div>
         )}
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer minWidth="100%" width="100%" height="100%">
           <BarChart
             width={700}
             height={300}

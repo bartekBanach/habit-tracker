@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoMdRefresh } from 'react-icons/io';
 import { MdDelete } from 'react-icons/md';
@@ -8,29 +8,6 @@ import { millisecondsToDurationStr } from '../../../utils/timeUtils';
 import { useEffect } from 'react';
 import { useState } from 'react';
 
-const getTimeLeft = (goal: Goal) => {
-  const currentDate = new Date();
-  let endDate = null;
-  let startDate = null;
-
-  if (goal.type === 'daily') {
-    endDate = endOfDay(currentDate);
-    startDate = startOfDay(currentDate);
-  } else {
-    endDate = goal.timeLimit.endDate as string;
-    startDate = new Date(goal.timeLimit.startDate);
-  }
-
-  const millisecondsRemaining = differenceInMilliseconds(endDate, currentDate);
-  const totalMilliseconds = differenceInMilliseconds(endDate, startDate);
-  const percentageRemaining = (millisecondsRemaining / totalMilliseconds) * 100;
-
-  return {
-    milliseconds: millisecondsRemaining,
-    percentage: percentageRemaining,
-  };
-};
-
 interface GoalItemProps {
   goal: GoalWithHabit;
   onDelete: (goalId: string) => Promise<void>;
@@ -38,7 +15,38 @@ interface GoalItemProps {
 }
 
 const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft(goal));
+  const getTimeLeft = useCallback(() => {
+    if (goal.type === 'one_time' && !goal.timeLimit.endDate) return null;
+
+    const currentDate = new Date();
+    let endDate = null;
+    let startDate = null;
+
+    if (goal.type === 'daily') {
+      endDate = endOfDay(currentDate);
+      startDate = startOfDay(currentDate);
+    } else {
+      endDate = goal.timeLimit.endDate as string;
+      startDate = new Date(goal.timeLimit.startDate);
+    }
+
+    const millisecondsRemaining = differenceInMilliseconds(
+      endDate,
+      currentDate
+    );
+    const totalMilliseconds = differenceInMilliseconds(endDate, startDate);
+    const percentageRemaining =
+      (millisecondsRemaining / totalMilliseconds) * 100;
+
+    return {
+      milliseconds: millisecondsRemaining,
+      percentage: percentageRemaining,
+    };
+  }, [goal]);
+  const [timeLeft, setTimeLeft] = useState<{
+    milliseconds: number;
+    percentage: number;
+  } | null>(getTimeLeft());
 
   const {
     _id: id,
@@ -51,7 +59,7 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
   } = goal;
 
   const timeLeftColor =
-    timeLeft.percentage > 30 ? 'text-green-500' : 'text-red-500';
+    !timeLeft || timeLeft.percentage > 30 ? 'text-green-600' : 'text-red-500';
   const timeLeftStrFormat = 'd h m';
   const timeAmountStrFormat =
     timeAmount >= 60 * 60 * 1000
@@ -67,16 +75,18 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
       : 'm';
 
   useEffect(() => {
+    setTimeLeft(getTimeLeft());
+
     const intervalId = setInterval(() => {
-      setTimeLeft(getTimeLeft(goal));
+      setTimeLeft(getTimeLeft());
     }, 60000);
 
     return () => clearInterval(intervalId);
-  }, [goal]);
+  }, [goal, getTimeLeft]);
 
   return (
     <div className="border border-gray-300 shadow-md rounded-md overflow-hidden">
-      <div className="bg-gray-200 p-3 w-full flex items-center justify-between  ">
+      <div className="bg-gray-200 p-3 w-full flex flex-wrap items-center justify-between  ">
         <h3 className="text-center font-semibold text-l ">{habitName}</h3>
         <div className="flex gap-3">
           <IconButton onClick={onRestart}>
@@ -102,8 +112,17 @@ const GoalItem: React.FC<GoalItemProps> = ({ goal, onDelete, onRestart }) => {
         </h4>
 
         <p className={`text-center ${timeLeftColor}`}>
-          Time left:{' '}
-          {millisecondsToDurationStr(timeLeft.milliseconds, timeLeftStrFormat)}
+          {timeLeft ? (
+            <>
+              Time left: {''}
+              {millisecondsToDurationStr(
+                timeLeft.milliseconds,
+                timeLeftStrFormat
+              )}
+            </>
+          ) : (
+            <>No time limit</>
+          )}
         </p>
 
         <ProgressBar

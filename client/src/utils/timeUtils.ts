@@ -1,4 +1,4 @@
-import { intervalToDuration, millisecondsToMinutes } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
 
 function getHours(milliseconds: number) {
   const diffrenceInSeconds = Math.floor(milliseconds / 1000);
@@ -63,7 +63,6 @@ const millisecondsToDurationStr = (milliseconds: number, format: string) => {
     millisecondsLeft -= hours * 1000 * 60 * 60;
   }
 
-  console.log('after hours', millisecondsToMinutes(millisecondsLeft));
   if (format.includes('m')) {
     minutes = Math.floor(millisecondsLeft / (1000 * 60));
     millisecondsLeft -= minutes * 1000 * 60;
@@ -71,7 +70,6 @@ const millisecondsToDurationStr = (milliseconds: number, format: string) => {
   if (format.includes('s')) {
     seconds = Math.floor(millisecondsLeft / 1000);
     millisecondsLeft -= seconds * 1000;
-    console.log('after seconds', millisecondsToMinutes(millisecondsLeft));
   }
 
   const formatted = format

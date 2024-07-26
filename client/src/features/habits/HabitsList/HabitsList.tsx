@@ -125,7 +125,7 @@ const HabitsList = () => {
           )}
           {habits.map((item: Habit) => (
             <li
-              className="flex justify-between items-center shadow-md text-white border rounded-md py-2 px-4 font-semibold"
+              className="flex flex-wrap justify-between items-center shadow-md text-white border rounded-md py-2 px-4 font-semibold"
               key={item._id}
               style={{ backgroundColor: `${item.color}` }}
             >
