@@ -1,0 +1,28 @@
+name: Check Goals
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # Runs every day at midnight (UTC)
+  workflow_dispatch:
+
+jobs:
+  check-goals:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./server
+
+      - name: Run goal check script
+        run: npm run check-goals
+        working-directory: ./server
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}

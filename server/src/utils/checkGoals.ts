@@ -7,14 +7,18 @@ mongoose.connect(process.env.MONGO_URL as string);
 
 const checkGoals = async () => {
   try {
-    const today = new Date('2030-01-01');
+    const currentDate = new Date();
     //Update one time goals
     await Goal.updateMany(
       {
         type: GoalType.ONE_TIME,
         status: GoalStatus.IN_PROGRESS,
         $expr: {
-          $and: [{ $gte: ['$timeAmount', '$requiredTimeAmount'] }, { $lt: ['$timeLimit.endDate', today] }],
+          $and: [
+            { $gte: ['$timeAmount', '$requiredTimeAmount'] },
+            { $lt: ['$timeLimit.endDate', currentDate] },
+            { $ne: ['$timeLimit.endDate', null] },
+          ],
         },
       },
       { $set: { status: GoalStatus.FULFILLED } },
@@ -25,7 +29,11 @@ const checkGoals = async () => {
         type: GoalType.ONE_TIME,
         status: GoalStatus.IN_PROGRESS,
         $expr: {
-          $and: [{ $lt: ['$timeAmount', '$requiredTimeAmount'] }, { $lt: ['$timeLimit.endDate', today] }],
+          $and: [
+            { $lt: ['$timeAmount', '$requiredTimeAmount'] },
+            { $gte: [currentDate, '$timeLimit.endDate'] },
+            { $ne: ['$timeLimit.endDate', null] },
+          ],
         },
       },
       { $set: { status: GoalStatus.FAILED } },
