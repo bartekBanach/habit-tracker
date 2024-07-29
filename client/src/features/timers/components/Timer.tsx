@@ -45,9 +45,9 @@ export default function Timer({ timer, isEditing }: TimerProps) {
 
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(getRemainingTime());
-  const [addWorkSession] = useAddWorkSessionMutation();
-  const [updateTimer, { isLoading: isUpdateLoading }] =
-    useUpdateTimerMutation();
+  const [addWorkSession, { isLoading: isSaveLoading }] =
+    useAddWorkSessionMutation();
+  const [updateTimer] = useUpdateTimerMutation();
   const [deleteTimer] = useDeleteTimerMutation();
   const handleErrors = useHandleErrors();
   const dispatch = useDispatch();
@@ -64,7 +64,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
         habit: habitId,
         user: userId,
         timeDuration: durationToMilliseconds(duration) - remainingTime,
-      });
+      }).unwrap();
       await handleRestart();
 
       dispatch(
@@ -74,6 +74,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
         })
       );
     } catch (error: unknown) {
+      console.log('COUGHT ERROR!!!', error);
       handleErrors(error);
     }
   };
@@ -82,8 +83,9 @@ export default function Timer({ timer, isEditing }: TimerProps) {
     await updateTimer({
       id,
       updates: { ...timer, remainingTime: time },
-    });
-    localStorage.setItem(`timer_${id}`, time.toString());
+    }).unwrap();
+    //localStorage.setItem(`timer_${id}`, time.toString());
+    //setRemainingTime(time);
   };
 
   function getRemainingTime() {
@@ -108,6 +110,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   const handleRestart = async () => {
     if (isRunning) return;
     const restartedTime = durationToMilliseconds(duration);
+    localStorage.setItem(`timer_${id}`, restartedTime.toString());
     setRemainingTime(restartedTime);
     await updateRemainingTime(restartedTime);
   };
@@ -214,7 +217,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
             }}
             type="button"
             className="bg-green-500"
-            loading={isUpdateLoading}
+            loading={isSaveLoading}
             spinnerInside={false}
           >
             Save time
