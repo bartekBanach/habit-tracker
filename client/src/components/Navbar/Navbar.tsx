@@ -17,7 +17,6 @@ interface NavLink {
   text: string;
   to?: string;
   type: 'link' | 'button' | 'span';
-  //onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
@@ -115,7 +114,6 @@ const Navbar = () => {
 
       <IconButton
         className="md:hidden"
-        iconSize="large"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {!isOpen ? <GiHamburgerMenu /> : <IoCloseOutline />}

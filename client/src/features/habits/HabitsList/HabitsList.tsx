@@ -132,17 +132,15 @@ const HabitsList = () => {
               {item.name}
               <div className="flex flex-row gap-3">
                 <IconButton
-                  background="transparent"
                   size="noPadding"
-                  iconColor="white"
+                  color="transparent"
                   onClick={() => handleEditModalOpen(item)}
                 >
                   <FaEdit />
                 </IconButton>
                 <IconButton
-                  background="transparent"
                   size="noPadding"
-                  iconColor="white"
+                  color="transparent"
                   onClick={() => handleDeleteModalOpen(item._id)}
                 >
                   <RiDeleteBin6Fill />

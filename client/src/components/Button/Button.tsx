@@ -1,26 +1,59 @@
 import { cva } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
+import Spinner from '../Spinner/Spinner';
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   intent?: 'primary' | 'secondary';
   disabled?: boolean;
-  isLoading?: boolean;
+  loading?: boolean;
+  spinnerInside?: boolean;
 };
 
 const Button = ({
   className,
   intent,
   disabled,
-  isLoading,
+  loading,
+  spinnerInside = true,
+  children,
   ...props
 }: ButtonProps) => {
-  return (
-    <button
-      className={cn(buttonVariants({ intent, disabled }), className)}
-      disabled={disabled === true || isLoading}
-      {...props}
-    ></button>
-  );
+  let content;
+
+  if (spinnerInside) {
+    content = (
+      <button
+        className={cn(buttonVariants({ intent, disabled }), className)}
+        disabled={disabled === true || loading}
+        {...props}
+      >
+        <div className="flex gap-3 items-center justify-center">
+          {children}
+          {loading && <Spinner size="small" color="secondary" />}
+        </div>
+      </button>
+    );
+  } else {
+    content = (
+      <div className="relative">
+        <button
+          className={cn(buttonVariants({ intent, disabled }), className)}
+          disabled={disabled === true || loading}
+          {...props}
+        >
+          {children}
+        </button>
+        {loading && (
+          <Spinner
+            size="small"
+            color="secondary"
+            className="absolute left-full top-3 mx-2"
+          />
+        )}
+      </div>
+    );
+  }
+  return content;
 };
 
 const buttonVariants = cva('py-2 px-4 shadow-md rounded-md font-semibold', {

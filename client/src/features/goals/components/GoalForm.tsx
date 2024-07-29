@@ -157,7 +157,7 @@ const GoalForm = ({ onSubmit }: GoalFormProps) => {
         ></input>
       </div>
 
-      <Button intent="primary" type="submit" isLoading={isLoading}>
+      <Button intent="primary" type="submit" loading={isLoading}>
         Add goal
       </Button>
     </form>

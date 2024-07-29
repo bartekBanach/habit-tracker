@@ -84,12 +84,7 @@ const NotificationItem = ({ notification }: NotificationItemProps) => {
         <div className="text-l">{notificationIcons[type]}</div>
         <p>{message}</p>
       </div>
-      <IconButton
-        background={'transparent'}
-        size="noPadding"
-        iconSize="extraLarge"
-        onClick={handleDismiss}
-      >
+      <IconButton size="noPadding" color="transparent" onClick={handleDismiss}>
         <IoMdClose />
       </IconButton>
     </motion.li>

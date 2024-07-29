@@ -8,7 +8,6 @@ import { addNotification } from '../../features/notifications/notifications.slic
 import FormInput from '../../components/FormInput/FormInput';
 import Button from '../../components/Button/Button';
 import useHandleErrors from '../../hooks/useHandleErrors';
-import Spinner from '../../components/Spinner/Spinner';
 
 interface LoginFormData {
   email: string;
@@ -98,15 +97,9 @@ const Login = () => {
             />
           ))}
 
-          <div className="relative">
-            <Button type="submit">Login</Button>
-            {isLoading && (
-              <Spinner
-                color="secondary"
-                className="absolute left-full top-1 mx-3"
-              />
-            )}
-          </div>
+          <Button type="submit" loading={isLoading}>
+            Login
+          </Button>
         </form>
       </div>
     </>

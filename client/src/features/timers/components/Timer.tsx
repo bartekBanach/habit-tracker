@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { useAddWorkSessionMutation } from '../../workSessions/workSessionsApiSlice';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoClose } from 'react-icons/io5';
-import { IoMdRefresh } from 'react-icons/io';
+import { GrRefresh } from 'react-icons/gr';
+import { FaPlay, FaPause } from 'react-icons/fa';
 
 import {
   getHours,
@@ -45,7 +46,8 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [remainingTime, setRemainingTime] = useState(getRemainingTime());
   const [addWorkSession] = useAddWorkSessionMutation();
-  const [updateTimer] = useUpdateTimerMutation();
+  const [updateTimer, { isLoading: isUpdateLoading }] =
+    useUpdateTimerMutation();
   const [deleteTimer] = useDeleteTimerMutation();
   const handleErrors = useHandleErrors();
   const dispatch = useDispatch();
@@ -77,11 +79,11 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   };
 
   const updateRemainingTime = async (time: number) => {
-    localStorage.setItem(`timer_${id}`, time.toString());
     await updateTimer({
       id,
       updates: { ...timer, remainingTime: time },
     });
+    localStorage.setItem(`timer_${id}`, time.toString());
   };
 
   function getRemainingTime() {
@@ -167,24 +169,42 @@ export default function Timer({ timer, isEditing }: TimerProps) {
         )}
       </h2>
 
-      <div className={`${isEditing && 'opacity-50'}`}>
+      <div
+        className={`${isEditing && 'opacity-50'} w-full flex flex-col justify-center items-center`}
+      >
         <CircularProgressbar
           angle={(remainingTime / durationToMilliseconds(duration)) * 360}
           text={`${getHours(remainingTime)}h : ${getMinutes(remainingTime)}m : ${getSeconds(remainingTime)}s`}
           color={habitColor}
         />
-        <div className="flex flex-row justify-center items-center space-x-5">
-          <Button
-            onClick={() => {
-              void (async () => {
-                await handlePlayPause();
-              })();
-            }}
-            disabled={remainingTime === 0 || isEditing}
-            type="button"
-          >
-            {isRunning ? 'Pause' : 'Start'}
-          </Button>
+        <div className="flex flex-row justify-between items-center gap-8">
+          <div className="flex gap-4">
+            <IconButton
+              size="large"
+              color="primary"
+              onClick={() => {
+                void (async () => {
+                  await handlePlayPause();
+                })();
+              }}
+              disabled={remainingTime === 0 || isEditing}
+              type="button"
+            >
+              {isRunning ? <FaPause /> : <FaPlay />}
+            </IconButton>
+            <IconButton
+              size="large"
+              disabled={isRunning || isEditing}
+              onClick={() => {
+                void (async () => {
+                  await handleRestart();
+                })();
+              }}
+            >
+              <GrRefresh />
+            </IconButton>
+          </div>
+
           <Button
             disabled={isRunning || isEditing}
             onClick={() => {
@@ -194,19 +214,11 @@ export default function Timer({ timer, isEditing }: TimerProps) {
             }}
             type="button"
             className="bg-green-500"
+            loading={isUpdateLoading}
+            spinnerInside={false}
           >
             Save time
           </Button>
-          <IconButton
-            disabled={isRunning || isEditing}
-            onClick={() => {
-              void (async () => {
-                await handleRestart();
-              })();
-            }}
-          >
-            <IoMdRefresh />
-          </IconButton>
         </div>
       </div>
     </div>

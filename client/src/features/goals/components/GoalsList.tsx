@@ -77,6 +77,7 @@ const GoalsList = () => {
         ...goal,
         timeAmount: 0,
         timeLimit: newTimeLimit ? newTimeLimit : timeLimit,
+        status: 'in_progress',
       }).unwrap();
 
       dispatch(
