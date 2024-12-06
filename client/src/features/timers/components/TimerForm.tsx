@@ -10,9 +10,10 @@ interface TimerFormProps {
     color: string,
     duration: Duration
   ) => Promise<void>;
+  isLoading: boolean;
 }
 
-export const TimerForm = ({ onSubmit }: TimerFormProps) => {
+export const TimerForm = ({ onSubmit, isLoading }: TimerFormProps) => {
   const [selectedHabit, setSelectedHabit] = useState('');
   const habitItem = useSelector(selectHabitById(selectedHabit));
 
@@ -54,7 +55,7 @@ export const TimerForm = ({ onSubmit }: TimerFormProps) => {
       <input name="minutes" type="number" placeholder="minutes"></input>
       <input name="seconds" type="number" placeholder="seconds"></input>
 
-      <Button intent="primary" type="submit">
+      <Button intent="primary" type="submit" loading={isLoading}>
         New timer
       </Button>
     </form>

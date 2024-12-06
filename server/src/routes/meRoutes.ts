@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import { getMyHabits } from '../controllers/meController';
 import { getMyTimers } from '../controllers/meController';
 import { getMyGoals } from '../controllers/meController';

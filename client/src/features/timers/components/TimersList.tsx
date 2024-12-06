@@ -19,12 +19,12 @@ import Spinner from '../../../components/Spinner/Spinner';
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser) ?? {};
 
-  const { data: timers, isLoading, isError } = useGetUserTimersQuery();
+  const { data: timers, isError, isLoading } = useGetUserTimersQuery();
 
   const [isEditingList, setIsEditingList] = useState(false);
 
   const [modalOpened, setModalOpened] = useState(false);
-  const [createTimer] = useCreateTimerMutation();
+  const [createTimer, { isLoading: isCreating }] = useCreateTimerMutation();
   const handleErrors = useHandleErrors();
 
   useEffect(() => {
@@ -97,7 +97,7 @@ const TimersList = () => {
           header="New Timer"
           onClose={() => setModalOpened(false)}
         >
-          <TimerForm onSubmit={handleNewTimer} />
+          <TimerForm onSubmit={handleNewTimer} isLoading={isCreating} />
         </Modal>
       </>
     );
@@ -127,7 +127,7 @@ const TimersList = () => {
 
   return (
     <SectionContainer headerText="Timers" headerChildren={headerContent}>
-      <div className="flex-grow flex flex-col p-10">{content}</div>
+      <div className="flex-grow flex flex-col p-10 items-center">{content}</div>
     </SectionContainer>
   );
 };

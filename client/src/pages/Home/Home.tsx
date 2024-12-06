@@ -1,9 +1,12 @@
-import heroImage from '../../assets/heroSection.png';
+import heroImage from '../../assets/heroSectionImg.png';
+import { useState } from 'react';
 import { ImStatsBars } from 'react-icons/im';
 import { GiStairsGoal } from 'react-icons/gi';
 import { IoIosTimer } from 'react-icons/io';
 
 const Home = () => {
+  const [isImageLoaded, setImageLoaded] = useState(false);
+
   return (
     <div className="">
       <section className=" bg-gray-100 text-black py-14 px-10 ">
@@ -36,7 +39,10 @@ const Home = () => {
             <img
               src={heroImage}
               alt="Habit Tracker App"
-              className="w-full lg:w-9/12 h-auto rounded-lg shadow-lg"
+              onLoad={() => setImageLoaded(true)}
+              className={`w-full lg:w-9/12 h-auto rounded-lg shadow-lg transition-opacity duration-1000 ${
+                isImageLoaded ? 'opacity-100' : 'opacity-0'
+              }`}
             />
           </div>
         </div>

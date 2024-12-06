@@ -24,9 +24,9 @@ const HabitsList = () => {
 
   const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
   const [deletingHabit, setDeletingHabit] = useState<string | null>(null);
-  const [updateHabit] = useUpdateHabitMutation();
+  const [updateHabit, { isLoading: isUpdating }] = useUpdateHabitMutation();
   const [deleteHabit] = useDeleteHabitMutation();
-  const [addHabit] = useAddHabitMutation();
+  const [addHabit, { isLoading: isAdding }] = useAddHabitMutation();
   const dispatch = useDispatch();
   const handleErrors = useHandleErrors();
 
@@ -155,7 +155,11 @@ const HabitsList = () => {
               isOpened={habitModalOpened}
               onClose={handleEditModalClose}
             >
-              <HabitForm onUpdate={handleUpdateHabit} habit={editingHabit} />
+              <HabitForm
+                onUpdate={handleUpdateHabit}
+                habit={editingHabit}
+                isLoading={isUpdating}
+              />
             </Modal>
           )}
           <Modal
@@ -163,7 +167,7 @@ const HabitsList = () => {
             onClose={handleEditModalClose}
             header="Create new habit"
           >
-            <HabitForm onCreate={handleCreateHabit} />
+            <HabitForm onCreate={handleCreateHabit} isLoading={isAdding} />
           </Modal>
           {deletingHabit && (
             <Modal

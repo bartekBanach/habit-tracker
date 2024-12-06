@@ -7,19 +7,14 @@ dotenv.config();
 mongoose.connect(process.env.MONGO_URL as string);
 
 const generateData = () => {
-  const habits = [
-    '663652ab11fa22b22aca7433',
-    '663a2567b3d56fcdfb9092cb',
-    '665b860593ebf50fab2087fa',
-    '665b86be93ebf50fab20880f',
-    '665b87c593ebf50fab20881a',
-  ];
+  const habits = ['674a31f7067208849ff496a5', '674a31ff067208849ff496aa', '674a34f8067208849ff49704'];
   const dataItems = [];
   for (let i = 0; i < 500; i++) {
     const data = {
       habit: faker.helpers.arrayElement(habits),
       timeDuration: faker.number.int({ min: 3600000, max: 21600000 }),
       finishedAt: faker.date.past(),
+      user: '674336beef9a2c7461fb110f',
     };
     dataItems.push(data);
   }

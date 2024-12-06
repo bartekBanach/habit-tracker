@@ -8,9 +8,15 @@ interface HabitFormProps {
   habit?: Habit | null;
   onCreate?: (habit: NewHabit) => Promise<void>;
   onUpdate?: (habit: Habit) => Promise<void>;
+  isLoading: boolean;
 }
 
-const HabitForm = ({ onCreate, onUpdate, habit }: HabitFormProps) => {
+const HabitForm = ({
+  onCreate,
+  onUpdate,
+  habit,
+  isLoading,
+}: HabitFormProps) => {
   const [name, setName] = useState(habit?.name ?? '');
   const [color, setColor] = useState(habit?.color ?? '#FF8A65');
 
@@ -64,7 +70,7 @@ const HabitForm = ({ onCreate, onUpdate, habit }: HabitFormProps) => {
         </div>
       </div>
 
-      <Button intent="primary" type="submit">
+      <Button intent="primary" type="submit" loading={isLoading}>
         Submit
       </Button>
     </form>

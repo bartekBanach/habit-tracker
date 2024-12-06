@@ -29,7 +29,6 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
 
   const isCurrentTimeInterval = () => {
     let result = false;
-
     if (timeUnit === 'week') {
       result = isAfter(add(from, { weeks: 1 }), new Date());
     } else if (timeUnit === 'month') {
@@ -37,7 +36,6 @@ const TimeIntervalSelector: React.FC<WeekSelectorProps> = ({
     } else {
       result = isAfter(add(from, { years: 1 }), new Date());
     }
-
     return result;
   };
 
