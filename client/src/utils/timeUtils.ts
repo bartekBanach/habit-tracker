@@ -1,4 +1,9 @@
-import { intervalToDuration } from 'date-fns';
+import {
+  intervalToDuration,
+  format,
+  millisecondsToHours,
+  hoursToMilliseconds,
+} from 'date-fns';
 
 function getHours(milliseconds: number) {
   const diffrenceInSeconds = Math.floor(milliseconds / 1000);
@@ -21,6 +26,23 @@ function getMilliseconds(duration: Duration) {
     (hours ?? 0) * 3600000 + (minutes ?? 0) * 60000 + (seconds ?? 0) * 1000
   );
 }
+const formatDate = (date: string, timeUnit: string) => {
+  if (timeUnit === 'week') {
+    return format(date, 'EEEE');
+  } else if (timeUnit === 'month') {
+    return format(date, 'dd/MM');
+  } else {
+    return format(date, 'MMMM');
+  }
+};
+
+[];
+const formatMilliseconds = (value: number): string => {
+  const duration = intervalToDuration({ start: 0, end: value });
+  if (duration.days) return millisecondsToDurationStr(value, 'h');
+  else if (duration.hours) return millisecondsToDurationStr(value, 'h');
+  else return millisecondsToDurationStr(value, 'm');
+};
 
 const durationToMilliseconds = (duration: Duration): number => {
   return (
@@ -46,7 +68,10 @@ const formatTime = (value: number) => {
   return '';
 };
 
-const millisecondsToDurationStr = (milliseconds: number, format: string) => {
+const millisecondsToDurationStr = (
+  milliseconds: number,
+  format = 'h m'
+): string => {
   let millisecondsLeft = milliseconds;
 
   let days = null;
@@ -81,6 +106,12 @@ const millisecondsToDurationStr = (milliseconds: number, format: string) => {
   return formatted.trim() || '0s';
 };
 
+const getNextTimeUnitIncrement = (maxValue: number) => {
+  const maxValueInHours = millisecondsToHours(maxValue);
+  const hoursToAdd = Math.max(Math.floor(maxValueInHours / 6), 1);
+  return hoursToMilliseconds(maxValueInHours + hoursToAdd);
+};
+
 export {
   getHours,
   getMinutes,
@@ -88,5 +119,8 @@ export {
   getMilliseconds,
   durationToMilliseconds,
   formatTime,
+  formatDate,
+  formatMilliseconds,
   millisecondsToDurationStr,
+  getNextTimeUnitIncrement,
 };

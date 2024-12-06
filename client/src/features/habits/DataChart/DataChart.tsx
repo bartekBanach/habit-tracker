@@ -14,19 +14,23 @@ import {
   startOfDay,
   addDays,
   addMonths,
-  millisecondsToHours,
   differenceInDays,
   differenceInMonths,
-  hoursToMilliseconds,
   startOfMonth,
 } from 'date-fns';
 import { selectGoalByHabit } from '../../goals/goalsApiSlice';
 import { useSelector } from 'react-redux';
-import { formatTime } from '../../../utils/timeUtils';
+import {
+  formatTime,
+  formatDate,
+  formatMilliseconds,
+  millisecondsToDurationStr,
+  getNextTimeUnitIncrement,
+} from '../../../utils/timeUtils';
 import { useGetUserHabitsQuery } from '../habitsApiSlice';
 
-type DayData = Record<string, number | string>;
-type AccumulatedData = Record<string, DayData>;
+type TimeIntervalData = Record<string, number | string>;
+type AccumulatedData = Record<string, TimeIntervalData>;
 
 interface DataChartProps {
   data: WorkSession[] | undefined;
@@ -42,7 +46,7 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
   const goal = useSelector(selectGoalByHabit(habitId));
   let noData = false;
 
-  const processedData: WorkSession[] = (data ?? []).flatMap(
+  const preprocessedWorkSessions: WorkSession[] = (data ?? []).flatMap(
     (workSession: WorkSession) => {
       const habit = habits?.find((h: Habit) => workSession.habit === h._id);
 
@@ -60,81 +64,60 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
     }
   );
 
-  const accumulatedData = processedData
-    ? processedData.reduce((acc: AccumulatedData, item: WorkSession) => {
-        const day =
-          timeUnit === 'year'
-            ? format(startOfMonth(item.finishedAt), 'MM/dd/yyyy')
-            : format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
-        if (!acc[day]) {
-          acc[day] = { name: day };
-        }
-        acc[day][item.habit] =
-          ((acc[day][item.habit] || 0) as number) + item.timeDuration;
-        return acc;
-      }, {})
+  const summarizedTimesByDate = preprocessedWorkSessions
+    ? preprocessedWorkSessions.reduce(
+        (acc: AccumulatedData, item: WorkSession) => {
+          const intervalStartDate =
+            timeUnit === 'year'
+              ? format(startOfMonth(item.finishedAt), 'MM/dd/yyyy')
+              : format(startOfDay(item.finishedAt), 'MM/dd/yyyy');
+
+          if (!acc[intervalStartDate]) {
+            acc[intervalStartDate] = { name: intervalStartDate };
+          }
+          acc[intervalStartDate][item.habit] =
+            ((acc[intervalStartDate][item.habit] || 0) as number) +
+            item.timeDuration;
+          return acc;
+        },
+        {}
+      )
     : {};
 
-  const fillMissingDays = (data: AccumulatedData): AccumulatedData => {
+  const fillMissingDates = (
+    data: AccumulatedData,
+    unit: 'days' | 'months'
+  ): AccumulatedData => {
     if (Object.keys(data).length === 0) noData = true;
-    const currentPeriodData: AccumulatedData = {};
-    const daysAmount = Math.abs(differenceInDays(from, to));
 
-    for (let i = 0; i <= daysAmount; i++) {
-      const currentDate = addDays(from, i);
+    const result: AccumulatedData = {};
+    const differenceFn =
+      unit === 'days' ? differenceInDays : differenceInMonths;
+    const addFn = unit === 'days' ? addDays : addMonths;
+
+    const datesAmount = Math.abs(differenceFn(from, to));
+
+    for (let i = 0; i <= datesAmount; i++) {
+      const currentDate = addFn(from, i);
       const formattedDate = format(currentDate, 'MM/dd/yyyy');
 
       if (!data[formattedDate]) {
-        currentPeriodData[formattedDate] = { name: formattedDate };
+        result[formattedDate] = { name: formattedDate };
       } else {
-        currentPeriodData[formattedDate] = data[formattedDate];
+        result[formattedDate] = data[formattedDate];
       }
     }
-    return currentPeriodData;
+
+    return result;
   };
 
-  const fillMissingMonths = (data: AccumulatedData): AccumulatedData => {
-    if (Object.keys(data).length === 0) noData = true;
-    const currentPeriodData: AccumulatedData = {};
-    const monthsAmount = Math.abs(differenceInMonths(from, to));
-
-    for (let i = 0; i <= monthsAmount; i++) {
-      const currentDate = addMonths(from, i);
-      const formattedDate = format(currentDate, 'MM/dd/yyyy');
-
-      if (!data[formattedDate]) {
-        currentPeriodData[formattedDate] = { name: formattedDate };
-      } else {
-        currentPeriodData[formattedDate] = data[formattedDate];
-      }
-    }
-    return currentPeriodData;
-  };
-
-  const chartData: DayData[] = Object.values(
+  const chartData: TimeIntervalData[] = Object.values(
     timeUnit === 'year'
-      ? fillMissingMonths(accumulatedData)
-      : fillMissingDays(accumulatedData)
+      ? fillMissingDates(summarizedTimesByDate, 'months')
+      : fillMissingDates(summarizedTimesByDate, 'days')
   );
 
   const chartKeys = Array.from(habitsSet);
-
-  const formatDate = (date: string) => {
-    if (timeUnit === 'week') {
-      const day = format(date, 'EEEE');
-      return day;
-    } else if (timeUnit === 'month') {
-      return format(date, 'dd/MM');
-    } else {
-      return format(date, 'MMMM');
-    }
-  };
-
-  const getNextTimeUnitIncrement = (maxValue: number) => {
-    const maxValueInHours = millisecondsToHours(maxValue);
-    const hoursToAdd = Math.max(Math.floor(maxValueInHours / 5), 1);
-    return hoursToMilliseconds(maxValueInHours + hoursToAdd);
-  };
 
   if (chartData)
     return (
@@ -159,17 +142,22 @@ const DataChart = ({ data, from, to, habitId, timeUnit }: DataChartProps) => {
             }}
             barSize={40}
           >
-            <Tooltip labelFormatter={formatDate} formatter={formatTime} />
+            <Tooltip
+              labelFormatter={(label) => formatDate(label as string, timeUnit)}
+              formatter={(value) =>
+                millisecondsToDurationStr(value as number, 'h m')
+              }
+            />
             <XAxis
               dataKey="name"
               scale="point"
               padding={{ left: 30, right: 30 }}
               tick={{ fill: '#6b7280' }}
-              tickFormatter={formatDate}
+              tickFormatter={(label) => formatDate(label as string, timeUnit)}
             />
             <YAxis
               tick={{ fill: '#6b7280' }}
-              tickFormatter={formatTime}
+              tickFormatter={(value) => formatMilliseconds(value as number)}
               type="number"
               scale="time"
               domain={[
