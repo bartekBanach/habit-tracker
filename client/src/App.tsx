@@ -16,7 +16,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         {/* protected routes*/}
-
         <Route element={<PersistLogin />}>
           <Route element={<RequireAuth />}>
             <Route path="/user" element={<User />} />

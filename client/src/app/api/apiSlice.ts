@@ -8,6 +8,7 @@ import { FetchArgs } from '@reduxjs/toolkit/query';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { RootState } from '../store';
 import { jwtDecode } from 'jwt-decode';
+import getErrors from '../../utils/getErrors';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${import.meta.env.VITE_PROXY_URL}/api`,
@@ -28,7 +29,12 @@ const baseQueryWithReauth: BaseQueryFn<
 > = async (args, api, extraOptions) => {
   const { getState, dispatch } = api;
   let result = await baseQuery(args, api, extraOptions);
-  if (result.error && result.error.status === 401) {
+  if (
+    result.error &&
+    result.error.status === 401 &&
+    !isLoginFailure(getErrors(result.error))
+  ) {
+    console.log('FETCH RESULT ERROR', result.error);
     const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
 
     if (refreshResult.data) {
@@ -52,6 +58,13 @@ const baseQueryWithReauth: BaseQueryFn<
   }
 
   return result;
+};
+
+const isLoginFailure = (errors: BackendError[]) => {
+  for (const err of errors) {
+    if (err.message === 'Invalid email or password') return true;
+  }
+  return false;
 };
 
 export const apiSlice = createApi({
