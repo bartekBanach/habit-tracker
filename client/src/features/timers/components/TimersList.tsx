@@ -15,12 +15,27 @@ import { IoMdCheckmark } from 'react-icons/io';
 import useHandleErrors from '../../../hooks/useHandleErrors';
 import { useEffect } from 'react';
 import Spinner from '../../../components/Spinner/Spinner';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
 
 const TimersList = () => {
   const { _id: userId } = useSelector(selectCurrentUser) ?? {};
 
   const { data: timers, isError, isLoading } = useGetUserTimersQuery();
-
+  const [sortedTimers, setSortedTimers] = useState(timers ?? []);
   const [isEditingList, setIsEditingList] = useState(false);
 
   const [modalOpened, setModalOpened] = useState(false);
@@ -28,8 +43,32 @@ const TimersList = () => {
   const handleErrors = useHandleErrors();
 
   useEffect(() => {
+    if (timers) {
+      setSortedTimers(timers);
+    }
+  }, [timers]);
+
+  useEffect(() => {
     if (timers?.length === 0) setIsEditingList(false);
   }, [timers]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setSortedTimers((items) => {
+        const oldIndex = items.findIndex((item) => item._id === active.id);
+        const newIndex = items.findIndex((item) => item._id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
 
   const handleNewTimer = async (
     habitId: string,
@@ -69,29 +108,34 @@ const TimersList = () => {
   } else
     content = (
       <>
-        <div>
-          {timers?.length === 0 ? (
-            <div className="flex flex-col items-center ">
-              <RiTimerFill className="text-5xl text-gray-500" />
-              <p className="text-2xl font-semibold">
-                {`You don't have any timers.`}
-              </p>
-              <p className="text-lg text-gray-400">
-                {`Press '+' to add new timer.`}
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2">
-              {timers?.map((timer) => (
-                <Timer
-                  key={timer._id}
-                  timer={timer}
-                  isEditing={isEditingList}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        {sortedTimers.length === 0 ? (
+          <div className="flex flex-col items-center">
+            <RiTimerFill className="text-5xl text-gray-500" />
+            <p className="text-2xl font-semibold">{`You don't have any timers.`}</p>
+            <p className="text-lg text-gray-400">{`Press '+' to add a new timer.`}</p>
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={sortedTimers.map((timer) => timer._id)}
+              strategy={rectSortingStrategy}
+            >
+              <div className="grid gap-7 grid-cols-1 sm:grid-cols-2">
+                {sortedTimers.map((timer) => (
+                  <Timer
+                    key={timer._id}
+                    timer={timer}
+                    isEditing={isEditingList}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        )}
         <Modal
           isOpened={modalOpened}
           header="New Timer"

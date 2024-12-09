@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAddWorkSessionMutation } from '../../workSessions/workSessionsApiSlice';
 import IconButton from '../../../components/IconButton/IconButton';
 import { IoClose } from 'react-icons/io5';
+import { IoIosMove } from 'react-icons/io';
 import { GrRefresh } from 'react-icons/gr';
 import { FaPlay, FaPause } from 'react-icons/fa';
 
@@ -23,6 +24,8 @@ import { selectCurrentUser } from '../../auth/authSlice';
 import useHandleErrors from '../../../hooks/useHandleErrors';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../../notifications/notifications.slice';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface TimerProps {
   timer: Timer;
@@ -51,6 +54,13 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   const [deleteTimer] = useDeleteTimerMutation();
   const handleErrors = useHandleErrors();
   const dispatch = useDispatch();
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
   const logTime = async () => {
     setIsRunning(false);
@@ -153,6 +163,8 @@ export default function Timer({ timer, isEditing }: TimerProps) {
   if (!habit || !userId) return;
   return (
     <div
+      ref={setNodeRef}
+      style={style}
       className={`flex flex-col justify-center items-center border shadow-md py-6 px-7 `}
     >
       <h2
@@ -160,15 +172,25 @@ export default function Timer({ timer, isEditing }: TimerProps) {
       >
         {habitName}
         {isEditing && (
-          <IconButton className="absolute top-0 right-0">
-            <IoClose
+          <>
+            <IconButton
+              className="absolute top-0 right-0"
               onClick={() => {
                 void (async () => {
                   await handleDelete(id);
                 })();
               }}
-            />
-          </IconButton>
+            >
+              <IoClose />
+            </IconButton>
+            <IconButton
+              {...attributes}
+              {...listeners}
+              className="absolute top-0 left-0"
+            >
+              <IoIosMove />
+            </IconButton>
+          </>
         )}
       </h2>
 
