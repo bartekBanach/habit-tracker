@@ -19,15 +19,20 @@ const authSlice = createSlice({
     setCredentials: (
       state,
       {
-        payload: { email, _id, token },
+        payload: { email, _id, token, userPreferences },
       }: PayloadAction<{
         email: string | null;
         _id: string | null;
         token: string | null;
+        userPreferences: UserPreferences | undefined;
       }>
     ) => {
       if (!email || !_id || !token) return;
-      state.user = { _id, email };
+      state.user = {
+        _id,
+        email,
+        userPreferences,
+      };
       state.token = token;
     },
     clearCredentials: (state) => {

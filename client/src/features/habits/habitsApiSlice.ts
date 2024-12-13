@@ -7,10 +7,7 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
       query: () => ({ url: '/habits' }),
       providesTags: ['Habits'],
     }),
-    getHabitsByUser: builder.query<Habit[], void>({
-      query: () => ({ url: `/me/habits` }),
-      providesTags: ['Habits'],
-    }),
+
     getUserHabits: builder.query<Habit[], void>({
       query: () => ({ url: `/me/habits` }),
       providesTags: ['Habits'],
@@ -38,7 +35,6 @@ export const habitsApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetHabitsQuery,
-  useGetHabitsByUserQuery,
   useGetUserHabitsQuery,
   useAddHabitMutation,
   useUpdateHabitMutation,

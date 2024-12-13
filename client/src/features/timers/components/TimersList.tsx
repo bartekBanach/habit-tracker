@@ -7,6 +7,7 @@ import IconButton from '../../../components/IconButton/IconButton';
 import { IoAdd } from 'react-icons/io5';
 import { useState } from 'react';
 import { useCreateTimerMutation } from '../timersApiSlice';
+import { useUpdateMyUserPreferencesMutation } from '../../users/usersApiSlice';
 import { useGetUserTimersQuery } from '../timersApiSlice';
 import { RiTimerFill } from 'react-icons/ri';
 import SectionContainer from '../../../components/SectionContainer/SectionContainer';
@@ -32,21 +33,39 @@ import {
 } from '@dnd-kit/sortable';
 
 const TimersList = () => {
-  const { _id: userId } = useSelector(selectCurrentUser) ?? {};
+  const { _id: userId, userPreferences } = useSelector(selectCurrentUser) ?? {};
+  const timersOrder = userPreferences ? userPreferences.timersOrder : null;
 
   const { data: timers, isError, isLoading } = useGetUserTimersQuery();
+
   const [sortedTimers, setSortedTimers] = useState(timers ?? []);
   const [isEditingList, setIsEditingList] = useState(false);
 
   const [modalOpened, setModalOpened] = useState(false);
   const [createTimer, { isLoading: isCreating }] = useCreateTimerMutation();
+  const [updateUserPreferences] = useUpdateMyUserPreferencesMutation();
   const handleErrors = useHandleErrors();
 
   useEffect(() => {
     if (timers) {
-      setSortedTimers(timers);
+      let result = [];
+
+      if (timersOrder) {
+        for (const timerId of timersOrder) {
+          const timer = timers.find((t) => t._id === timerId);
+          if (timer) result.push(timer);
+        }
+        const unorderedTimers = timers.filter(
+          (t) => !timersOrder.includes(t._id)
+        );
+        result = [...result, ...unorderedTimers];
+      } else {
+        result = timers;
+      }
+
+      setSortedTimers(result);
     }
-  }, [timers]);
+  }, [timers, timersOrder]);
 
   useEffect(() => {
     if (timers?.length === 0) setIsEditingList(false);
@@ -59,14 +78,26 @@ const TimersList = () => {
     })
   );
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setSortedTimers((items) => {
-        const oldIndex = items.findIndex((item) => item._id === active.id);
-        const newIndex = items.findIndex((item) => item._id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = sortedTimers.findIndex((item) => item._id === active.id);
+    const newIndex = sortedTimers.findIndex((item) => item._id === over.id);
+
+    const updatedTimers = arrayMove(sortedTimers, oldIndex, newIndex);
+    setSortedTimers(updatedTimers); // Temporary UI update
+
+    try {
+      if (!userId) throw new Error('User unauthenticated.');
+
+      await updateUserPreferences({
+        ...userPreferences,
+        timersOrder: updatedTimers.map((t) => t._id),
+      }).unwrap();
+    } catch (error) {
+      handleErrors(error);
     }
   };
 
@@ -86,6 +117,7 @@ const TimersList = () => {
       if (!userId) {
         throw new Error('User unauthenthicated.');
       }
+
       await createTimer(newTimer as NewTimer).unwrap();
     } catch (error: unknown) {
       handleErrors(error);
@@ -118,7 +150,11 @@ const TimersList = () => {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
+            onDragEnd={(e) => {
+              void (async () => {
+                await handleDragEnd(e);
+              })();
+            }}
           >
             <SortableContext
               items={sortedTimers.map((timer) => timer._id)}

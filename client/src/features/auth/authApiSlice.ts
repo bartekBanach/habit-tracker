@@ -38,8 +38,10 @@ export const authApiSlice = apiSlice.injectEndpoints({
           const { accessToken } = data;
 
           const decoded: DecodedToken = jwtDecode(accessToken);
-          const { email, _id } = decoded.UserInfo;
-          dispatch(setCredentials({ token: accessToken, email, _id }));
+          const { email, _id, userPreferences } = decoded.UserInfo;
+          dispatch(
+            setCredentials({ token: accessToken, email, _id, userPreferences })
+          );
         } catch (error) {
           console.log(error);
         }

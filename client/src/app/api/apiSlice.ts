@@ -34,7 +34,6 @@ const baseQueryWithReauth: BaseQueryFn<
     result.error.status === 401 &&
     !isLoginFailure(getErrors(result.error))
   ) {
-    console.log('FETCH RESULT ERROR', result.error);
     const refreshResult = await baseQuery('/auth/refresh', api, extraOptions);
 
     if (refreshResult.data) {
@@ -43,14 +42,18 @@ const baseQueryWithReauth: BaseQueryFn<
       const authUser = (getState() as RootState).auth.user;
       let email = authUser?.email;
       let _id = authUser?._id;
+      let userPreferences = authUser?.userPreferences;
 
       if (!email || !_id) {
         const decoded: DecodedToken = jwtDecode(accessToken);
         email = decoded.UserInfo.email;
         _id = decoded.UserInfo._id;
+        userPreferences = decoded.UserInfo.userPreferences;
       }
 
-      dispatch(setCredentials({ token: accessToken, email, _id }));
+      dispatch(
+        setCredentials({ token: accessToken, email, _id, userPreferences })
+      );
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(clearCredentials());
@@ -70,7 +73,7 @@ const isLoginFailure = (errors: BackendError[]) => {
 export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
   endpoints: () => ({}),
-  tagTypes: ['Habits', 'WorkSessions', 'Goals', 'Timers'],
+  tagTypes: ['Habits', 'WorkSessions', 'Goals', 'Timers', 'Users'],
 });
 
 export const { resetApiState } = apiSlice.util;

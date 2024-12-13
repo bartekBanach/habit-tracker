@@ -2,11 +2,16 @@ import mongoose from 'mongoose';
 import { Schema, Model, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 
+interface IUserPreferences {
+  timersOrder?: string[];
+}
+
 interface IUser {
   _id: Types.ObjectId;
   username: string;
   email: string;
   password: string;
+  userPreferences: IUserPreferences;
 }
 
 interface IUserMethods {
@@ -29,6 +34,12 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     type: String,
     required: true,
   },
+  userPreferences: {
+    type: {
+      timersOrder: { type: [String], default: [] },
+    },
+    default: {},
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -46,4 +57,4 @@ userSchema.methods.matchPasswords = async function (enteredPassowrd: string): Pr
 const User = mongoose.model<IUser, UserModel>('User', userSchema);
 
 export default User;
-export { UserModel };
+export { IUser };

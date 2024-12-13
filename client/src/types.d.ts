@@ -68,6 +68,22 @@ interface User {
   _id: string;
   username?: string;
   email: string;
+  userPreferences?: UserPreferences;
+}
+
+interface UserPreferences {
+  timersOrder?: string[];
+}
+
+interface UserInfo {
+  _id: string;
+  email: string;
+  username: string;
+  userPreferences?: UserPreferences;
+}
+
+interface DecodedToken {
+  UserInfo: UserInfo;
 }
 
 interface BackendError {
@@ -80,14 +96,4 @@ interface ErrorResponse {
     errors: BackendError[];
   };
   status: number;
-}
-
-interface UserInfo {
-  _id: string;
-  email: string;
-  username: string;
-}
-
-interface DecodedToken {
-  UserInfo: UserInfo;
 }

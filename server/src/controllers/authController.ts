@@ -73,6 +73,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
           _id: user._id,
           username: user.username,
           email: user.email,
+          userPreferences: user.userPreferences,
         },
       },
       process.env.ACCESS_TOKEN_SECRET as string,
@@ -121,6 +122,7 @@ const refresh = asyncHandler(async (req: Request, res: Response): Promise<void> 
         _id: user._id,
         username: user.username,
         email: user.email,
+        userPreferences: user.userPreferences,
       },
     },
     process.env.ACCESS_TOKEN_SECRET as string,
@@ -149,6 +151,7 @@ const getProfile = asyncHandler(async (req: Request, res: Response): Promise<voi
     _id: req.user._id,
     username: req.user.username,
     email: req.user.email,
+    userPreferences: req.user.userPreferences,
   };
 
   res.status(200).json(user);

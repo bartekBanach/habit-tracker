@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Habit, { IHabit } from '../models/habit';
 import Timer, { ITimer } from '../models/timer';
+import User from '../models/user';
 import Goal, { IGoal } from '../models/goal';
 import WorkSession, { IWorkSession } from '../models/workSession';
 import asyncHandler from 'express-async-handler';
@@ -56,5 +57,34 @@ const getMyWorkSessions = asyncHandler(async (req: Request, res: Response) => {
     throw new DatabaseError('Failed to get work sessions');
   }
 });
+
+const updateMyPreferences = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req?.user?._id;
+  const { preferences } = req.body;
+
+  if (!preferences || typeof preferences !== 'object') {
+    throw new BadRequestError('Invalid preferences data.');
+  }
+
+  const user = await User.findById(userId);
+  console.log('user id', userId);
+  if (!user) {
+    throw new NotFoundError('User not foundd.');
+  }
+
+  user.userPreferences = {
+    ...user.userPreferences,
+    ...preferences,
+  };
+
+  try {
+    await user.save();
+    res.json({ message: 'Preferences updated successfully', preferences: user.userPreferences });
+  } catch (error) {
+    throw new DatabaseError('Failed to update user preferences.');
+  }
+});
+
+export { updateMyPreferences };
 
 export { getMyHabits, getMyTimers, getMyGoals, getMyWorkSessions };
