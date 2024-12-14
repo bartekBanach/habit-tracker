@@ -12,7 +12,7 @@ import { getSortedTimers } from '../../../utils/helperFunctions';
 import Modal from '../../../components/Modal/Modal';
 import SectionContainer from '../../../components/SectionContainer/SectionContainer';
 
-import { TimerForm } from './TimerForm';
+import TimerForm from './TimerForm';
 import TimersListHeader from './TimersListHeader';
 import TimersListContent from './TimersListContent';
 
@@ -42,6 +42,7 @@ const TimersList = () => {
   }, [timers]);
 
   const handleUpdateOrder = async (updatedTimers: Timer[]) => {
+    const previousTimers = [...sortedTimers];
     setSortedTimers(updatedTimers);
 
     try {
@@ -52,6 +53,7 @@ const TimersList = () => {
       }).unwrap();
     } catch (error) {
       handleErrors(error);
+      setSortedTimers(previousTimers);
     }
   };
 

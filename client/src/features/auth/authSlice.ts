@@ -24,7 +24,7 @@ const authSlice = createSlice({
         email: string | null;
         _id: string | null;
         token: string | null;
-        userPreferences: UserPreferences | undefined;
+        userPreferences?: UserPreferences | undefined;
       }>
     ) => {
       if (!email || !_id || !token) return;
