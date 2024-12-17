@@ -5,6 +5,7 @@ import timerRoutes from './routes/timerRoutes';
 import habitRoutes from './routes/habitRoutes';
 import goalRoutes from './routes/goalRoutes';
 import meRoutes from './routes/meRoutes';
+import pingRoute from './routes/pingRoute';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
@@ -33,6 +34,7 @@ mongoose
   .catch((err) => console.log('Error connecting to db.', err));
 
 // Routes
+app.use('/api/ping', pingRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/me', meRoutes);
 app.use('/api/habits', habitRoutes);
