@@ -11,6 +11,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import IconButton from '../IconButton/IconButton';
 import { useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
+import { FaRegClock } from 'react-icons/fa6';
 
 interface NavLink {
   id: number;
@@ -71,7 +72,7 @@ const Navbar = () => {
         return (
           <Link
             key={index}
-            className={`bg-white ${isMobile ? 'text-center border p-4 w-full' : 'p-2 rounded-md shadow-md'}`}
+            className={`bg-white font-medium ${isMobile ? 'text-center border p-4 w-full' : ' px-5 py-2 rounded-md shadow-md'}`}
             to={link.to}
             onClick={() => isMobile && setIsOpen(false)}
           >
@@ -94,9 +95,10 @@ const Navbar = () => {
         return (
           <span
             key={index}
-            className={`${isMobile ? 'text-center border p-4 w-full font-semibold' : 'font-semibold'}`}
+            className={`${isMobile ? 'text-center border p-4 w-full' : ''}`}
           >
-            {link.text}
+            <span className="font-normal">Logged as </span>
+            <span className="font-semibold">{user?.email}</span>
           </span>
         );
       }
@@ -105,26 +107,26 @@ const Navbar = () => {
   };
 
   return (
-    <div className=" text-black bg-orange-300 shadow-md w-full flex justify-between items-center px-4 py-4 sticky top-0 z-40">
-      <Link to="/">
-        <div className="bg-gray-800 text-white rounded-md px-4 py-2 font-semibold">
-          <h1 className=" text-3xl">habitTracker</h1>
+    <div className=" text-black bg-lime-300 border-b w-full flex justify-between items-center px-6 md:px-14 py-4 sticky top-0 z-40">
+      <Link to="/" className="flex justify-center items-center gap-2 ">
+        <div className="bg-black rounded-lg text-white p-2 shadow-md">
+          <FaRegClock className="text-2xl" />
         </div>
+        <h1 className=" text-xl text-black font-semibold  ">habitTracker</h1>
       </Link>
 
       <IconButton
-        className="md:hidden"
+        className="lg:hidden"
         onClick={() => setIsOpen((prev) => !prev)}
       >
         {!isOpen ? <GiHamburgerMenu /> : <IoCloseOutline />}
       </IconButton>
       {isOpen && (
-        <nav className="md:hidden absolute top-full left-0 w-full h-screen bg-white flex flex-col items-center">
+        <nav className="lg:hidden absolute top-full left-0 w-full h-screen bg-white flex flex-col items-center">
           {user ? renderLinks(authLinks, true) : renderLinks(unauthLinks, true)}
         </nav>
       )}
-
-      <nav className="hidden md:flex gap-5 items-center">
+      <nav className="hidden lg:flex gap-5 items-center">
         {user ? renderLinks(authLinks, false) : renderLinks(unauthLinks, false)}
       </nav>
     </div>

@@ -242,7 +242,7 @@ export default function Timer({ timer, isEditing }: TimerProps) {
             loading={isSaveLoading}
             spinnerInside={false}
           >
-            Save time
+            Save
           </Button>
         </div>
       </div>

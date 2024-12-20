@@ -78,7 +78,7 @@ const Login = () => {
 
   return (
     <>
-      <div className="p-10 md:p-0 flex-1 flex flex-col items-center justify-start md:justify-center">
+      <div className="p-10 md:p-0 flex-1 flex flex-col items-center justify-start md:justify-center bg-gray-100">
         <form
           onSubmit={(e) => {
             void (async () => {

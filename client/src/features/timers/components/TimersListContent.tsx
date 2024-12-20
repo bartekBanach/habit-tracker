@@ -71,7 +71,7 @@ const TimersListContent: React.FC<TimersListContentProps> = ({
             items={sortedTimers.map((timer) => timer._id)}
             strategy={rectSortingStrategy}
           >
-            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2">
+            <div className="grid gap-7 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3">
               {sortedTimers.map((timer) => (
                 <Timer
                   key={timer._id}

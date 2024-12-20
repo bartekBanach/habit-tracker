@@ -7,7 +7,7 @@ const FormInput = (props: FormInputProps) => {
   const { label, onChange, errorMessage, ...inputProps } = props;
 
   return (
-    <div className="flex flex-col gap-3 w-6/12">
+    <div className="flex flex-col gap-3 w-10/12 sm:w-8/12 ">
       <label>{label}</label>
       <input
         className={`border border-black p-2 rounded-md peer`}

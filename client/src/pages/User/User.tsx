@@ -58,7 +58,7 @@ const User = () => {
         </div>
       </div>
 
-      <div className="flex-1 hidden lg:flex flex-col gap-10 p-10">
+      <div className="flex-1 hidden lg:flex flex-col gap-10 p-10  bg-gray-100">
         <HabitsStats />
 
         <div className="grid grid-cols-10 gap-5">

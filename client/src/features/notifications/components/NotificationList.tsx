@@ -7,7 +7,7 @@ interface NotificationListProps {
 
 const NotificationList = ({ children }: NotificationListProps) => {
   return ReactDOM.createPortal(
-    <ul className="fixed bottom-4 right-4 flex flex-col gap-5 min-w-96">
+    <ul className="fixed bottom-4 left-4 right-4  md:min-w-96 md:left-auto md:right-4 flex flex-col gap-5 ">
       <AnimatePresence initial={false}>{children}</AnimatePresence>
     </ul>,
     document.body
